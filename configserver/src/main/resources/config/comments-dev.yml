@@ -1,0 +1,21 @@
+spring.datasource:
+  url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL;NON_KEYWORDS=USER
+  driver-class-name: org.h2.Driver
+  username: 'sa'
+  password: ''
+
+spring.h2:
+  console:
+    enabled: true
+
+spring.jpa:
+  database-platform: org.hibernate.dialect.H2Dialect
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8070/eureka/

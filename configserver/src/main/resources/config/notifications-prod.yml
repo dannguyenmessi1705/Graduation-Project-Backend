@@ -1,0 +1,23 @@
+spring.datasource:
+  url: jdbc:mysql://localhost:3306/forum_notifications
+  username: 'root'
+  password: '17052002'
+
+spring.jpa:
+  properties:
+    hibernate:
+      dialect: org.hibernate.dialect.MySQL8Dialect
+  defer-datasource-initialization: true
+
+spring.sql:
+  init:
+    mode: always
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8070/eureka/

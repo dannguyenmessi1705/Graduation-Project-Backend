@@ -1,0 +1,20 @@
+#spring.datasource:
+#  url: "{cipher}2681c574fe6f7f2f33733ed71fafb1d11c93cf7c6e9fc9bad0fc64403bf46cfd31cdb1764164bc9c7097a65799bbc0b9c4fc9ecfbb02ac018c2aa257a7944578e0116cf607712b6a78f46d877e7600e6f43af9f50feb11b6bacb51cca76c604a7d5fa5b920cafb7d1964346f1712c3379f4297fd25dabce8bbd5007b15f51e3f"
+#  username: "{cipher}b447891ee31d0b9c6b59e13be85e45c65fcb3cc0b158fe5ec2029785db396c71"
+#  password: "{cipher}414f97e948d86739788fed29c146445159bd1d999932821c860d3590a389039b6ef11ebaf606dce2a1a723cd74190345"
+
+spring.jpa:
+  properties:
+    hibernate:
+      dialect: org.hibernate.dialect.MySQL8Dialect
+  defer-datasource-initialization: true
+
+spring.sql:
+  init:
+    mode: always
+
+spring.cloud:
+  kubernetes:
+    discovery:
+      all-namespaces: true
+      discovery-server-url: http://spring-cloud-kubernetes-discoveryserver:80/
