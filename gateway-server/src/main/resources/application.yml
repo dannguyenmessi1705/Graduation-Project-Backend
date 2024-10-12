@@ -1,0 +1,57 @@
+server:
+  port: 8072
+
+spring:
+  application:
+    name: gatewayserver
+  config:
+    import: optional:configserver:http://localhost:8071
+  profiles:
+    active: "dev"
+  security:
+    user:
+      name: didannguyen
+      password: password
+
+
+#  data:
+#    redis:
+#      connect-timeout: 2s
+#      host: localhost
+#      port: 6379
+#      timeout: 1s
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          jwk-set-uri: http://localhost:7080/realms/master/protocol/openid-connect/certs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+info:
+  app:
+    name: "gatewayserver"
+    description: "Forum Gateway Server Application Microservices"
+    version: "1.0.0"
+
+logging:
+  level:
+    com:
+      didan:
+        microservices:
+          gatewaysever: debug
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"

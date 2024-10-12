@@ -1,0 +1,72 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: users
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  profiles:
+    active: "dev"
+  config:
+    import: optional:configserver:http://localhost:8071
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 30MB
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true
+    shutdown:
+      enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+endpoints:
+  shutdown:
+    enabled: true
+
+info:
+  app:
+    name: ${spring.application.name}
+    description: "Forum users application"
+    version: "1.0.0"
+
+logging:
+  level:
+    com:
+      didan:
+        forum:
+          users: debug
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+
+minio:
+  access-key: IFxmZQZnzwfeigv79Lo3
+  secret-key: M64UOvH5OAFZx7q4V1fGi6BbOmH9PXaAtfuyW9x3
+  endpoint: http://localhost:10000
+  bucket-name: materials

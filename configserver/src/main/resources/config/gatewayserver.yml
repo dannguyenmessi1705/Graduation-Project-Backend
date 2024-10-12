@@ -1,0 +1,9 @@
+spring.cloud:
+  kubernetes:
+    discovery:
+      all-namespaces: true
+      enabled: true
+      discovery-server-url: http://spring-cloud-kubernetes-discoveryserver:80/
+    httpclient:
+      connect-timeout: 10000 # Thoi gian toi da de ket noi toi service
+      response-timeout: 10s # Thoi gian toi da de nhan phan hoi tu service
