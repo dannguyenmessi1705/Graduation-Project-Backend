@@ -9,9 +9,15 @@ spring:
   profiles:
     active: "dev"
   security:
-    user:
-      name: didannguyen
-      password: password
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:7080/realms/forum
+          jwk-set-uri: http://localhost:7080/realms/forum/protocol/openid-connect/certs
+
+oauth:
+  openId:
+    url: http://localhost:7080/realms/forum/.well-known/openid-configuration
 
 
 #  data:
@@ -20,11 +26,7 @@ spring:
 #      host: localhost
 #      port: 6379
 #      timeout: 1s
-#  security:
-#    oauth2:
-#      resourceserver:
-#        jwt:
-#          jwk-set-uri: http://localhost:7080/realms/master/protocol/openid-connect/certs
+
 
 management:
   endpoints:
@@ -40,6 +42,24 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
+    config-url: /api-docs/swagger-config
+    urls:
+      - url: /api-docs
+        name: API Gateway Service
+        display-name: API Gateway Service
+      - url: /forum/users/api-docs
+        name: Users Service
+        display-name: Users Service
+    oauth:
+      client-id: forum-authentication
+      client-secret: l2WiWQULnEFt9KrgySvFK03QtVf9K4DO
+  enable-native-support: true
 
 info:
   app:

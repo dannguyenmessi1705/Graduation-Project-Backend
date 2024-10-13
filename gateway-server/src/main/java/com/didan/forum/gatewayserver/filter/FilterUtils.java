@@ -8,7 +8,7 @@ import org.springframework.web.server.ServerWebExchange;
 @Component
 public class FilterUtils {
 
-  public static final String CORRELATION_ID = "forum-correlation-id";
+  public static final String CORRELATION_ID = "Forum-Correlation-ID";
 
   public String getCorrelationId(HttpHeaders httpHeaders) {
     if (httpHeaders.get(CORRELATION_ID) != null) {
