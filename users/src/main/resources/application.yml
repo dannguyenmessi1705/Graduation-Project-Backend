@@ -27,6 +27,19 @@ oauth:
   openId:
     url: http://localhost:7080/realms/forum/.well-known/openid-configuration
 
+
+app:
+  cache:
+    redis:
+      enabled: false
+      host: 'redis://redis-12610.c252.ap-southeast-1-1.ec2.redns.redis-cloud.com'
+      port: 12610
+      timeoutSeconds: 60
+      maxPoolSize: 8
+      maxIdle: 8
+      minIdle: 0
+      password: "jfz74hpkdMFx6qTfjIZT4kOixxq9iFB6"
+
 management:
   endpoints:
     web:

@@ -59,6 +59,7 @@ springdoc:
     oauth:
       client-id: forum-authentication
       client-secret: l2WiWQULnEFt9KrgySvFK03QtVf9K4DO
+      ##client-secret: RTNNPLYDsNafVR3DRc19jlYGceMaga67
   enable-native-support: true
 
 info:
