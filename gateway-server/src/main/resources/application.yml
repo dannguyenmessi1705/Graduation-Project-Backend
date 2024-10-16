@@ -19,7 +19,6 @@ oauth:
   openId:
     url: http://localhost:7080/realms/forum/.well-known/openid-configuration
 
-
 #  data:
 #    redis:
 #      connect-timeout: 2s

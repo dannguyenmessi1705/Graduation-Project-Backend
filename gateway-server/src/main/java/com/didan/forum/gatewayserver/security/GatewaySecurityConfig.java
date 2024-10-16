@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity.CorsSpec;
@@ -16,7 +15,9 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import org.springframework.security.web.server.savedrequest.NoOpServerRequestCache;
+import org.springframework.web.server.session.WebSessionManager;
 import reactor.core.publisher.Mono;
 
 @Configuration
@@ -40,9 +41,15 @@ public class GatewaySecurityConfig {
         .httpBasic(HttpBasicSpec::disable)
         .logout(LogoutSpec::disable)
         .requestCache(
-            requestCacheSpec -> requestCacheSpec.requestCache(NoOpServerRequestCache.getInstance()))
+            requestCacheSpec -> requestCacheSpec.requestCache(NoOpServerRequestCache.getInstance())) // Disable RequestCache = SessionCreationPolicy.STATELESS
+        .securityContextRepository(NoOpServerSecurityContextRepository.getInstance()) // Disable SecurityContextRepository = SessionCreationPolicy.STATELESS
         .build();
   }
+
+  @Bean
+  public WebSessionManager webSessionManager() {
+    return exchange -> Mono.empty();
+  } // Disable WebSessionManager = SessionCreationPolicy.STATELESS
 
   private Converter<Jwt, Mono<AbstractAuthenticationToken>> grantedAuthoritiesExtractor() {
     JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();

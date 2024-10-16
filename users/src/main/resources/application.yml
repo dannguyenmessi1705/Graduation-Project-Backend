@@ -27,11 +27,20 @@ oauth:
   openId:
     url: http://localhost:7080/realms/forum/.well-known/openid-configuration
 
+keycloak:
+  management-user:
+    realm: forum
+    server: http://localhost:7080
+    client-id: admin-cli
+    grant-type: password
+    name: didannguyen
+    password: 17052002
+    client-secret: l2WiWQULnEFt9KrgySvFK03QtVf9K4DO
 
 app:
   cache:
     redis:
-      enabled: false
+      enabled: true
       host: 'redis://redis-12610.c252.ap-southeast-1-1.ec2.redns.redis-cloud.com'
       port: 12610
       timeoutSeconds: 60
