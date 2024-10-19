@@ -5,13 +5,14 @@ import com.didan.forum.users.dto.response.UserResponseDto;
 import java.util.List;
 
 public interface IUserService {
+
   List<UserResponseDto> getAllUsers();
 
   UserResponseDto getDetailUser(String userId);
 
   boolean reportUser(String userId);
 
-  UserResponseDto createUser(CreateUserRequestDto requestDto);
+  UserResponseDto createUser(boolean isVerified, CreateUserRequestDto requestDto);
 
 
 }

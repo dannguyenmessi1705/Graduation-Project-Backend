@@ -1,29 +1,26 @@
-package com.didan.forum.users.dto.response;
+package com.didan.forum.users.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
-@Schema(name = "UserResponseDto", description = "User response data transfer object")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UserResponseDto {
-
-  @Schema(
-      name = "id",
-      description = "User id",
-      example = "123456"
-  )
-  private String id;
+@Schema(name = "UpdateUserRequestDto", description = "Update User Request Dto")
+public class UpdateUserRequestDto {
 
   @Schema(
       name = "firstName",
       description = "User first name",
       example = "John"
   )
+  @Size(max = 255, message = "invalid.field.firstName")
   private String firstName;
 
   @Schema(
@@ -31,6 +28,7 @@ public class UserResponseDto {
       description = "User last name",
       example = "Doe"
   )
+  @Size(max = 255, message = "invalid.field.lastName")
   private String lastName;
 
   @Schema(
@@ -38,14 +36,8 @@ public class UserResponseDto {
       description = "User email",
       example = "johndoe@exmaple.com"
   )
+  @Size(max = 255, message = "invalid.field.email")
   private String email;
-
-  @Schema(
-      name = "username",
-      description = "User username",
-      example = "johndoe"
-  )
-  private String username;
 
   @Schema(
       name = "birthDay",
@@ -59,6 +51,7 @@ public class UserResponseDto {
       description = "User country",
       example = "Vietnam"
   )
+  @Size(max = 255, message = "invalid.field.country")
   private String country;
 
   @Schema(
@@ -73,6 +66,7 @@ public class UserResponseDto {
       description = "Gender",
       example = "Male"
   )
+  @Pattern(regexp = "^(Male|Female|)$", message = "invalid.field.gender")
   private String gender;
 
   @Schema(
@@ -80,6 +74,7 @@ public class UserResponseDto {
       description = "City",
       example = "123 Main St"
   )
+  @Size(max = 255, message = "invalid.field.city")
   private String city;
 
   @Schema(
@@ -90,16 +85,15 @@ public class UserResponseDto {
   private Long postalCode;
 
   @Schema(
-      name = "picture",
-      description = "User picture URL",
-      example = "https://example.com/picture.jpg"
-  )
-  private String picture;
-
-  @Schema(
       name = "isVerified",
-      description = "User verification status",
+      description = "User is verified or not",
       example = "true"
   )
   private boolean isVerified;
+
+  @Schema(
+      name = "picture",
+      description = "File to be uploaded"
+  )
+  private MultipartFile picture;
 }

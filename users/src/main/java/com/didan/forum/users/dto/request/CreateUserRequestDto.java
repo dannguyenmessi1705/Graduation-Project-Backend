@@ -11,12 +11,14 @@ import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 @Schema(name = "CreateUserRequestDto", description = "Create User Request Dto")
-@AllArgsConstructor @NoArgsConstructor @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class CreateUserRequestDto {
+
   @Schema(
       name = "firstName",
       description = "User first name",
@@ -71,7 +73,6 @@ public class CreateUserRequestDto {
       description = "User birth day",
       example = "1990-01-01"
   )
-  @Pattern(regexp = "^[0-9]{4}-[0-9]{2}-[0-9]{2}$", message = "invalid.field.birthDay")
   private LocalDate birthDay;
 
   @Schema(
@@ -80,7 +81,6 @@ public class CreateUserRequestDto {
       example = "Vietnam"
   )
   @Size(max = 255, message = "invalid.field.country")
-  @Pattern(regexp = "^[a-zA-Z]*$", message = "invalid.field.country")
   private String country;
 
   @Schema(
@@ -98,7 +98,7 @@ public class CreateUserRequestDto {
       description = "Gender",
       example = "Male"
   )
-  @Pattern(regexp = "^(Male|Female|)$", message="invalid.field.gender")
+  @Pattern(regexp = "^(Male|Female|)$", message = "invalid.field.gender")
   private String gender;
 
   @Schema(
@@ -107,7 +107,6 @@ public class CreateUserRequestDto {
       example = "123 Main St"
   )
   @Size(max = 255, message = "invalid.field.city")
-  @Pattern(regexp = "^[a-zA-Z]*$", message = "invalid.field.city")
   private String city;
 
   @Schema(
@@ -117,7 +116,6 @@ public class CreateUserRequestDto {
   )
   @Max(value = 99999999, message = "invalid.field.postalCode")
   @Min(value = 0, message = "invalid.field.postalCode")
-  @Pattern(regexp = "^[0-9]*$", message = "invalid.field.postalCode")
   private Long postalCode;
 
   @Schema(

@@ -17,7 +17,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,8 +30,11 @@ import lombok.ToString;
 })
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter @Getter @ToString
+@Setter
+@Getter
+@ToString
 public class UserEntity extends SuperClass implements Serializable {
+
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
@@ -73,6 +75,9 @@ public class UserEntity extends SuperClass implements Serializable {
   @Lob
   @Column(length = 16777216)
   private String picture;
+
+  @Column
+  private boolean isVerified;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<UserRoleEntity> userRoles;

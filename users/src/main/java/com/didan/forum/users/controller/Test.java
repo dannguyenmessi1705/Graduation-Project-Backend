@@ -1,15 +1,16 @@
 package com.didan.forum.users.controller;
 
-import com.didan.forum.users.dto.RoleDto;
-import com.didan.forum.users.dto.Status;
-import com.didan.forum.users.dto.UserDto;
-import com.didan.forum.users.dto.response.GeneralResponse;
 import com.didan.forum.users.config.locale.Translator;
-import com.didan.forum.users.service.keycloak.KeycloakService;
+import com.didan.forum.users.dto.Status;
+import com.didan.forum.users.dto.response.GeneralResponse;
+import com.didan.forum.users.dto.response.UserResponseDto;
+import com.didan.forum.users.entity.keycloak.RoleKeycloakEntity;
+import com.didan.forum.users.entity.keycloak.UserKeycloakEntity;
+import com.didan.forum.users.utils.MapperObjectKeycloakUtils;
 import jakarta.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
@@ -18,7 +19,6 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class Test {
-  private final MessageSource messageSource;
-  private final KeycloakService keycloakService;
+
+  private final Keycloak keycloak;
 
   @Value("${keycloak.management-user.realm}")
   private String realm;
@@ -45,38 +45,33 @@ public class Test {
   }
 
   @GetMapping("/users")
-  public List<UserDto> getUsers() {
-    Keycloak keycloak = keycloakService.getKeycloakInstance();
+  public List<UserResponseDto> getUsers() {
     List<UserRepresentation> userReps = keycloak.realm(realm).users().list();
-    return mapUsers(userReps);
+    return MapperObjectKeycloakUtils.mapUsers(userReps);
   }
 
   @PostMapping(value = "/user")
-  public ResponseEntity<?> createUser(UserDto user) {
+  public ResponseEntity<?> createUser(UserKeycloakEntity user) {
     UserRepresentation userRep = mapUserRep(user);
-    Keycloak keycloak = keycloakService.getKeycloakInstance();
     Response res = keycloak.realm(realm).users().create(userRep);
     return ResponseEntity.ok(user);
   }
 
   @PutMapping(value = "/user")
-  public ResponseEntity<?> updateUser(UserDto user) {
+  public ResponseEntity<?> updateUser(UserKeycloakEntity user) {
     UserRepresentation userRep = mapUserRep(user);
-    Keycloak keycloak = keycloakService.getKeycloakInstance();
     keycloak.realm(realm).users().get(user.getId()).update(userRep);
     return ResponseEntity.ok(user);
   }
 
   @DeleteMapping(value = "/users/{id}")
   public ResponseEntity<?> deleteUser(@PathVariable("id") String id) {
-    Keycloak keycloak = keycloakService.getKeycloakInstance();
     keycloak.realm(realm).users().delete(id);
     return ResponseEntity.ok().build();
   }
 
   @GetMapping(value = "/users/{id}/roles")
-  public List<RoleDto> getRoles(@PathVariable("id") String id) {
-    Keycloak keycloak = keycloakService.getKeycloakInstance();
+  public List<RoleKeycloakEntity> getRoles(@PathVariable("id") String id) {
     return mapRoles(keycloak.realm(realm).users()
         .get(id).roles().realmLevel().listAll());
   }
@@ -84,72 +79,66 @@ public class Test {
   @PostMapping(value = "/users/{id}/roles/{roleName}")
   public ResponseEntity<?> createRole(@PathVariable("id") String id,
       @PathVariable("roleName") String roleName) {
-    Keycloak keycloak = keycloakService.getKeycloakInstance();
     RoleRepresentation role = keycloak.realm(realm).roles().get(roleName).toRepresentation();
-    keycloak.realm(realm).users().get(id).roles().realmLevel().add(Arrays.asList(role));
+    keycloak.realm(realm).users().get(id).roles().realmLevel().add(Collections.singletonList(role));
     return ResponseEntity.ok().build();
   }
 
   @GetMapping(value = "/roles")
-  public List<RoleDto> getRoles() {
-    Keycloak keycloak = keycloakService.getKeycloakInstance();
+  public List<RoleKeycloakEntity> getRoles() {
     List<RoleRepresentation> roleRepresentations =
         keycloak.realm(realm).roles().list();
     return mapRoles(roleRepresentations);
   }
 
   @GetMapping(value = "/roles/{roleName}")
-  public RoleDto getRole(@PathVariable("roleName") String roleName) {
-    Keycloak keycloak = keycloakService.getKeycloakInstance();
+  public RoleKeycloakEntity getRole(@PathVariable("roleName") String roleName) {
     return mapRole(keycloak.realm(realm).roles().get(roleName).toRepresentation());
   }
 
   @PostMapping(value = "/role")
-  public ResponseEntity<?> createRole(RoleDto role) {
+  public ResponseEntity<?> createRole(RoleKeycloakEntity role) {
     RoleRepresentation roleRep = mapRoleRep(role);
-    Keycloak keycloak = keycloakService.getKeycloakInstance();
     keycloak.realm(realm).roles().create(roleRep);
     return ResponseEntity.ok(role);
   }
 
   @PutMapping(value = "/role")
-  public ResponseEntity<?> updateRole(RoleDto role) {
+  public ResponseEntity<?> updateRole(RoleKeycloakEntity role) {
     RoleRepresentation roleRep = mapRoleRep(role);
-    Keycloak keycloak = keycloakService.getKeycloakInstance();
     keycloak.realm(realm).roles().get(role.getName()).update(roleRep);
     return ResponseEntity.ok(role);
   }
 
   @DeleteMapping(value = "/roles/{roleName}")
   public ResponseEntity deleteRole(@PathVariable("roleName") String roleName) {
-    Keycloak keycloak = keycloakService.getKeycloakInstance();
     keycloak.realm(realm).roles().deleteRole(roleName);
     return ResponseEntity.ok().build();
   }
 
-  public static List<RoleDto> mapRoles(List<RoleRepresentation> representations) {
-    List<RoleDto> roles = new ArrayList<>();
-    if(CollectionUtil.isNotEmpty(representations)) {
+  public static List<RoleKeycloakEntity> mapRoles(List<RoleRepresentation> representations) {
+    List<RoleKeycloakEntity> roles = new ArrayList<>();
+    if (CollectionUtil.isNotEmpty(representations)) {
       representations.forEach(roleRep -> roles.add(mapRole(roleRep)));
     }
     return roles;
   }
 
-  public static RoleDto mapRole(RoleRepresentation roleRep) {
-    RoleDto role = new RoleDto();
+  public static RoleKeycloakEntity mapRole(RoleRepresentation roleRep) {
+    RoleKeycloakEntity role = new RoleKeycloakEntity();
     role.setId(roleRep.getId());
     role.setName(roleRep.getName());
     return role;
   }
 
-  public RoleRepresentation mapRoleRep(RoleDto role) {
+  public RoleRepresentation mapRoleRep(RoleKeycloakEntity role) {
     RoleRepresentation roleRep = new RoleRepresentation();
     roleRep.setName(role.getName());
     return roleRep;
   }
 
-  private List<UserDto> mapUsers(List<UserRepresentation> userReps) {
-    List<UserDto> users = new ArrayList<>();
+  private List<UserKeycloakEntity> mapUsers(List<UserRepresentation> userReps) {
+    List<UserKeycloakEntity> users = new ArrayList<>();
     if (CollectionUtil.isNotEmpty(userReps)) {
       userReps.forEach(userRep -> {
         users.add(mapUser(userRep));
@@ -158,8 +147,8 @@ public class Test {
     return users;
   }
 
-  private UserDto mapUser(UserRepresentation userRep) {
-    UserDto user = new UserDto();
+  private UserKeycloakEntity mapUser(UserRepresentation userRep) {
+    UserKeycloakEntity user = new UserKeycloakEntity();
     user.setId(userRep.getId());
     user.setFirstName(userRep.getFirstName());
     user.setLastName(userRep.getLastName());
@@ -168,7 +157,7 @@ public class Test {
     return user;
   }
 
-  private UserRepresentation mapUserRep(UserDto user) {
+  private UserRepresentation mapUserRep(UserKeycloakEntity user) {
     UserRepresentation userRep = new UserRepresentation();
     userRep.setId(user.getId());
     userRep.setUsername(user.getUsername());

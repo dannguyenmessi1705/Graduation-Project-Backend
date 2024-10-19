@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class UserFunction {
   @Bean
-  public Consumer<SendMailWithTemplate> listenEmailRegister(SendgridService sendgridService, RedisServiceImpl redisService) {
+  public Consumer<SendMailWithTemplate> listenUserRegister(SendgridService sendgridService, RedisServiceImpl redisService) {
     return sendMailWithTemplate -> {
       log.info("Sending email to {}", sendMailWithTemplate.getEmail());
       sendgridService.dispatchEmail(sendMailWithTemplate);

@@ -1,12 +1,14 @@
-package com.didan.forum.users.service.keycloak;
+package com.didan.forum.users.config.keycloak;
 
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@Component
-public class KeycloakService {
+@Configuration
+public class KeycloakConfig {
+
   Keycloak keycloak;
 
   @Value("${keycloak.management-user.server}")
@@ -30,7 +32,8 @@ public class KeycloakService {
   @Value("${keycloak.management-user.client-secret}")
   private String clientSecret;
 
-  public Keycloak getKeycloakInstance() {
+  @Bean
+  public Keycloak keycloak() {
     if (keycloak == null) {
       keycloak = KeycloakBuilder.builder()
           .serverUrl(serverUrl)

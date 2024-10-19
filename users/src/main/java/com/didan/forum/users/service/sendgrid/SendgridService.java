@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @RequiredArgsConstructor
 public class SendgridService {
+
   private final Email fromEmail;
   private final SendGrid sendGrid;
   private final String templateId;
@@ -50,7 +51,8 @@ public class SendgridService {
     }
   }
 
-  public void dispatchEmail(String receiverEmail, String subject, String body, List<MultipartFile> files) {
+  public void dispatchEmail(String receiverEmail, String subject, String body,
+      List<MultipartFile> files) {
     Email toEmail = new Email(receiverEmail);
     Content content = new Content("text/plain", body);
     Mail mail = new Mail(fromEmail, subject, toEmail, content);
@@ -82,6 +84,7 @@ public class SendgridService {
     personalization.add("lastName", mailObject.getLastName());
     personalization.add("phoneNumber", mailObject.getPhoneNumber());
     personalization.add("message", mailObject.getMessage());
+    personalization.addTo(toEmail);
 
     Mail mail = new Mail();
     mail.setFrom(fromEmail);
@@ -95,7 +98,8 @@ public class SendgridService {
       request.setBody(mail.build());
 
       Response response = sendGrid.api(request);
-      log.info("Email sent to {} with status code {}", mailObject.getEmail(), response.getStatusCode());
+      log.info("Email sent to {} with status code {}", mailObject.getEmail(),
+          response.getStatusCode());
     } catch (IOException ex) {
       log.error("Error while sending email: {}", ex.getMessage());
       throw new ErrorActionException("Error while sending email");
@@ -113,6 +117,7 @@ public class SendgridService {
   }
 
   class DynamicTemplateData extends Personalization {
+
     private final Map<String, Object> dynamicTemplateData = new HashMap<>();
 
     public void add(String key, String value) {

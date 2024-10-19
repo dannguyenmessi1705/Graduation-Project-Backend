@@ -1,0 +1,121 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.2
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 2181:2181
+      - 2888:2888
+      - 3888:3888
+    networks:
+      - didan
+
+  kafka:
+    image: confluentinc/cp-kafka:7.3.2
+    healthcheck:
+      test: nc -z localhost 9092 || exit -1
+      start_period: 15s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - didan
+
+  redis:
+    image: "redis"
+    container_name: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ] # Kiểm tra sức khỏe của Redis Server bằng cách gửi lệnh ping
+      interval: 10s
+      retries: 10
+    volumes:
+      - ../data/redis:/data
+    networks:
+      - didan
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -k -f http://127.0.0.1:9001/minio/health/live || exit 1" ]
+    volumes:
+      - "../data/minio/data:/data"
+      - "../data/minio/minio:/minio"
+      - "../data/minio/config:/root/.minio"
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+      LANG: en_US.UTF-8
+      MINIO_PROMETHEUS_AUTH_TYPE: "public"
+      MINIO_ACCESS_KEY: "didannguyen"
+      MINIO_SECRET_KEY: "17052002"
+    command: server /data  --console-address ":9001"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+    ports:
+      - "10000:9000" # API
+      - "10001:9001" # UI
+
+  keycloakdb:
+    image: mysql:8.0
+    container_name: keycloakdb
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: keycloakdb
+      MYSQL_USER: keycloak
+      MYSQL_PASSWORD: 17052002
+    volumes:
+      - ../data/keycloakdb:/var/lib/mysql
+    networks:
+      - didan
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.2
+    container_name: keycloak
+    command: "start-dev"
+    ports:
+      - "7080:8080"
+    environment:
+      KC_HEALTH_ENABLE: true
+      KEYCLOAK_ADMIN: didannguyen
+      KEYCLOAK_ADMIN_PASSWORD: 17052002
+      KC_DB: mysql
+      KC_DB_URL: jdbc:mysql://keycloakdb:3306/keycloakdb
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: 17052002
+    depends_on:
+      - keycloakdb
+    volumes:
+      - ../data/keycloak:/opt/keycloak/data/
+    networks:
+      - didan
+
+networks:
+  didan:
+    driver: bridge
