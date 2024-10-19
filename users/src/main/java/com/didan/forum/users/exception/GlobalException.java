@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -18,10 +19,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
-@RequiredArgsConstructor
 public class GlobalException extends ResponseEntityExceptionHandler {
 
   @Override
@@ -57,6 +59,34 @@ public class GlobalException extends ResponseEntityExceptionHandler {
             statusDto,
             null
         ), HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @Override
+  protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex,
+      HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    Status statusDto = new Status(request.getDescription(false),
+        HttpStatus.NOT_FOUND.value(),
+        ex.getMessage(),
+        LocalDateTime.now());
+    return new ResponseEntity<>(
+        new GeneralResponse<>(
+            statusDto,
+            null
+        ), HttpStatus.NOT_FOUND);
+  }
+
+  @Override
+  protected ResponseEntity<Object> handleNoResourceFoundException(NoResourceFoundException ex,
+      HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    Status statusDto = new Status(request.getDescription(false),
+        HttpStatus.NOT_FOUND.value(),
+        ex.getMessage(),
+        LocalDateTime.now());
+    return new ResponseEntity<>(
+        new GeneralResponse<>(
+            statusDto,
+            null
+        ), HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(ResourceAlreadyExistException.class)

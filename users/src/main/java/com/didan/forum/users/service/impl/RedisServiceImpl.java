@@ -1,6 +1,6 @@
 package com.didan.forum.users.service.impl;
 
-import com.didan.forum.users.service.RedisService;
+import com.didan.forum.users.service.IRedisService;
 import com.didan.forum.users.utils.ObjectMapperUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +16,7 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 @Lazy
 @Slf4j
-public class RedisServiceImpl implements RedisService {
+public class RedisServiceImpl implements IRedisService {
 
   private final RedisTemplate<String, Object> redisTemplate;
 

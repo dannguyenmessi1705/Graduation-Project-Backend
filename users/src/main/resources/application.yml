@@ -16,6 +16,24 @@ spring:
     multipart:
       max-file-size: 25MB
       max-request-size: 30MB
+  security:
+    user:
+      name: didannguyen
+      password: 17052002
+  cloud:
+    function:
+      definition: listenEmailRegister
+    stream:
+      bindings:
+        sendEmailRegister-out-0:
+          destination: mail-register
+        listenEmailRegister-in-0:
+          destination: mail-register
+          group: ${spring.application.name}
+      kafka:
+        binder:
+          brokers:
+            - localhost:9092
 
 springdoc:
   api-docs:
@@ -37,17 +55,24 @@ keycloak:
     password: 17052002
     client-secret: l2WiWQULnEFt9KrgySvFK03QtVf9K4DO
 
+sendgrid:
+  apiKey: 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
+  fromEmail: social-service@didan.id.vn
+  fromName: Forum Admin
+  templateId: d-cb3c0b3bb8514de7991b0f47b12f8a6e
+  urlAuth: http://localhost:8072/users/verify/activate?token=
+
 app:
   cache:
     redis:
       enabled: true
-      host: 'redis://redis-12610.c252.ap-southeast-1-1.ec2.redns.redis-cloud.com'
+      host: redis://redis-12610.c252.ap-southeast-1-1.ec2.redns.redis-cloud.com
       port: 12610
       timeoutSeconds: 60
       maxPoolSize: 8
       maxIdle: 8
       minIdle: 0
-      password: "jfz74hpkdMFx6qTfjIZT4kOixxq9iFB6"
+      password: jfz74hpkdMFx6qTfjIZT4kOixxq9iFB6
 
 management:
   endpoints:
@@ -95,4 +120,4 @@ minio:
   access-key: IFxmZQZnzwfeigv79Lo3
   secret-key: M64UOvH5OAFZx7q4V1fGi6BbOmH9PXaAtfuyW9x3
   endpoint: http://localhost:10000
-  bucket-name: materials
+  bucket-name: users

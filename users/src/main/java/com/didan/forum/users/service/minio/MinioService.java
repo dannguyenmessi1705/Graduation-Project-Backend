@@ -1,4 +1,4 @@
-package com.didan.forum.users.utils;
+package com.didan.forum.users.service.minio;
 
 import com.didan.forum.users.exception.ErrorActionException;
 import io.minio.BucketExistsArgs;
@@ -41,7 +41,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class MinioUtils {
+public class MinioService {
 
   private final MinioClient minioClient;
 

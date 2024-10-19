@@ -2,7 +2,7 @@ package com.didan.forum.users.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-public interface RedisService {
+public interface IRedisService {
   <T> void setCache(String cacheName, String key, T value);
   <T> void setCache(String cacheName, String key, T value, long expireTime);
   <T> T getCache(String cacheName, String key, Class<T> objectClass);
