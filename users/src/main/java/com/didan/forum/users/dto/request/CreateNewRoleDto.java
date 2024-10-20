@@ -1,15 +1,15 @@
-package com.didan.forum.users.entity.keycloak;
+package com.didan.forum.users.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @Data
-public class RoleKeycloakEntity {
+@AllArgsConstructor
+@NoArgsConstructor
+public class CreateNewRoleDto {
 
-  @NotBlank(message = "blank.field.roleId")
-  private String id;
   @NotBlank(message = "blank.field.roleName")
   private String name;
 }

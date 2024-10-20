@@ -1,6 +1,7 @@
 package com.didan.forum.users.function;
 
 import com.didan.forum.users.dto.SendMailWithTemplate;
+import com.didan.forum.users.service.IUserService;
 import com.didan.forum.users.service.impl.RedisServiceImpl;
 import com.didan.forum.users.service.sendgrid.SendgridService;
 import java.util.function.Consumer;
@@ -11,8 +12,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Slf4j
 public class UserFunction {
+
   @Bean
-  public Consumer<SendMailWithTemplate> listenUserRegister(SendgridService sendgridService, RedisServiceImpl redisService) {
+  public Consumer<SendMailWithTemplate> listenUserRegister(SendgridService sendgridService,
+      RedisServiceImpl redisService, IUserService userService) {
     return sendMailWithTemplate -> {
       log.info("Sending email to {}", sendMailWithTemplate.getEmail());
       sendgridService.dispatchEmail(sendMailWithTemplate);

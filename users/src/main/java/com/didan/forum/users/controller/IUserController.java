@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 )
 @Validated
 public interface IUserController {
+
   @Operation(
       summary = "Create a new user account",
       description = "Create a new user account with the provided details",
@@ -43,6 +44,7 @@ public interface IUserController {
           )
       }
   )
-  @PostMapping(path = {"/create", "/register"}, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  ResponseEntity<GeneralResponse<UserResponseDto>> createUser(@Valid @ModelAttribute CreateUserRequestDto requestDto);
+  @PostMapping(path = "/register", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  ResponseEntity<GeneralResponse<UserResponseDto>> createUser(
+      @Valid @ModelAttribute CreateUserRequestDto requestDto);
 }

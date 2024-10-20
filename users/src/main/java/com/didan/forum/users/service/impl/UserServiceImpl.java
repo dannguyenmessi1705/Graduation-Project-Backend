@@ -79,13 +79,16 @@ public class UserServiceImpl implements IUserService {
     user.setId(userResponseDto.getId());
     user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
     userRepository.save(user);
-    SendMailWithTemplate objectMail = MapperUtils.map(user, SendMailWithTemplate.class);
-    String token = RandomStringUtils.random(100, true, true);
-    String messageAuthUrl = urlAuth + token;
-    objectMail.setMessage(messageAuthUrl);
-    log.info("Sending Communication request to Kafka for the details : {}", objectMail);
-    boolean isSendKafka = streamBridge.send("sendUserRegister-out-0", objectMail);
-    log.info("Is the Communication request successfully triggered ? : {}", isSendKafka);
+
+    if (!isVerified) {
+      SendMailWithTemplate objectMail = MapperUtils.map(user, SendMailWithTemplate.class);
+      String token = RandomStringUtils.random(100, true, true);
+      String messageAuthUrl = urlAuth + token;
+      objectMail.setMessage(messageAuthUrl);
+      log.info("Sending Communication request to Kafka for the details : {}", objectMail);
+      boolean isSendKafka = streamBridge.send("sendUserRegister-out-0", objectMail);
+      log.info("Is the Communication request successfully triggered ? : {}", isSendKafka);
+    }
     return MapperUtils.map(user, UserResponseDto.class);
   }
 }

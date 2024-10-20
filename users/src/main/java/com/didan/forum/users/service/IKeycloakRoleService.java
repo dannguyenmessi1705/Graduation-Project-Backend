@@ -1,21 +1,22 @@
 package com.didan.forum.users.service;
 
-import com.didan.forum.users.entity.RoleEntity;
+import com.didan.forum.users.dto.request.CreateNewRoleDto;
+import com.didan.forum.users.entity.keycloak.RoleKeycloakEntity;
 import java.util.List;
 
 public interface IKeycloakRoleService {
 
-  List<RoleEntity> getAllRolesOfUserFromKeycloak(String userId);
+  List<RoleKeycloakEntity> getAllRolesOfUserFromKeycloak(String userId);
 
   void addRoleToUserInKeycloak(String userId, String roleName);
 
-  List<RoleEntity> getAllRolesFromKeycloak();
+  void removeRoleFromUserInKeycloak(String userId, String roleName);
 
-  RoleEntity getRoleFromKeycloak(String roleName);
+  List<RoleKeycloakEntity> getAllRolesFromKeycloak();
 
-  void createRoleInKeycloak(RoleEntity role);
+  RoleKeycloakEntity getRoleFromKeycloak(String roleName);
 
-  void updateRoleInKeycloak(RoleEntity role);
+  void createRoleInKeycloak(CreateNewRoleDto role);
 
   void deleteRoleFromKeycloak(String roleName);
 }

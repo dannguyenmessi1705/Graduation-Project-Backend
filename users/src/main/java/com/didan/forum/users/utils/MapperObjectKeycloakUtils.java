@@ -30,7 +30,7 @@ public class MapperObjectKeycloakUtils {
     return role;
   }
 
-  public RoleRepresentation mapRoleRep(RoleKeycloakEntity role) {
+  public static RoleRepresentation mapRoleRep(RoleKeycloakEntity role) {
     RoleRepresentation roleRep = new RoleRepresentation();
     roleRep.setName(role.getName());
     return roleRep;

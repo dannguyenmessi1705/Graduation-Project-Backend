@@ -1,14 +1,12 @@
 package com.didan.forum.users.exception;
 
+import com.didan.forum.users.config.locale.Translator;
 import com.didan.forum.users.dto.Status;
 import com.didan.forum.users.dto.response.GeneralResponse;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -34,11 +32,11 @@ public class GlobalException extends ResponseEntityExceptionHandler {
 
     validationErrorsList.forEach(error -> {
       String fieldName = ((FieldError) error).getField();
-      String errorMessage = error.getDefaultMessage();
+      String errorMessage = Translator.toLocale(error.getDefaultMessage());
       validationErrors.put(fieldName, errorMessage);
     });
     Status statusDto = new Status(request.getDescription(false), HttpStatus.BAD_REQUEST.value(),
-        ex.getMessage(),
+        "Input validation error",
         LocalDateTime.now());
     return new ResponseEntity<>(
         new GeneralResponse<Object>(
