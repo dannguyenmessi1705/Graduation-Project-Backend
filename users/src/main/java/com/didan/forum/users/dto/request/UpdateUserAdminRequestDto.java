@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @Data
 @Schema(name = "UpdateUserAdminRequestDto", description = "Update User Request Dto")
-public class UpdateUserRequestDto {
+public class UpdateUserAdminRequestDto {
 
   @Schema(
       name = "firstName",
@@ -83,6 +83,13 @@ public class UpdateUserRequestDto {
       example = "12345"
   )
   private Long postalCode;
+
+  @Schema(
+      name = "isVerified",
+      description = "User is verified or not",
+      example = "true"
+  )
+  private boolean isVerified;
 
   @Schema(
       name = "picture",

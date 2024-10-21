@@ -55,11 +55,11 @@ keycloak:
     password: 17052002
     client-secret: l2WiWQULnEFt9KrgySvFK03QtVf9K4DO
   client:
-    client-id: test-app
-    client-secret: eRBfSwXaHAcoW7i261tSKi2ZBWWQB3u9
+    client-id: forum-authentication
+    client-secret: l2WiWQULnEFt9KrgySvFK03QtVf9K4DO
     grant-type-login: password
     grant-type-logout: refresh_token
-    token-url: http://localhost:7080/realms/master/protocol/openid-connect/
+    token-url: http://localhost:7080/realms/forum/protocol/openid-connect/
 
 sendgrid:
   apiKey: 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
@@ -79,6 +79,8 @@ app:
       maxIdle: 8
       minIdle: 0
       password: jfz74hpkdMFx6qTfjIZT4kOixxq9iFB6
+  pagination:
+    defaultSize: 10
 
 management:
   endpoints:

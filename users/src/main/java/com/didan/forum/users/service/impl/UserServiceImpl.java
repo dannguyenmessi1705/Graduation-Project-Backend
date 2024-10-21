@@ -3,11 +3,14 @@ package com.didan.forum.users.service.impl;
 import com.didan.forum.users.dto.SendMailWithTemplate;
 import com.didan.forum.users.dto.request.CreateUserRequestDto;
 import com.didan.forum.users.dto.request.LoginRequestDto;
+import com.didan.forum.users.dto.request.UpdateUserAdminRequestDto;
+import com.didan.forum.users.dto.request.UpdateUserRequestDto;
 import com.didan.forum.users.dto.response.LoginResponseDto;
 import com.didan.forum.users.dto.response.UserResponseDto;
 import com.didan.forum.users.entity.UserEntity;
 import com.didan.forum.users.exception.ErrorActionException;
 import com.didan.forum.users.exception.ResourceAlreadyExistException;
+import com.didan.forum.users.exception.ResourceNotFoundException;
 import com.didan.forum.users.repository.UserRepository;
 import com.didan.forum.users.service.IKeycloakUserService;
 import com.didan.forum.users.service.IRestTemplateService;
@@ -15,15 +18,15 @@ import com.didan.forum.users.service.IUserService;
 import com.didan.forum.users.service.minio.MinioService;
 import com.didan.forum.users.service.sendgrid.SendgridService;
 import com.didan.forum.users.utils.MapperUtils;
-import jakarta.ws.rs.core.MultivaluedHashMap;
-import jakarta.ws.rs.core.MultivaluedMap;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.function.StreamBridge;
-import org.springframework.http.HttpEntity;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -75,18 +78,26 @@ public class UserServiceImpl implements IUserService {
   private String grantTypeLogout;
 
   @Override
-  public List<UserResponseDto> findUsers() {
-    return List.of();
+  public List<UserResponseDto> findUsers(
+      String keyword, int page, int size
+  ) {
+    Pageable pageable = PageRequest.of(page, size, Sort.by("username"));
+
+    List<UserResponseDto> users = userRepository.findAllByUsernameContainingIgnoreCase(keyword,
+            pageable).stream()
+        .map(user -> MapperUtils.map(user, UserResponseDto.class)).toList();
+
+    if (users.isEmpty()) {
+      throw new ResourceNotFoundException("No user found");
+    }
+    return users;
   }
 
   @Override
   public UserResponseDto getDetailUser(String userId) {
-    return null;
-  }
-
-  @Override
-  public boolean reportUser(String userId) {
-    return false;
+    UserEntity user = userRepository.findById(userId)
+        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    return MapperUtils.map(user, UserResponseDto.class);
   }
 
   @Override
@@ -122,6 +133,28 @@ public class UserServiceImpl implements IUserService {
       log.info("Is the Communication request successfully triggered ? : {}", isSendKafka);
     }
     return MapperUtils.map(user, UserResponseDto.class);
+  }
+
+  @Override
+  public UserResponseDto updateUser(String userId, UpdateUserRequestDto requestDto) {
+    UserEntity userEntity = userRepository.findById(userId)
+        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    if (StringUtils.hasText(requestDto.getEmail())) {
+      userRepository.findFirstByEmailIgnoreCase(requestDto.getEmail()).ifPresent(user -> {
+        throw new ResourceAlreadyExistException("Email already exists");
+      });
+    }
+    if (StringUtils.hasText(requestDto.getPhoneNumber())) {
+      userRepository.findFirstByPhoneNumber(requestDto.getPhoneNumber()).ifPresent(user -> {
+        throw new ResourceAlreadyExistException("Phone number already exists");
+      });
+    }
+    UserResponseDto updateUserRequest = keycloakUserService.updateUserInKeycloak(userId,
+        MapperUtils.map(requestDto, UpdateUserAdminRequestDto.class));
+
+    userEntity = MapperUtils.map(updateUserRequest, UserEntity.class);
+    userRepository.save(userEntity);
+    return updateUserRequest;
   }
 
   @Override

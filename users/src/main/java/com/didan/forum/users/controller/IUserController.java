@@ -3,6 +3,7 @@ package com.didan.forum.users.controller;
 import com.didan.forum.users.dto.request.CreateUserRequestDto;
 import com.didan.forum.users.dto.request.LoginRequestDto;
 import com.didan.forum.users.dto.request.LogoutRequestDto;
+import com.didan.forum.users.dto.request.UpdateUserRequestDto;
 import com.didan.forum.users.dto.response.GeneralResponse;
 import com.didan.forum.users.dto.response.LoginResponseDto;
 import com.didan.forum.users.dto.response.UserResponseDto;
@@ -12,13 +13,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RequestMapping("${spring.application.name}")
 @Tag(
@@ -99,4 +107,80 @@ public interface IUserController {
   @PostMapping(path = "/register", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   ResponseEntity<GeneralResponse<UserResponseDto>> createUser(
       @Valid @ModelAttribute CreateUserRequestDto requestDto);
+
+  @Operation(
+      summary = "Update user account",
+      description = "Update user account with the provided details",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "User account updated successfully",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          )
+      }
+  )
+  @PutMapping(path = "/update/{userId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes =
+      MediaType.MULTIPART_FORM_DATA_VALUE)
+  ResponseEntity<GeneralResponse<UserResponseDto>> updateUser(
+      @NotBlank(message = "Not authorized") @RequestHeader("X-User-Id") String userIdHeader,
+      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId,
+      @ModelAttribute UpdateUserRequestDto requestDto);
+
+  @Operation(
+      summary = "Get user account details",
+      description = "Get user account details with the provided user ID",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "User account details retrieved successfully",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          )
+      }
+  )
+  @GetMapping(path = "/detail/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  ResponseEntity<GeneralResponse<UserResponseDto>> getDetailUser(
+      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId);
+
+  @Operation(
+      summary = "Find users",
+      description = "Find users with the provided keyword, page, and size",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "Users found successfully",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          )
+      }
+  )
+  @GetMapping(path = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
+  ResponseEntity<GeneralResponse<List<UserResponseDto>>> findUsers(
+      @NotBlank(message = "blank.field.keyword") @RequestParam("keyword") String keyword,
+      @RequestParam("page") int page);
 }

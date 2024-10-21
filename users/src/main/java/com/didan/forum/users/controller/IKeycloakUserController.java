@@ -2,7 +2,7 @@ package com.didan.forum.users.controller;
 
 import com.didan.forum.users.dto.request.ChangePasswordAdminDto;
 import com.didan.forum.users.dto.request.CreateUserRequestDto;
-import com.didan.forum.users.dto.request.UpdateUserRequestDto;
+import com.didan.forum.users.dto.request.UpdateUserAdminRequestDto;
 import com.didan.forum.users.dto.response.GeneralResponse;
 import com.didan.forum.users.dto.response.UserResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -128,7 +128,7 @@ public interface IKeycloakUserController {
   @PutMapping(path = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes =
       MediaType.MULTIPART_FORM_DATA_VALUE)
   ResponseEntity<GeneralResponse<UserResponseDto>> updateUserInKeycloak(
-      @Valid @ModelAttribute UpdateUserRequestDto requestDto,
+      @Valid @ModelAttribute UpdateUserAdminRequestDto requestDto,
       @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId);
 
   @Operation(

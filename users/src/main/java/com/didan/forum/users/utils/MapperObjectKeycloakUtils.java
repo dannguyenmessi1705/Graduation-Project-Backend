@@ -12,6 +12,7 @@ import org.keycloak.common.util.CollectionUtil;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.util.StringUtils;
 
 public class MapperObjectKeycloakUtils {
 
@@ -103,7 +104,7 @@ public class MapperObjectKeycloakUtils {
     attributes.put("phoneNumber", List.of(user.getPhoneNumber()));
     attributes.put("postalCode", List.of(user.getPostalCode().toString()));
     attributes.put("gender", List.of(user.getGender()));
-    attributes.put("picture", List.of(pictureUrl));
+    attributes.put("picture", StringUtils.hasText(pictureUrl) ? List.of(pictureUrl) : null);
     userRep.setAttributes(attributes);
 
     List<CredentialRepresentation> creds = new ArrayList<>();

@@ -4,7 +4,7 @@ import com.didan.forum.users.controller.IKeycloakUserController;
 import com.didan.forum.users.dto.Status;
 import com.didan.forum.users.dto.request.ChangePasswordAdminDto;
 import com.didan.forum.users.dto.request.CreateUserRequestDto;
-import com.didan.forum.users.dto.request.UpdateUserRequestDto;
+import com.didan.forum.users.dto.request.UpdateUserAdminRequestDto;
 import com.didan.forum.users.dto.response.GeneralResponse;
 import com.didan.forum.users.dto.response.UserResponseDto;
 import com.didan.forum.users.service.IKeycloakUserService;
@@ -53,7 +53,7 @@ public class KeycloakUserControllerImpl implements IKeycloakUserController {
 
   @Override
   public ResponseEntity<GeneralResponse<UserResponseDto>> updateUserInKeycloak(
-      UpdateUserRequestDto requestDto, String userId) {
+      UpdateUserAdminRequestDto requestDto, String userId) {
     UserResponseDto updatedUser = keycloakUserService.updateUserInKeycloak(userId, requestDto);
     Status status = new Status("/users/keycloak/user/" + userId, HttpStatus.OK.value(), "User "
         + "updated successfully", LocalDateTime.now());

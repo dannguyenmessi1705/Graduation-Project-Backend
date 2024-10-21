@@ -1,7 +1,7 @@
 package com.didan.forum.users.service;
 
 import com.didan.forum.users.dto.request.CreateUserRequestDto;
-import com.didan.forum.users.dto.request.UpdateUserRequestDto;
+import com.didan.forum.users.dto.request.UpdateUserAdminRequestDto;
 import com.didan.forum.users.dto.response.UserResponseDto;
 import java.util.List;
 
@@ -14,7 +14,7 @@ public interface IKeycloakUserService {
   UserResponseDto createUserInKeycloak(CreateUserRequestDto requestDto, String userId,
       String picture, boolean isVerified);
 
-  UserResponseDto updateUserInKeycloak(String userId, UpdateUserRequestDto requestDto);
+  UserResponseDto updateUserInKeycloak(String userId, UpdateUserAdminRequestDto requestDto);
 
   void updateUserPasswordInKeycloak(String userId, String password);
 
