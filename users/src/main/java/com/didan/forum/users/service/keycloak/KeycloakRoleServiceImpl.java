@@ -1,11 +1,14 @@
 package com.didan.forum.users.service.keycloak;
 
 import com.didan.forum.users.dto.request.CreateNewRoleDto;
+import com.didan.forum.users.entity.RoleEntity;
 import com.didan.forum.users.entity.keycloak.RoleKeycloakEntity;
 import com.didan.forum.users.exception.ResourceAlreadyExistException;
 import com.didan.forum.users.exception.ResourceNotFoundException;
 import com.didan.forum.users.service.IKeycloakRoleService;
+import com.didan.forum.users.service.IRoleService;
 import com.didan.forum.users.utils.MapperObjectKeycloakUtils;
+import com.didan.forum.users.utils.MapperUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +31,7 @@ public class KeycloakRoleServiceImpl implements IKeycloakRoleService {
   private String realm;
 
   private final Keycloak keycloak;
+  private final IRoleService roleService;
 
   @Override
   public List<RoleKeycloakEntity> getAllRolesOfUserFromKeycloak(String userId) {
@@ -37,6 +41,7 @@ public class KeycloakRoleServiceImpl implements IKeycloakRoleService {
 
   @Override
   public void addRoleToUserInKeycloak(String userId, String roleName) {
+    roleService.assignRoleToUser(userId, roleName);
     RoleResource roleResource = checkRoleExistence(roleName);
     RoleRepresentation role = roleResource.toRepresentation();
     UserResource userResource = checkUserExistence(userId);
@@ -45,6 +50,7 @@ public class KeycloakRoleServiceImpl implements IKeycloakRoleService {
 
   @Override
   public void removeRoleFromUserInKeycloak(String userId, String roleName) {
+    roleService.removeRoleFromUser(userId, roleName);
     RoleResource roleResource = checkRoleExistence(roleName);
     RoleRepresentation role = roleResource.toRepresentation();
     UserResource userResource = checkUserExistence(userId);
@@ -74,10 +80,16 @@ public class KeycloakRoleServiceImpl implements IKeycloakRoleService {
             "Role with name " + role.getName() + " already exists in Keycloak");
       }
     } catch (Exception e) {
+      if (e instanceof ResourceAlreadyExistException) {
+        log.debug("Role with name {} not found in Keycloak", role.getName());
+        throw new ResourceAlreadyExistException(
+            "Role with name " + role.getName() + " already exists in Keycloak");
+      }
       RoleKeycloakEntity roleEntity = new RoleKeycloakEntity(UUID.randomUUID().toString(),
           role.getName());
       RoleRepresentation roleRep = MapperObjectKeycloakUtils.mapRoleRep(roleEntity);
       keycloak.realm(realm).roles().create(roleRep);
+      roleService.createRole(MapperUtils.map(roleEntity, RoleEntity.class));
     }
   }
 
@@ -85,6 +97,7 @@ public class KeycloakRoleServiceImpl implements IKeycloakRoleService {
   public void deleteRoleFromKeycloak(String roleName) {
     RoleResource roleResource = checkRoleExistence(roleName);
     roleResource.remove();
+    roleService.deleteRole(roleName);
   }
 
   private RoleResource checkRoleExistence(String roleName) {

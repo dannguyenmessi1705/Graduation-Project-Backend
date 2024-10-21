@@ -2,7 +2,7 @@ package com.didan.forum.users.function;
 
 import com.didan.forum.users.dto.SendMailWithTemplate;
 import com.didan.forum.users.service.IUserService;
-import com.didan.forum.users.service.impl.RedisServiceImpl;
+import com.didan.forum.users.service.redis.RedisServiceImpl;
 import com.didan.forum.users.service.sendgrid.SendgridService;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;

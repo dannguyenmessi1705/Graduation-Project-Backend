@@ -12,11 +12,10 @@ import com.didan.forum.users.exception.ErrorActionException;
 import com.didan.forum.users.exception.ResourceAlreadyExistException;
 import com.didan.forum.users.exception.ResourceNotFoundException;
 import com.didan.forum.users.repository.UserRepository;
+import com.didan.forum.users.service.IKeycloakRoleService;
 import com.didan.forum.users.service.IKeycloakUserService;
 import com.didan.forum.users.service.IRestTemplateService;
 import com.didan.forum.users.service.IUserService;
-import com.didan.forum.users.service.minio.MinioService;
-import com.didan.forum.users.service.sendgrid.SendgridService;
 import com.didan.forum.users.utils.MapperUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -45,13 +43,10 @@ public class UserServiceImpl implements IUserService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
-  private final SendgridService sendgridService;
-  private final RedisServiceImpl redisService;
   private final StreamBridge streamBridge;
-  private final MinioService minio;
   private final IKeycloakUserService keycloakUserService;
   private final IRestTemplateService restTemplateService;
-  private final RestTemplate restTemplate;
+  private final IKeycloakRoleService keycloakRoleService;
 
   @Value("${minio.bucket-name}")
   private String bucketName;
@@ -131,6 +126,9 @@ public class UserServiceImpl implements IUserService {
       log.info("Sending Communication request to Kafka for the details : {}", objectMail);
       boolean isSendKafka = streamBridge.send("sendUserRegister-out-0", objectMail);
       log.info("Is the Communication request successfully triggered ? : {}", isSendKafka);
+      keycloakRoleService.addRoleToUserInKeycloak(user.getId(), "inactive");
+    } else {
+      keycloakRoleService.addRoleToUserInKeycloak(user.getId(), "user");
     }
     return MapperUtils.map(user, UserResponseDto.class);
   }

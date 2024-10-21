@@ -1,4 +1,4 @@
-package com.didan.forum.users.service.impl;
+package com.didan.forum.users.service.redis;
 
 import com.didan.forum.users.service.IRedisService;
 import com.didan.forum.users.utils.ObjectMapperUtils;
