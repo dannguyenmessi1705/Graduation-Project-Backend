@@ -21,8 +21,8 @@ public class RestTemplateConfig {
     factory.setConnectionRequestTimeout(5000); // Thời gian chờ kết nối tối đa là 5s
     RestTemplate restTemplate = new RestTemplate(
         factory); // Tạo RestTemplate với factory đã cấu hình
-    restTemplate.setErrorHandler(
-        (ResponseErrorHandler) new GlobalException()); // Xử lý exception khi gọi API (nếu có định nghĩa các
+    restTemplate.setErrorHandler(new GlobalException()); // Xử lý exception khi gọi API (nếu có
+    // định nghĩa các
     // Error Handler) đã trình bày ở bài 15, mục #4.4
     return restTemplate; // Trả về RestTemplate đã cấu hình
   }

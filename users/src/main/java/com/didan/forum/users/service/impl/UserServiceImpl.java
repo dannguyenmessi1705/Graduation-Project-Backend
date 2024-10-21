@@ -2,23 +2,38 @@ package com.didan.forum.users.service.impl;
 
 import com.didan.forum.users.dto.SendMailWithTemplate;
 import com.didan.forum.users.dto.request.CreateUserRequestDto;
+import com.didan.forum.users.dto.request.LoginRequestDto;
+import com.didan.forum.users.dto.response.LoginResponseDto;
 import com.didan.forum.users.dto.response.UserResponseDto;
 import com.didan.forum.users.entity.UserEntity;
+import com.didan.forum.users.exception.ErrorActionException;
 import com.didan.forum.users.exception.ResourceAlreadyExistException;
 import com.didan.forum.users.repository.UserRepository;
 import com.didan.forum.users.service.IKeycloakUserService;
+import com.didan.forum.users.service.IRestTemplateService;
 import com.didan.forum.users.service.IUserService;
 import com.didan.forum.users.service.minio.MinioService;
 import com.didan.forum.users.service.sendgrid.SendgridService;
 import com.didan.forum.users.utils.MapperUtils;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,6 +47,8 @@ public class UserServiceImpl implements IUserService {
   private final StreamBridge streamBridge;
   private final MinioService minio;
   private final IKeycloakUserService keycloakUserService;
+  private final IRestTemplateService restTemplateService;
+  private final RestTemplate restTemplate;
 
   @Value("${minio.bucket-name}")
   private String bucketName;
@@ -42,8 +59,23 @@ public class UserServiceImpl implements IUserService {
   @Value("${sendgrid.urlAuth}")
   private String urlAuth;
 
+  @Value("${keycloak.client.client-id}")
+  private String clientId;
+
+  @Value("${keycloak.client.client-secret}")
+  private String clientSecret;
+
+  @Value("${keycloak.client.token-url}")
+  private String tokenUrl;
+
+  @Value("${keycloak.client.grant-type-login}")
+  private String grantTypeLogin;
+
+  @Value("${keycloak.client.grant-type-logout}")
+  private String grantTypeLogout;
+
   @Override
-  public List<UserResponseDto> getAllUsers() {
+  public List<UserResponseDto> findUsers() {
     return List.of();
   }
 
@@ -90,5 +122,54 @@ public class UserServiceImpl implements IUserService {
       log.info("Is the Communication request successfully triggered ? : {}", isSendKafka);
     }
     return MapperUtils.map(user, UserResponseDto.class);
+  }
+
+  @Override
+  public LoginResponseDto loginUser(LoginRequestDto requestDto) {
+    UserEntity user = userRepository.findFirstByUsernameIgnoreCase(requestDto.getUsername())
+        .orElseThrow(() -> new ResourceAlreadyExistException("username or password doesn't match"));
+    if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+      throw new ResourceAlreadyExistException("username or password doesn't match");
+    }
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+    MultiValueMap<String, String> objectRequest = new LinkedMultiValueMap<>();
+    objectRequest.add("username", requestDto.getUsername());
+    objectRequest.add("password", requestDto.getPassword());
+    objectRequest.add("grant_type", grantTypeLogin);
+    objectRequest.add("client_id", clientId);
+    objectRequest.add("client_secret", clientSecret);
+
+    ResponseEntity<LoginResponseDto> loginResponse = restTemplateService.process(HttpMethod.POST,
+        tokenUrl + "token", headers, objectRequest, LoginResponseDto.class);
+
+    if (!loginResponse.getStatusCode().is2xxSuccessful()) {
+      throw new ErrorActionException("login failed");
+    }
+    return loginResponse.getBody();
+  }
+
+  @Override
+  public void logoutUser(String refreshToken) {
+    if (!StringUtils.hasText(refreshToken)) {
+      throw new ErrorActionException("refresh token is required");
+    }
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+    MultiValueMap<String, String> objectRequest = new LinkedMultiValueMap<>();
+    objectRequest.add("client_id", clientId);
+    objectRequest.add("client_secret", clientSecret);
+    objectRequest.add("grant_type", grantTypeLogout);
+    objectRequest.add("refresh_token", refreshToken);
+
+    ResponseEntity<Void> logoutResponse = restTemplateService.process(HttpMethod.POST,
+        tokenUrl + "logout", headers, objectRequest, Void.class);
+    if (!logoutResponse.getStatusCode().is2xxSuccessful()) {
+      throw new ErrorActionException("logout failed");
+    }
   }
 }
