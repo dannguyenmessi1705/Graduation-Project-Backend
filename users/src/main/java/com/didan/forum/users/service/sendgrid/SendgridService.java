@@ -84,6 +84,8 @@ public class SendgridService {
     personalization.add("lastName", mailObject.getLastName());
     personalization.add("phoneNumber", mailObject.getPhoneNumber());
     personalization.add("message", mailObject.getMessage());
+    personalization.add("title", mailObject.getTitle());
+    personalization.add("guide", mailObject.getGuide());
     personalization.addTo(toEmail);
 
     Mail mail = new Mail();

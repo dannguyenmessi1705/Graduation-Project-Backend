@@ -22,12 +22,12 @@ spring:
       password: 17052002
   cloud:
     function:
-      definition: listenUserRegister
+      definition: listenUserEmail
     stream:
       bindings:
-        sendUserRegister-out-0:
+        sendUserEmail-out-0:
           destination: mail-register
-        listenUserRegister-in-0:
+        listenUserEmail-in-0:
           destination: mail-register
           group: ${spring.application.name}
       kafka:
@@ -66,7 +66,7 @@ sendgrid:
   fromEmail: social-service@didan.id.vn
   fromName: Forum Admin
   templateId: d-cb3c0b3bb8514de7991b0f47b12f8a6e
-  urlAuth: http://localhost:8072/users/verify/activate?token=
+  urlVerify: http://localhost:8072/forum/users/verify/
 
 app:
   cache:

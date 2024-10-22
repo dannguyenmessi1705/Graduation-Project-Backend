@@ -211,4 +211,27 @@ public interface IUserController {
       @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId,
       @Valid @RequestBody ChangePasswordUserDto requestDto);
 
+  @Operation(
+      summary = "Request password reset",
+      description = "Request password reset with the provided email",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "Password reset requested successfully",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          )
+      }
+  )
+  @PostMapping(path = "/reset/password/{userId}")
+  ResponseEntity<GeneralResponse<Void>> requestResetPassword(
+      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId);
 }

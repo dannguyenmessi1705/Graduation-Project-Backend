@@ -117,4 +117,14 @@ public class UserControllerImpl implements IUserController {
         LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.OK);
   }
+
+  @Override
+  public ResponseEntity<GeneralResponse<Void>> requestResetPassword(String userId) {
+    log.info("===== Start requesting reset password =====");
+    userService.requestResetPassword(userId);
+    Status status = new Status("/users/reset/password/" + userId, HttpStatus.OK.value(),
+        "Reset password requested successfully",
+        LocalDateTime.now());
+    return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.OK);
+  }
 }

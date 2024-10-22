@@ -31,4 +31,6 @@ public interface IUserService {
   void updatePasswordAdmin(String userId, ChangePasswordAdminDto requestDto);
 
   void deleteUser(String userId);
+
+  void requestResetPassword(String userId);
 }

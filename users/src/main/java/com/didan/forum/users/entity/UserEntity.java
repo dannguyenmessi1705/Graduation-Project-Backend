@@ -78,8 +78,4 @@ public class UserEntity extends SuperClass implements Serializable {
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<UserRoleEntity> userRoles;
-
-  @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-  @PrimaryKeyJoinColumn
-  private PasswordRequestEntity passwordRequest;
 }

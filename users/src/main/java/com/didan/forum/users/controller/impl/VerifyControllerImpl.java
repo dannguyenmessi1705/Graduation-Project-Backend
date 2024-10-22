@@ -2,6 +2,7 @@ package com.didan.forum.users.controller.impl;
 
 import com.didan.forum.users.controller.IVerifyController;
 import com.didan.forum.users.dto.Status;
+import com.didan.forum.users.dto.request.ChangePasswordAdminDto;
 import com.didan.forum.users.dto.response.GeneralResponse;
 import com.didan.forum.users.service.IVerifyService;
 import java.time.LocalDateTime;
@@ -23,5 +24,13 @@ public class VerifyControllerImpl implements IVerifyController {
     verifyService.activateUser(token);
     Status status = new Status("/users/verify/activate", HttpStatus.OK.value(), "Account activated successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<GeneralResponse<ChangePasswordAdminDto>> resetPassword(String token) {
+    log.info("Reset password with token: {}", token);
+    ChangePasswordAdminDto responseDto = verifyService.resetPassword(token);
+    Status status = new Status("/users/verify/reset", HttpStatus.OK.value(), "Password reset successfully", LocalDateTime.now());
+    return new ResponseEntity<>(new GeneralResponse<>(status, responseDto), HttpStatus.OK);
   }
 }

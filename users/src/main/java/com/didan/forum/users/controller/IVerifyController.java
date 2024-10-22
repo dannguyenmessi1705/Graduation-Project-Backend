@@ -1,5 +1,6 @@
 package com.didan.forum.users.controller;
 
+import com.didan.forum.users.dto.request.ChangePasswordAdminDto;
 import com.didan.forum.users.dto.response.GeneralResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -48,4 +49,35 @@ public interface IVerifyController {
   )
   @GetMapping("/activate")
   ResponseEntity<GeneralResponse<Void>> activateAccount(@NotBlank(message = "blank.field.token") @RequestParam("token") String token);
+
+  @Operation(
+      summary = "Reset user account password",
+      description = "Reset user account password using the token sent to the user's email.",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "User account password reset successfully",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "400",
+              description = "Invalid token",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          )
+      }
+  )
+  @GetMapping("/reset")
+  ResponseEntity<GeneralResponse<ChangePasswordAdminDto>> resetPassword(
+      @NotBlank(message = "blank.field.token") @RequestParam("token") String token);
 }

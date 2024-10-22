@@ -9,10 +9,12 @@ import com.didan.forum.users.dto.request.UpdateUserAdminRequestDto;
 import com.didan.forum.users.dto.request.UpdateUserRequestDto;
 import com.didan.forum.users.dto.response.LoginResponseDto;
 import com.didan.forum.users.dto.response.UserResponseDto;
+import com.didan.forum.users.entity.TokenRequestEntity;
 import com.didan.forum.users.entity.UserEntity;
 import com.didan.forum.users.exception.ErrorActionException;
 import com.didan.forum.users.exception.ResourceAlreadyExistException;
 import com.didan.forum.users.exception.ResourceNotFoundException;
+import com.didan.forum.users.repository.TokenRequestRepository;
 import com.didan.forum.users.repository.UserRepository;
 import com.didan.forum.users.service.IKeycloakRoleService;
 import com.didan.forum.users.service.IKeycloakUserService;
@@ -50,6 +52,7 @@ public class UserServiceImpl implements IUserService {
   private final IKeycloakUserService keycloakUserService;
   private final IRestTemplateService restTemplateService;
   private final IKeycloakRoleService keycloakRoleService;
+  private final TokenRequestRepository tokenRequestRepository;
 
   @Value("${minio.bucket-name}")
   private String bucketName;
@@ -57,7 +60,7 @@ public class UserServiceImpl implements IUserService {
   @Value("${minio.endpoint}")
   private String minioEndpoint;
 
-  @Value("${sendgrid.urlAuth}")
+  @Value("${sendgrid.urlVerify}")
   private String urlAuth;
 
   @Value("${keycloak.client.client-id}")
@@ -124,10 +127,13 @@ public class UserServiceImpl implements IUserService {
     if (!isVerified) {
       SendMailWithTemplate objectMail = MapperUtils.map(user, SendMailWithTemplate.class);
       String token = RandomStringUtils.random(100, true, true);
-      String messageAuthUrl = urlAuth + token;
+      String messageAuthUrl = urlAuth + "activate?token=" + token;
+      objectMail.setUserId(user.getId());
       objectMail.setMessage(messageAuthUrl);
+      objectMail.setGuide("Click this link to verify account, the link is expired in 10 minutes");
+      objectMail.setTitle("Verify your account");
       log.info("Sending Communication request to Kafka for the details : {}", objectMail);
-      boolean isSendKafka = streamBridge.send("sendUserRegister-out-0", objectMail);
+      boolean isSendKafka = streamBridge.send("sendUserEmail-out-0", objectMail);
       log.info("Is the Communication request successfully triggered ? : {}", isSendKafka);
       keycloakRoleService.addRoleToUserInKeycloak(user.getId(), "inactive");
     } else {
@@ -267,5 +273,22 @@ public class UserServiceImpl implements IUserService {
         .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     keycloakUserService.deleteUserFromKeycloak(userId);
     userRepository.delete(user);
+  }
+
+  @Override
+  public void requestResetPassword(String userId) {
+    UserEntity user = userRepository.findById(userId)
+        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    String token = RandomStringUtils.random(100, true, true);
+
+    String messageAuthUrl = urlAuth + "reset?token=" + token;
+    SendMailWithTemplate objectMail = MapperUtils.map(user, SendMailWithTemplate.class);
+    objectMail.setUserId(user.getId());
+    objectMail.setMessage(messageAuthUrl);
+    objectMail.setGuide("Click this link to reset password, the link is expired in 10 minutes");
+    objectMail.setTitle("Reset your password");
+    log.info("Sending Communication request to Kafka for the details : {}", objectMail);
+    boolean isSendKafka = streamBridge.send("sendUserEmail-out-0", objectMail);
+    log.info("Is the Communication request successfully triggered ? : {}", isSendKafka);
   }
 }
