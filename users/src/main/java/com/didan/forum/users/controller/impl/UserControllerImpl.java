@@ -2,6 +2,7 @@ package com.didan.forum.users.controller.impl;
 
 import com.didan.forum.users.controller.IUserController;
 import com.didan.forum.users.dto.Status;
+import com.didan.forum.users.dto.request.ChangePasswordUserDto;
 import com.didan.forum.users.dto.request.CreateUserRequestDto;
 import com.didan.forum.users.dto.request.LoginRequestDto;
 import com.didan.forum.users.dto.request.LogoutRequestDto;
@@ -98,5 +99,22 @@ public class UserControllerImpl implements IUserController {
     Status status = new Status("/users/find", HttpStatus.OK.value(), "Users found successfully",
         LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, responseDto), HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<GeneralResponse<Void>> updatePasswordByUser(String userIdHeader,
+      String userId, ChangePasswordUserDto requestDto) {
+    log.info("===== Start updating password by user =====");
+    if (!userIdHeader.equals(userId)) {
+      Status status = new Status("/users/update/password/" + userId, HttpStatus.FORBIDDEN.value(),
+          "You are not authorized to update password this user",
+          LocalDateTime.now());
+      return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.FORBIDDEN);
+    }
+    userService.updatePassword(userId, requestDto);
+    Status status = new Status("/users/update/password/" + userId, HttpStatus.OK.value(),
+        "Password updated successfully",
+        LocalDateTime.now());
+    return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.OK);
   }
 }

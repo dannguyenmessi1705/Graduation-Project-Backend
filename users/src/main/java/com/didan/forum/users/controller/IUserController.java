@@ -1,5 +1,6 @@
 package com.didan.forum.users.controller;
 
+import com.didan.forum.users.dto.request.ChangePasswordUserDto;
 import com.didan.forum.users.dto.request.CreateUserRequestDto;
 import com.didan.forum.users.dto.request.LoginRequestDto;
 import com.didan.forum.users.dto.request.LogoutRequestDto;
@@ -183,4 +184,31 @@ public interface IUserController {
   ResponseEntity<GeneralResponse<List<UserResponseDto>>> findUsers(
       @NotBlank(message = "blank.field.keyword") @RequestParam("keyword") String keyword,
       @RequestParam("page") int page);
+
+  @Operation(
+      summary = "Update user password",
+      description = "Update user password with the provided details",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "User password updated successfully",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          )
+      }
+  )
+  @PutMapping(path = "/update/password/{userId}")
+  ResponseEntity<GeneralResponse<Void>> updatePasswordByUser(
+      @NotBlank(message = "Not Auth") @RequestHeader("X-User-Id") String userIdHeader,
+      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId,
+      @Valid @RequestBody ChangePasswordUserDto requestDto);
+
 }

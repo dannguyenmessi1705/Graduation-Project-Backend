@@ -1,6 +1,8 @@
 package com.didan.forum.users.service.impl;
 
 import com.didan.forum.users.dto.SendMailWithTemplate;
+import com.didan.forum.users.dto.request.ChangePasswordAdminDto;
+import com.didan.forum.users.dto.request.ChangePasswordUserDto;
 import com.didan.forum.users.dto.request.CreateUserRequestDto;
 import com.didan.forum.users.dto.request.LoginRequestDto;
 import com.didan.forum.users.dto.request.UpdateUserAdminRequestDto;
@@ -17,6 +19,7 @@ import com.didan.forum.users.service.IKeycloakUserService;
 import com.didan.forum.users.service.IRestTemplateService;
 import com.didan.forum.users.service.IUserService;
 import com.didan.forum.users.utils.MapperUtils;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -134,8 +137,9 @@ public class UserServiceImpl implements IUserService {
   }
 
   @Override
+  @Transactional
   public UserResponseDto updateUser(String userId, UpdateUserRequestDto requestDto) {
-    UserEntity userEntity = userRepository.findById(userId)
+    userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     if (StringUtils.hasText(requestDto.getEmail())) {
       userRepository.findFirstByEmailIgnoreCase(requestDto.getEmail()).ifPresent(user -> {
@@ -150,7 +154,30 @@ public class UserServiceImpl implements IUserService {
     UserResponseDto updateUserRequest = keycloakUserService.updateUserInKeycloak(userId,
         MapperUtils.map(requestDto, UpdateUserAdminRequestDto.class));
 
-    userEntity = MapperUtils.map(updateUserRequest, UserEntity.class);
+    UserEntity userEntity = MapperUtils.map(updateUserRequest, UserEntity.class);
+    userRepository.save(userEntity);
+    return updateUserRequest;
+  }
+
+  @Override
+  @Transactional
+  public UserResponseDto updateUserByAdmin(String userId, UpdateUserAdminRequestDto requestDto) {
+    userRepository.findById(userId)
+        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    if (StringUtils.hasText(requestDto.getEmail())) {
+      userRepository.findFirstByEmailIgnoreCase(requestDto.getEmail()).ifPresent(user -> {
+        throw new ResourceAlreadyExistException("Email already exists");
+      });
+    }
+    if (StringUtils.hasText(requestDto.getPhoneNumber())) {
+      userRepository.findFirstByPhoneNumber(requestDto.getPhoneNumber()).ifPresent(user -> {
+        throw new ResourceAlreadyExistException("Phone number already exists");
+      });
+    }
+    UserResponseDto updateUserRequest = keycloakUserService.updateUserInKeycloak(userId,
+        requestDto);
+
+    UserEntity userEntity = MapperUtils.map(updateUserRequest, UserEntity.class);
     userRepository.save(userEntity);
     return updateUserRequest;
   }
@@ -202,5 +229,43 @@ public class UserServiceImpl implements IUserService {
     if (!logoutResponse.getStatusCode().is2xxSuccessful()) {
       throw new ErrorActionException("logout failed");
     }
+  }
+
+  @Override
+  @Transactional
+  public void updatePassword(String userId, ChangePasswordUserDto requestDto) {
+    UserEntity user = userRepository.findById(userId).orElseThrow(
+        () -> new ResourceNotFoundException("User not found"));
+
+    if (!passwordEncoder.matches(requestDto.getOldPassword(), user.getPassword())) {
+      throw new ErrorActionException("Password is incorrect");
+    }
+
+    keycloakUserService.updateUserPasswordInKeycloak(userId, requestDto.getNewPassword());
+
+    user.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
+    userRepository.save(user);
+  }
+
+  @Override
+  @Transactional
+  public void updatePasswordAdmin(String userId, ChangePasswordAdminDto requestDto) {
+    UserEntity user = userRepository.findById(userId).orElseThrow(
+        () -> new ResourceNotFoundException("User not found"));
+
+    keycloakUserService.updateUserPasswordInKeycloak(userId, requestDto.getPassword());
+
+    user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+
+    userRepository.save(user);
+  }
+
+  @Override
+  @Transactional
+  public void deleteUser(String userId) {
+    UserEntity user = userRepository.findById(userId)
+        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    keycloakUserService.deleteUserFromKeycloak(userId);
+    userRepository.delete(user);
   }
 }

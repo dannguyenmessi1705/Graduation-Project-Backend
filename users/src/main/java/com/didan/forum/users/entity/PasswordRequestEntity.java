@@ -18,26 +18,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
 
-@Entity(name = "password_request")
 @NoArgsConstructor @AllArgsConstructor @Setter @Getter @ToString
+@RedisHash("USER:PASSWORD_REQUEST")
 public class PasswordRequestEntity extends SuperClass implements Serializable {
   @Id
   private String id;
 
-  @Column
   private String token;
 
-  @Column
-  private LocalDateTime expiredAt;
+  @TimeToLive
+  private Long ttl;
 
-  @OneToOne
-  @MapsId
-  @JoinColumn(name = "id")
-  private UserEntity user;
-
-  @PrePersist
-  public void init() {
-    this.expiredAt = LocalDateTime.now().plusMinutes(10);
-  }
+  private String userId;
 }

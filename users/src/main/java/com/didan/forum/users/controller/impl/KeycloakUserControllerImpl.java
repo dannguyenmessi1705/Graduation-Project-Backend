@@ -54,7 +54,7 @@ public class KeycloakUserControllerImpl implements IKeycloakUserController {
   @Override
   public ResponseEntity<GeneralResponse<UserResponseDto>> updateUserInKeycloak(
       UpdateUserAdminRequestDto requestDto, String userId) {
-    UserResponseDto updatedUser = keycloakUserService.updateUserInKeycloak(userId, requestDto);
+    UserResponseDto updatedUser = userService.updateUserByAdmin(userId, requestDto);
     Status status = new Status("/users/keycloak/user/" + userId, HttpStatus.OK.value(), "User "
         + "updated successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, updatedUser), HttpStatus.OK);
@@ -63,7 +63,7 @@ public class KeycloakUserControllerImpl implements IKeycloakUserController {
   @Override
   public ResponseEntity<GeneralResponse<UserResponseDto>> updateUserPasswordInKeycloak(
       String userId, ChangePasswordAdminDto requestDto) {
-    keycloakUserService.updateUserPasswordInKeycloak(userId, requestDto.getPassword());
+    userService.updatePasswordAdmin(userId, requestDto);
     Status status = new Status("/users/keycloak/user/" + userId + "/password",
         HttpStatus.OK.value(),
         "User password updated successfully", LocalDateTime.now());
@@ -72,7 +72,7 @@ public class KeycloakUserControllerImpl implements IKeycloakUserController {
 
   @Override
   public ResponseEntity<GeneralResponse<Void>> deleteUserFromKeycloak(String userId) {
-    keycloakUserService.deleteUserFromKeycloak(userId);
+    userService.deleteUser(userId);
     Status status = new Status("/users/keycloak/user/" + userId, HttpStatus.NO_CONTENT.value(),
         "User "
             + "deleted successfully", LocalDateTime.now());
