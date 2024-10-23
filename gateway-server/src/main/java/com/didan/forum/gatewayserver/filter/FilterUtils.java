@@ -1,6 +1,8 @@
 package com.didan.forum.gatewayserver.filter;
 
+import com.didan.forum.gatewayserver.constant.TrackingConstant;
 import java.util.List;
+import org.slf4j.MDC;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -8,12 +10,21 @@ import org.springframework.web.server.ServerWebExchange;
 @Component
 public class FilterUtils {
 
-  public static final String CORRELATION_ID = "Forum-Correlation-ID";
+  public String getTraceId(HttpHeaders httpHeaders) {
+    if (httpHeaders.get(TrackingConstant.TRACE_ID.getHeaderKey()) != null) {
+      List<String> requestHeaders = httpHeaders.get(TrackingConstant.TRACE_ID.getHeaderKey());
+      assert requestHeaders != null;
+      return requestHeaders.stream().findFirst().isPresent() ? requestHeaders.stream().findFirst().get() : null;
+    } else {
+      return null;
+    }
+  }
 
-  public String getCorrelationId(HttpHeaders httpHeaders) {
-    if (httpHeaders.get(CORRELATION_ID) != null) {
-      List<String> requestHeaders = httpHeaders.get(CORRELATION_ID);
-      return requestHeaders.stream().findFirst().get();
+  public String getxUserId(HttpHeaders httpHeaders) {
+    if (httpHeaders.get(TrackingConstant.X_USER_ID.getHeaderKey()) != null) {
+      List<String> requestHeaders = httpHeaders.get(TrackingConstant.X_USER_ID.getHeaderKey());
+      assert requestHeaders != null;
+      return requestHeaders.stream().findFirst().isPresent() ? requestHeaders.stream().findFirst().get() : null;
     } else {
       return null;
     }
@@ -24,8 +35,13 @@ public class FilterUtils {
         .build();
   }
 
-  public ServerWebExchange setCorrelationId(ServerWebExchange exchange, String correlationId) {
-    return setRequestHeader(exchange, CORRELATION_ID, correlationId);
+  public ServerWebExchange setTraceId(ServerWebExchange exchange, String correlationId) {
+    MDC.put(TrackingConstant.TRACE_ID.getHeaderKey(), correlationId);
+    return setRequestHeader(exchange, TrackingConstant.TRACE_ID.getHeaderKey(), correlationId);
+  }
+
+  public ServerWebExchange setxUserId(ServerWebExchange exchange, String xUserId) {
+    return setRequestHeader(exchange, TrackingConstant.X_USER_ID.getHeaderKey(), xUserId);
   }
 
 }

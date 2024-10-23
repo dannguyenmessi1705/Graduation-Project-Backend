@@ -81,6 +81,9 @@ app:
       password: jfz74hpkdMFx6qTfjIZT4kOixxq9iFB6
   pagination:
     defaultSize: 10
+  schedule:
+    fixedDelay:
+      milliseconds: 3600000
 
 management:
   endpoints:
@@ -122,7 +125,7 @@ logging:
         forum:
           users: debug
   pattern:
-    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+    level: "%5p [${spring.application.name},%X{Trace-Id},%X{Span-Id}]"
 
 minio:
   access-key: didannguyen

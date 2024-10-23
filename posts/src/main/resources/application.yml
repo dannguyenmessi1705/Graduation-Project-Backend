@@ -23,22 +23,17 @@ springdoc:
   swagger-ui:
     path: /posts/swagger-ui
 
-oauth:
-  openId:
-    url: http://localhost:7080/realms/forum/.well-known/openid-configuration
-
-
 app:
   cache:
     redis:
-      enabled: false
-      host: 'redis://redis-12610.c252.ap-southeast-1-1.ec2.redns.redis-cloud.com'
-      port: 12610
+      enabled: true
+      host: localhost
+      port: 6379
       timeoutSeconds: 60
       maxPoolSize: 8
       maxIdle: 8
       minIdle: 0
-      password: "jfz74hpkdMFx6qTfjIZT4kOixxq9iFB6"
+      password: jfz74hpkdMFx6qTfjIZT4kOixxq9iFB6
 
 management:
   endpoints:
@@ -83,7 +78,7 @@ logging:
     level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
 
 minio:
-  access-key: IFxmZQZnzwfeigv79Lo3
-  secret-key: M64UOvH5OAFZx7q4V1fGi6BbOmH9PXaAtfuyW9x3
+  access-key: didannguyen
+  secret-key: 17052002
   endpoint: http://localhost:10000
-  bucket-name: materials
+  bucket-name: posts

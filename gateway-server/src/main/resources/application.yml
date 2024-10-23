@@ -26,6 +26,8 @@ oauth:
 #      port: 6379
 #      timeout: 1s
 
+private:
+  route: users/update,posts/update,comments/update
 
 management:
   endpoints:
@@ -73,4 +75,4 @@ logging:
         microservices:
           gatewaysever: debug
   pattern:
-    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+    level: "%5p [${spring.application.name},%X{Trace-Id},%X{Span-Id}]"

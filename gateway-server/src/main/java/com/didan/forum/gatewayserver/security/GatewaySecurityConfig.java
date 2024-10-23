@@ -30,8 +30,12 @@ public class GatewaySecurityConfig {
             exchanges
                 .pathMatchers("/forum/api-docs/**", "/forum/swagger-ui/**", "/forum/users/api-docs/**")
                 .permitAll()
-                .pathMatchers("/forum/**").hasAnyRole("user", "admin")
-                .anyExchange().permitAll())
+                .pathMatchers("/forum/users/update/**", "/forum/users/reset/**")
+                .hasAnyRole("user", "admin")
+                .pathMatchers("/forum/users/keycloak/**")
+                .hasRole("admin")
+                .anyExchange()
+                .permitAll())
         .oauth2ResourceServer(oauth2 -> oauth2.jwt(
             grantedRole -> grantedRole.jwtAuthenticationConverter(grantedAuthoritiesExtractor()))
         )

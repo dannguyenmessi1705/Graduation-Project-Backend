@@ -1,5 +1,6 @@
 package com.didan.forum.gatewayserver.filter;
 
+import com.didan.forum.gatewayserver.constant.TrackingConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -18,10 +19,10 @@ public class ResponseTraceFilter {
   public GlobalFilter globalFilter() {
     return (exchange, chain) -> chain.filter(exchange).then(Mono.fromRunnable(() -> {
       HttpHeaders httpHeaders = exchange.getRequest().getHeaders();
-      String correlationId = filterUtils.getCorrelationId(httpHeaders);
-      if (!(exchange.getResponse().getHeaders().containsKey(FilterUtils.CORRELATION_ID))) {
-        log.debug("Updating response with the correlation id: {}.", correlationId);
-        exchange.getResponse().getHeaders().add(FilterUtils.CORRELATION_ID, correlationId);
+      String traceId = filterUtils.getTraceId(httpHeaders);
+      if (!(exchange.getResponse().getHeaders().containsKey(TrackingConstant.TRACE_ID.getHeaderKey()))) {
+        log.debug("Updating response with the correlation id: {}.", traceId);
+        exchange.getResponse().getHeaders().add(TrackingConstant.TRACE_ID.getHeaderKey(), traceId);
       }
     }));
   }
