@@ -7,9 +7,12 @@ import com.didan.forum.users.exception.ErrorActionException;
 import com.didan.forum.users.exception.ResourceNotFoundException;
 import com.didan.forum.users.service.IKeycloakUserService;
 import com.didan.forum.users.service.minio.MinioService;
+import com.didan.forum.users.utils.ImageGenerator;
 import com.didan.forum.users.utils.MapperObjectKeycloakUtils;
 import com.didan.forum.users.utils.MapperUtils;
 import jakarta.ws.rs.core.Response;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,7 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -56,22 +60,9 @@ public class KeycloakUserServiceImpl implements IKeycloakUserService {
   }
 
   @Override
-  public UserResponseDto createUserInKeycloak(CreateUserRequestDto requestDto, String userId,
-      String picture, boolean isVerified) {
-    if (requestDto.getPicture() != null && picture == null) {
-      log.info("Uploading avatar to Minio");
-      minio.createBucket(bucketName);
-      String fileName = requestDto.getPicture().getOriginalFilename();
-      if (!StringUtils.hasText(fileName)) {
-        throw new ErrorActionException("File name is empty");
-      }
-      picture = "avatar_" + userId + "." + fileName.split("\\.")[1];
-      String contentType = requestDto.getPicture().getContentType();
-      minio.uploadFile(bucketName, requestDto.getPicture(), picture, contentType);
-      log.info("Avatar uploaded successfully");
-    }
-
-    UserRepresentation userRep = MapperObjectKeycloakUtils.mapUserRep(userId, isVerified, picture,
+  public UserResponseDto createUserInKeycloak(CreateUserRequestDto requestDto,
+   String pictureUrl, boolean isVerified) {
+    UserRepresentation userRep = MapperObjectKeycloakUtils.mapUserRep(null, isVerified, pictureUrl,
         requestDto);
     try {
       Response res = keycloak.realm(realm).users().create(userRep);
@@ -135,11 +126,13 @@ public class KeycloakUserServiceImpl implements IKeycloakUserService {
         if (!StringUtils.hasText(fileName)) {
           throw new ErrorActionException("File name is empty");
         }
-        String picture = "avatar_" + userId + "." + fileName.split("\\.")[1];
+        String picturePath = "avatar_" + updateUser.getUsername() + "." + fileName.split("\\.")[1];
         String contentType = requestDto.getPicture().getContentType();
-        minio.uploadFile(bucketName, requestDto.getPicture(), picture, contentType);
+        minio.uploadFile(bucketName, requestDto.getPicture(), picturePath, contentType);
         log.info("Avatar uploaded successfully");
-        updateUser.setPicture(picture);
+        String pictureUrl = minio.getUTF8ByURLDecoder(minio.getPresignedObjectUrl(bucketName,
+            picturePath));
+        updateUser.setPicture(pictureUrl);
       }
       UserRepresentation userRep = MapperObjectKeycloakUtils.mapUserRep(updateUser.getId(),
           updateUser.isVerified(), updateUser.getPicture(), MapperUtils.map(updateUser,

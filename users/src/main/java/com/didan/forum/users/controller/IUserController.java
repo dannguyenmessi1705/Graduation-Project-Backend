@@ -234,4 +234,28 @@ public interface IUserController {
   @PostMapping(path = "/reset/password/{userId}")
   ResponseEntity<GeneralResponse<Void>> requestResetPassword(
       @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId);
+
+  @Operation(
+      summary = "Get QR code for user account",
+      description = "Get QR code for user account with the provided user ID",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "QR code retrieved successfully",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          )
+      }
+  )
+  @GetMapping(path = "/qrcode/{userId}", produces = MediaType.IMAGE_PNG_VALUE)
+  ResponseEntity<byte[]> getQRCode(
+      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId);
 }

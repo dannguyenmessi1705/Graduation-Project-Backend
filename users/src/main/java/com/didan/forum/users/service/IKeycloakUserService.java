@@ -11,8 +11,8 @@ public interface IKeycloakUserService {
 
   UserResponseDto getUserDetailsFromKeycloak(String userId);
 
-  UserResponseDto createUserInKeycloak(CreateUserRequestDto requestDto, String userId,
-      String picture, boolean isVerified);
+  UserResponseDto createUserInKeycloak(CreateUserRequestDto requestDto,
+      String pictureUrl, boolean isVerified);
 
   UserResponseDto updateUserInKeycloak(String userId, UpdateUserAdminRequestDto requestDto);
 

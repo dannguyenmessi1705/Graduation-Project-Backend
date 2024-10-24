@@ -19,7 +19,11 @@ import com.didan.forum.users.service.IKeycloakRoleService;
 import com.didan.forum.users.service.IKeycloakUserService;
 import com.didan.forum.users.service.IRestTemplateService;
 import com.didan.forum.users.service.IUserService;
+import com.didan.forum.users.service.minio.MinioService;
+import com.didan.forum.users.utils.ImageGenerator;
 import com.didan.forum.users.utils.MapperUtils;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +56,7 @@ public class UserServiceImpl implements IUserService {
   private final IRestTemplateService restTemplateService;
   private final IKeycloakRoleService keycloakRoleService;
   private final TokenRequestRepository tokenRequestRepository;
+  private final MinioService minioService;
 
   @Value("${minio.bucket-name}")
   private String bucketName;
@@ -111,9 +116,29 @@ public class UserServiceImpl implements IUserService {
     userRepository.findFirstByPhoneNumber(requestDto.getPhoneNumber()).ifPresent(user -> {
       throw new ResourceAlreadyExistException("Phone number already exists");
     });
+    String picturePath;
+    if (requestDto.getPicture() != null) {
+      log.info("Uploading avatar to Minio");
+      minioService.createBucket(bucketName);
+      String fileName = requestDto.getPicture().getOriginalFilename();
+      if (!StringUtils.hasText(fileName)) {
+        throw new ErrorActionException("File name is empty");
+      }
+      picturePath = "avatar_" + requestDto.getUsername() + "." + fileName.split("\\.")[1];
+      String contentType = requestDto.getPicture().getContentType();
+      minioService.uploadFile(bucketName, requestDto.getPicture(), picturePath, contentType);
+      log.info("Avatar uploaded successfully");
+    } else {
+      byte[] pictureDefault = ImageGenerator.generateAvatar(requestDto.getUsername(), 480);
+      InputStream inputStream = new ByteArrayInputStream(pictureDefault);
+      picturePath = "avatar_" + requestDto.getUsername() + ".png";
+      minioService.createBucket(bucketName);
+      minioService.uploadFile(bucketName, picturePath, inputStream, MediaType.IMAGE_PNG_VALUE);
+    }
 
-    UserResponseDto userResponseDto = keycloakUserService.createUserInKeycloak(requestDto, null,
-        null, isVerified);
+    String pictureUrl = getUrlMinio(picturePath);
+    UserResponseDto userResponseDto = keycloakUserService.createUserInKeycloak(requestDto, pictureUrl,
+        isVerified);
 
     log.info("Mapping CreateUserRequestDto to UserEntity");
     UserEntity user = MapperUtils.map(requestDto, UserEntity.class);
@@ -289,5 +314,10 @@ public class UserServiceImpl implements IUserService {
     log.info("Sending Communication request to Kafka for the details : {}", objectMail);
     boolean isSendKafka = streamBridge.send("sendUserEmail-out-0", objectMail);
     log.info("Is the Communication request successfully triggered ? : {}", isSendKafka);
+  }
+
+  private String getUrlMinio(String path) {
+    String url = minioService.getPresignedObjectUrl(bucketName, path);
+    return minioService.getUTF8ByURLDecoder(url);
   }
 }

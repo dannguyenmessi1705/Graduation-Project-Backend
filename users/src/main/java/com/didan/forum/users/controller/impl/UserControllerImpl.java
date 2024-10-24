@@ -10,13 +10,16 @@ import com.didan.forum.users.dto.request.UpdateUserRequestDto;
 import com.didan.forum.users.dto.response.GeneralResponse;
 import com.didan.forum.users.dto.response.LoginResponseDto;
 import com.didan.forum.users.dto.response.UserResponseDto;
+import com.didan.forum.users.exception.ErrorActionException;
 import com.didan.forum.users.service.IUserService;
+import com.didan.forum.users.utils.ImageGenerator;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +33,9 @@ public class UserControllerImpl implements IUserController {
 
   @Value("${app.pagination.defaultSize}")
   private int defaultSize;
+
+  @Value("${app.baseUrl}")
+  private String baseUrl;
 
   @Override
   public ResponseEntity<GeneralResponse<LoginResponseDto>> loginUser(LoginRequestDto requestDto) {
@@ -126,5 +132,18 @@ public class UserControllerImpl implements IUserController {
         "Reset password requested successfully",
         LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<byte[]> getQRCode(String userId) {
+    byte[] bytes = new byte[0];
+    String pathUserDetails = baseUrl + "/users/detail/" + userId;
+    try {
+      bytes = ImageGenerator.generateQRCodeImage(pathUserDetails, 350, 350);
+    } catch (Exception e) {
+      throw new ErrorActionException("Could not generate QR code");
+    }
+    return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=" + "qrcode")
+        .contentType(MediaType.IMAGE_PNG).body(bytes);
   }
 }

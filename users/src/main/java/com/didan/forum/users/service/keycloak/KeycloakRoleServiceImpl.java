@@ -5,6 +5,7 @@ import com.didan.forum.users.entity.RoleEntity;
 import com.didan.forum.users.entity.keycloak.RoleKeycloakEntity;
 import com.didan.forum.users.exception.ResourceAlreadyExistException;
 import com.didan.forum.users.exception.ResourceNotFoundException;
+import com.didan.forum.users.process.SyncRoleWithKeycloak;
 import com.didan.forum.users.service.IKeycloakRoleService;
 import com.didan.forum.users.service.IRoleService;
 import com.didan.forum.users.utils.MapperObjectKeycloakUtils;
@@ -32,6 +33,7 @@ public class KeycloakRoleServiceImpl implements IKeycloakRoleService {
 
   private final Keycloak keycloak;
   private final IRoleService roleService;
+  private final SyncRoleWithKeycloak syncRoleWithKeycloak;
 
   @Override
   public List<RoleKeycloakEntity> getAllRolesOfUserFromKeycloak(String userId) {
@@ -90,6 +92,7 @@ public class KeycloakRoleServiceImpl implements IKeycloakRoleService {
       RoleRepresentation roleRep = MapperObjectKeycloakUtils.mapRoleRep(roleEntity);
       keycloak.realm(realm).roles().create(roleRep);
       roleService.createRole(MapperUtils.map(roleEntity, RoleEntity.class));
+      syncRoleWithKeycloak.evictCache();
     }
   }
 
@@ -98,6 +101,7 @@ public class KeycloakRoleServiceImpl implements IKeycloakRoleService {
     RoleResource roleResource = checkRoleExistence(roleName);
     roleResource.remove();
     roleService.deleteRole(roleName);
+    syncRoleWithKeycloak.evictCache();
   }
 
   private RoleResource checkRoleExistence(String roleName) {

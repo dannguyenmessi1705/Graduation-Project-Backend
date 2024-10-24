@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -248,12 +249,15 @@ public class MinioService {
     }
   }
 
-  public ObjectWriteResponse uploadFile(String bucketName, String objectName, InputStream inputStream) {
+  public ObjectWriteResponse uploadFile(String bucketName, String objectName,
+      InputStream inputStream, String contentType) {
     try {
       return minioClient.putObject(
           PutObjectArgs.builder()
               .bucket(bucketName)
               .object(objectName)
+              .contentType(StringUtils.hasText(contentType) ? contentType : "application/octet"
+                  + "-stream")
               .stream(inputStream, inputStream.available(), -1)
               .build()
       );
@@ -263,14 +267,16 @@ public class MinioService {
     }
   }
 
-  public ObjectWriteResponse uploadImage(String bucketName, String imageBase64, String imageName) {
+  public ObjectWriteResponse uploadImage(String bucketName, String imageBase64, String imageName,
+   String contentType) {
     try {
       if (!StringUtils.hasText(imageBase64)) {
         InputStream inputStream = base64ToInputStream(imageBase64);
         String newName = System.currentTimeMillis() + "_" + imageName + ".jpg";
         String year = String.valueOf(LocalDate.now().getYear());
         String month = String.valueOf(LocalDate.now().getMonthValue());
-        return uploadFile(bucketName, year + "/" + month + "/" + newName, inputStream);
+        return uploadFile(bucketName, year + "/" + month + "/" + newName, inputStream,
+            MediaType.IMAGE_JPEG_VALUE);
       }
       return null;
     } catch (Exception e) {
