@@ -32,7 +32,7 @@ public class KeycloakUserServiceImpl implements IKeycloakUserService {
   @Value("${keycloak.management-user.realm}")
   private String realm;
 
-  @Value("${minio.bucket-name}")
+  @Value("${minio.bucketName}")
   private String bucketName;
 
   private final Keycloak keycloak;

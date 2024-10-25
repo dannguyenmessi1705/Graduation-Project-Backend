@@ -59,10 +59,10 @@ public class UserServiceImpl implements IUserService {
   private final TokenRequestRepository tokenRequestRepository;
   private final MinioService minioService;
 
-  @Value("${minio.bucket-name}")
+  @Value("${minio.bucketName}")
   private String bucketName;
 
-  @Value("${minio.endpoint}")
+  @Value("${minio.root.endpoint}")
   private String minioEndpoint;
 
   @Value("${sendgrid.urlVerify}")

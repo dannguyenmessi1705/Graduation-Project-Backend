@@ -12,12 +12,13 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:7080/realms/forum
-          jwk-set-uri: http://localhost:7080/realms/forum/protocol/openid-connect/certs
+          issuer-uri: http://${oauth.openId.server}/realms/forum
+          jwk-set-uri: http://${oauth.openId.server}/realms/forum/protocol/openid-connect/certs
 
 oauth:
   openId:
-    url: http://localhost:7080/realms/forum/.well-known/openid-configuration
+    server: localhost:7080
+    url: http://${oauth.openId.server}/realms/forum/.well-known/openid-configuration
 
 #  data:
 #    redis:

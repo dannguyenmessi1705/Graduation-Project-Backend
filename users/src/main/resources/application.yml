@@ -43,12 +43,13 @@ springdoc:
 
 oauth:
   openId:
-    url: http://localhost:7080/realms/forum/.well-known/openid-configuration
+    server: localhost:7080
+    url: http://${oauth.openId.server}/realms/forum/.well-known/openid-configuration
 
 keycloak:
   management-user:
     realm: forum
-    server: http://localhost:7080
+    server: http://${oauth.openId.server}
     client-id: admin-cli
     grant-type: password
     name: didannguyen
@@ -59,7 +60,7 @@ keycloak:
     client-secret: l2WiWQULnEFt9KrgySvFK03QtVf9K4DO
     grant-type-login: password
     grant-type-logout: refresh_token
-    token-url: http://localhost:7080/realms/forum/protocol/openid-connect/
+    token-url: http://${oauth.openId.server}/realms/forum/protocol/openid-connect/
 
 sendgrid:
   apiKey: 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
@@ -129,7 +130,8 @@ logging:
     level: "%5p [${spring.application.name},%X{Trace-Id},%X{Span-Id}]"
 
 minio:
-  access-key: minioadmin
-  secret-key: minioadmin
-  endpoint: http://localhost:10000
-  bucket-name: users
+  root:
+    user: didannguyen
+    password: 17052002
+    endpoint: http://localhost:10000
+  bucketName: ${spring.application.name}

@@ -25,10 +25,11 @@ services:
       - zookeeper
     environment:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_COMPRESSION_TYPE: producer
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
@@ -63,9 +64,9 @@ services:
       TZ: Asia/Ho_Chi_Minh
       LANG: en_US.UTF-8
       MINIO_PROMETHEUS_AUTH_TYPE: "public"
-      MINIO_ACCESS_KEY: "didannguyen"
-      MINIO_SECRET_KEY: "17052002"
-    command: server /data  --console-address ":9001"
+      MINIO_ROOT_USER: "didannguyen"
+      MINIO_ROOT_PASSWORD: "17052002"
+    command: server /data --console-address ':9001'
     logging:
       driver: "json-file"
       options:
@@ -73,6 +74,8 @@ services:
     ports:
       - "10000:9000" # API
       - "10001:9001" # UI
+    networks:
+      - didan
 
   keycloakdb:
     image: mysql:8.0
@@ -110,11 +113,124 @@ services:
       KC_DB_USERNAME: keycloak
       KC_DB_PASSWORD: 17052002
     depends_on:
-      - keycloakdb
+      keycloakdb:
+        condition: service_healthy
     volumes:
       - ../data/keycloak:/opt/keycloak/data/
     networks:
       - didan
+
+  configserver:
+    image: dannguyenmessi/configserver:v1
+    container_name: configserver
+    ports:
+      - "8071:8071"
+    healthcheck:
+      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    deploy:
+        resources:
+          limits:
+            memory: 700m
+    environment:
+      SPRING_APPLICATION_NAME: configserver
+    networks:
+      - didan
+
+  eurekaserver:
+    image: dannguyenmessi/eureka-server:v1
+    container_name: eureka-server
+    ports:
+      - "8070:8070"
+    healthcheck:
+      test: "curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    deploy:
+        resources:
+          limits:
+            memory: 700m
+    environment:
+      SPRING_APPLICATION_NAME: eureka-server
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+    depends_on:
+      configserver:
+        condition: service_healthy
+    networks:
+      - didan
+
+  gatewayserver:
+    image: dannguyenmessi/gateway-server:v1
+    container_name: gatewayserver
+    ports:
+      - "8072:8072"
+    deploy:
+        resources:
+          limits:
+            memory: 700m
+    environment:
+      SPRING_APPLICATION_NAME: gatewayserver
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+      OAUTH_OPENID_SERVER: localhost:7080
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+      users-service:
+        condition: service_healthy
+    networks:
+      - didan
+
+  users-service:
+    image: dannguyenmessi/users:v1
+    container_name: users-service
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    deploy:
+        resources:
+          limits:
+            memory: 700m
+    environment:
+      SPRING_APPLICATION_NAME: users
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+      SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: kafka:29092
+      OAUTH_OPENID_SERVER: keycloak:8080
+      APP_CACHE_REDIS_ENABLED: true
+      APP_CACHE_REDIS_HOST: redis
+      APP_CACHE_REDIS_PORT: 6379
+      APP_PAGINATION_DEFAULTSIZE: 10
+      APP_SCHEDULE_FIXEDDELAY_MILLISECONDS: 300000
+      APP_BASEURL: http://gatewayserver:8072/forum
+      MINIO_ROOT_USER: didannguyen
+      MINIO_ROOT_PASSWORD: 17052002
+      MINIO_ROOT_ENDPOINT: http://minio:9000
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - didan
+
 
 networks:
   didan:
