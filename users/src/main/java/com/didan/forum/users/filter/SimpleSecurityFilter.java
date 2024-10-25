@@ -26,7 +26,7 @@ public class SimpleSecurityFilter extends OncePerRequestFilter {
       @NotNull FilterChain filterChain) throws ServletException, IOException {
     log.info("SimpleSecurityFilter: doFilterInternal");
     String pathUrl = request.getRequestURI();
-    if (StringUtils.substringMatch(pathUrl, 0, "/users/update")) {
+    if (StringUtils.substringMatch(pathUrl, 0, "/users/update") || StringUtils.substringMatch(pathUrl, 0, "/users/qrcode")) {
       String userId = request.getHeader("X-User-Id");
       log.info("Verify userId: {}", userId);
       if (!StringUtils.hasText(userId) || !userRepository.existsById(userId)) {

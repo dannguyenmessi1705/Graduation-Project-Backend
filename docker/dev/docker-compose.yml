@@ -179,7 +179,7 @@ services:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      OAUTH_OPENID_SERVER: localhost:7080
+      OAUTH_OPENID_SERVER: keycloak:8080
     depends_on:
       configserver:
         condition: service_healthy

@@ -62,7 +62,7 @@ public class GatewayServerApplication {
     return builder.routes()
         .route(p -> p.path("/forum/users/**")
             .filters(f -> f
-                .rewritePath("/forum/users(?<remaining>.*)", "/users/${remaining}")
+                .rewritePath("/forum/users/(?<remaining>.*)", "/users/${remaining}")
                 .addRequestHeader("Time-Requested", LocalDateTime.now().toString())
                 .circuitBreaker(config -> config
                     .setName("usersCircuitBreaker")

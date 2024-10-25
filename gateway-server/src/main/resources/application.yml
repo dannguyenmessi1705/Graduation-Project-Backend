@@ -28,7 +28,7 @@ oauth:
 #      timeout: 1s
 
 private:
-  route: users/update,posts/update,comments/update
+  route: users/update,users/qrcode,posts/update,comments/update
 
 management:
   endpoints:
