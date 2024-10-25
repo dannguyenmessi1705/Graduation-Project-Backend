@@ -1,7 +1,9 @@
 package com.didan.forum.posts.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -59,6 +61,6 @@ public class PostEntity extends SuperClass {
   @JoinColumn(name = "topic_id", nullable = false)
   private TopicEntity topic;
 
-  @OneToMany(mappedBy = "post")
+  @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private List<PostVoteEntity> votes;
 }

@@ -42,9 +42,7 @@ public class LogFilter extends OncePerRequestFilter {
 
   private void generateTraceIdIfNotExists(String xTraceId) {
     log.info("xTraceId: {}", xTraceId);
-    String traceId = StringUtils.hasText(xTraceId) ? xTraceId : String.format("%s-%s",
-        applicationName,
-        UUID.randomUUID().toString());
+    String traceId = StringUtils.hasText(xTraceId) ? xTraceId : UUID.randomUUID().toString();
     MDC.put(TrackingConstant.TRACE_ID.getHeaderKey(), traceId);
   }
 

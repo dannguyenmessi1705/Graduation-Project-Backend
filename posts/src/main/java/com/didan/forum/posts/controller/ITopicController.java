@@ -1,10 +1,8 @@
-package com.didan.forum.users.controller;
+package com.didan.forum.posts.controller;
 
-import com.didan.forum.users.dto.request.ChangePasswordAdminDto;
-import com.didan.forum.users.dto.request.CreateUserRequestDto;
-import com.didan.forum.users.dto.request.UpdateUserAdminRequestDto;
-import com.didan.forum.users.dto.response.GeneralResponse;
-import com.didan.forum.users.dto.response.UserResponseDto;
+import com.didan.forum.posts.dto.request.CreateTopicRequestDto;
+import com.didan.forum.posts.dto.GeneralResponse;
+import com.didan.forum.posts.dto.response.TopicResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,33 +12,55 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-@RequestMapping("${spring.application.name}/keycloak/user")
-@Tag(
-    name = "Keycloak API",
-    description = "API routes for CRUD operations on Keycloak users and roles"
-)
+@RequestMapping("${spring.application.name}/topic")
 @Validated
-public interface IKeycloakUserController {
+@Tag(
+    name = "Topic",
+    description = "Operations related to topics"
+)
+public interface ITopicController {
+  @Operation(
+      summary = "Create a new topic by admin",
+      description = "Create a new topic by admin",
+      responses = {
+          @ApiResponse(
+              responseCode = "201",
+              description = "Topic created successfully",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          )
+      }
+  )
+  @PostMapping("/create")
+  ResponseEntity<GeneralResponse<TopicResponseDto>> createTopic(@Valid @RequestBody
+      CreateTopicRequestDto requestDto, HttpServletRequest request);
 
   @Operation(
-      summary = "Get all users",
-      description = "Get all users from Keycloak",
+      summary = "Get all topics",
+      description = "Get all topics",
       responses = {
           @ApiResponse(
               responseCode = "200",
-              description = "User account verified successfully",
+              description = "Topics retrieved successfully",
               content = @Content(
                   schema = @Schema(implementation = GeneralResponse.class)
               )
@@ -55,16 +75,15 @@ public interface IKeycloakUserController {
       }
   )
   @GetMapping("/all")
-  ResponseEntity<GeneralResponse<List<UserResponseDto>>> getAllUsersFromKeycloak(
-      HttpServletRequest request);
+  ResponseEntity<GeneralResponse<List<TopicResponseDto>>> getAllTopics(HttpServletRequest request);
 
   @Operation(
-      summary = "Get user details",
-      description = "Get user details from Keycloak",
+      summary = "Get a topic by name",
+      description = "Get a topic by name",
       responses = {
           @ApiResponse(
               responseCode = "200",
-              description = "User details retrieved successfully",
+              description = "Topic retrieved successfully",
               content = @Content(
                   schema = @Schema(implementation = GeneralResponse.class)
               )
@@ -78,44 +97,17 @@ public interface IKeycloakUserController {
           )
       }
   )
-  @GetMapping("/{userId}")
-  ResponseEntity<GeneralResponse<UserResponseDto>> getUserDetailsFromKeycloak(
-      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId,
-      HttpServletRequest request);
+  @GetMapping("/get")
+  ResponseEntity<GeneralResponse<List<TopicResponseDto>>> getTopicsByName(@NotBlank(message = "blank.field.topic.name")
+      @RequestParam("name") String name, HttpServletRequest request);
 
   @Operation(
-      summary = "Create user",
-      description = "Create a user in Keycloak",
-      responses = {
-          @ApiResponse(
-              responseCode = "201",
-              description = "User created successfully",
-              content = @Content(
-                  schema = @Schema(implementation = GeneralResponse.class)
-              )
-          ),
-          @ApiResponse(
-              responseCode = "500",
-              description = "Internal server error",
-              content = @Content(
-                  schema = @Schema(implementation = GeneralResponse.class)
-              )
-          )
-      }
-  )
-  @PostMapping(path = "/create", produces = MediaType.APPLICATION_JSON_VALUE, consumes =
-      MediaType.MULTIPART_FORM_DATA_VALUE)
-  ResponseEntity<GeneralResponse<UserResponseDto>> createUserInKeycloak(
-      @Valid @ModelAttribute CreateUserRequestDto user,
-      HttpServletRequest request);
-
-  @Operation(
-      summary = "Update user",
-      description = "Update a user in Keycloak",
+      summary = "Get details of a topic",
+      description = "Get details of a topic",
       responses = {
           @ApiResponse(
               responseCode = "200",
-              description = "User updated successfully",
+              description = "Topic details retrieved successfully",
               content = @Content(
                   schema = @Schema(implementation = GeneralResponse.class)
               )
@@ -129,19 +121,17 @@ public interface IKeycloakUserController {
           )
       }
   )
-  @PutMapping(path = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes =
-      MediaType.MULTIPART_FORM_DATA_VALUE)
-  ResponseEntity<GeneralResponse<UserResponseDto>> updateUserInKeycloak(
-      @Valid @ModelAttribute UpdateUserAdminRequestDto requestDto,
-      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId, HttpServletRequest request);
+  @GetMapping("/details/{topicId}")
+  ResponseEntity<GeneralResponse<TopicResponseDto>> getTopicDetails(@NotBlank(message = "blank.field.topic.id")
+      @PathVariable("topicId") String topicId, HttpServletRequest request);
 
   @Operation(
-      summary = "Update user password",
-      description = "Update a user's password in Keycloak",
+      summary = "Update a topic by admin",
+      description = "Update a topic by admin",
       responses = {
           @ApiResponse(
               responseCode = "200",
-              description = "User password updated successfully",
+              description = "Topic updated successfully",
               content = @Content(
                   schema = @Schema(implementation = GeneralResponse.class)
               )
@@ -155,18 +145,18 @@ public interface IKeycloakUserController {
           )
       }
   )
-  @PutMapping(path = "/{userId}/password", produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<GeneralResponse<UserResponseDto>> updateUserPasswordInKeycloak(
-      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId,
-      @Valid @RequestBody ChangePasswordAdminDto requestDto, HttpServletRequest request);
+  @PutMapping("/update/{topicId}")
+  ResponseEntity<GeneralResponse<TopicResponseDto>> updateTopic(@NotBlank(message = "blank.field.topic.id")
+      @PathVariable("topicId") String topicId,
+      @Valid @RequestBody CreateTopicRequestDto requestDto, HttpServletRequest request);
 
   @Operation(
-      summary = "Delete user",
-      description = "Delete a user from Keycloak",
+      summary = "Delete a topic by admin",
+      description = "Delete a topic by admin",
       responses = {
           @ApiResponse(
-              responseCode = "204",
-              description = "User deleted successfully",
+              responseCode = "200",
+              description = "Topic deleted successfully",
               content = @Content(
                   schema = @Schema(implementation = GeneralResponse.class)
               )
@@ -180,8 +170,10 @@ public interface IKeycloakUserController {
           )
       }
   )
-  @DeleteMapping("/{userId}/delete")
-  ResponseEntity<GeneralResponse<Void>> deleteUserFromKeycloak(
-      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId, HttpServletRequest request);
+  @DeleteMapping("/delete/{topicId}")
+  ResponseEntity<GeneralResponse<Void>> deleteTopic(
+      @NotBlank(message = "blank.field.topic.id")
+      @PathVariable("topicId") String topicId,
+      HttpServletRequest request);
 
 }

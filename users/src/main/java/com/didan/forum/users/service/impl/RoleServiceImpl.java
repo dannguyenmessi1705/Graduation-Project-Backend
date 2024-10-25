@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +58,8 @@ public class RoleServiceImpl implements IRoleService {
   }
 
   @Override
+  @Transactional
+  @Modifying
   public void removeRoleFromUser(String userId, String roleName) {
     List<UserRoleEntity> userRoleEntities =
         userRoleRepository.findUserRoleEntityByUser_Id(userId);
@@ -70,6 +74,8 @@ public class RoleServiceImpl implements IRoleService {
   }
 
   @Override
+  @Transactional
+  @Modifying
   public void deleteRole(String roleName) {
     RoleEntity roleEntity = roleRepository.findRoleEntityByName(roleName)
         .orElseThrow(() -> new IllegalArgumentException("Role not found"));

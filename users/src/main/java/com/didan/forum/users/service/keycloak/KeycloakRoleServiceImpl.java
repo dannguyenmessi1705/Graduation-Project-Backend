@@ -33,7 +33,6 @@ public class KeycloakRoleServiceImpl implements IKeycloakRoleService {
 
   private final Keycloak keycloak;
   private final IRoleService roleService;
-  private final SyncRoleWithKeycloak syncRoleWithKeycloak;
 
   @Override
   public List<RoleKeycloakEntity> getAllRolesOfUserFromKeycloak(String userId) {
@@ -92,7 +91,6 @@ public class KeycloakRoleServiceImpl implements IKeycloakRoleService {
       RoleRepresentation roleRep = MapperObjectKeycloakUtils.mapRoleRep(roleEntity);
       keycloak.realm(realm).roles().create(roleRep);
       roleService.createRole(MapperUtils.map(roleEntity, RoleEntity.class));
-      syncRoleWithKeycloak.evictCache();
     }
   }
 
@@ -101,7 +99,6 @@ public class KeycloakRoleServiceImpl implements IKeycloakRoleService {
     RoleResource roleResource = checkRoleExistence(roleName);
     roleResource.remove();
     roleService.deleteRole(roleName);
-    syncRoleWithKeycloak.evictCache();
   }
 
   private RoleResource checkRoleExistence(String roleName) {

@@ -1,5 +1,6 @@
 package com.didan.forum.posts.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,7 +39,8 @@ public class TopicEntity extends SuperClass {
   @Column(name = "name", nullable = false)
   private String name;
 
-  @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JsonIgnore
+  @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<PostEntity> posts;
 
 }

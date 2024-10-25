@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,7 +49,7 @@ public interface IVerifyController {
       }
   )
   @GetMapping("/activate")
-  ResponseEntity<GeneralResponse<Void>> activateAccount(@NotBlank(message = "blank.field.token") @RequestParam("token") String token);
+  ResponseEntity<GeneralResponse<Void>> activateAccount(@NotBlank(message = "blank.field.token") @RequestParam("token") String token, HttpServletRequest request);
 
   @Operation(
       summary = "Reset user account password",
@@ -79,5 +80,5 @@ public interface IVerifyController {
   )
   @GetMapping("/reset")
   ResponseEntity<GeneralResponse<ChangePasswordAdminDto>> resetPassword(
-      @NotBlank(message = "blank.field.token") @RequestParam("token") String token);
+      @NotBlank(message = "blank.field.token") @RequestParam("token") String token, HttpServletRequest request);
 }

@@ -9,6 +9,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TopicRepository extends JpaRepository<TopicEntity, String> {
+  @Query(value = "SELECT t FROM topics t LEFT JOIN t.posts p WHERE t.name LIKE %?1% ORDER BY "
+      + "COUNT(p) DESC, COALESCE(MAX(p.updatedAt), MAX(p.createdAt)) DESC, t.name ASC")
+  List<TopicEntity> findTopicByNameContain(String name);
+
   Optional<TopicEntity> findTopicEntityByName(String name);
 
   @Query(value = "SELECT t FROM topics t LEFT JOIN t.posts p GROUP BY t.id ORDER BY COUNT(p) "

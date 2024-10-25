@@ -1,5 +1,7 @@
 package com.didan.forum.gatewayserver.security;
 
+import java.util.Set;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -32,7 +34,8 @@ public class GatewaySecurityConfig {
                 .permitAll()
                 .pathMatchers("/forum/users/update/**", "/forum/users/reset/**")
                 .hasAnyRole("user", "admin")
-                .pathMatchers("/forum/users/keycloak/**")
+                .pathMatchers("/forum/users/keycloak/**", "/forum/posts/topic/update/**",
+                    "/forum/posts/topic/delete/**", "/forum/posts/topic/create/**")
                 .hasRole("admin")
                 .anyExchange()
                 .permitAll())

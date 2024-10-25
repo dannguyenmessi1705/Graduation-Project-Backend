@@ -57,6 +57,9 @@ springdoc:
       - url: /forum/users/api-docs
         name: Users Service
         display-name: Users Service
+      - url: /forum/posts/api-docs
+        name: Posts Service
+        display-name: Posts Service
     oauth:
       client-id: forum-authentication
       client-secret: l2WiWQULnEFt9KrgySvFK03QtVf9K4DO

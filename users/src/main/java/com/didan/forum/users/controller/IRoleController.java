@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -45,5 +46,5 @@ public interface IRoleController {
   )
   @GetMapping("/get-roles/{userId}")
   ResponseEntity<GeneralResponse<List<RoleEntity>>> getRoles(
-      @NotBlank(message = "invalid.field.userId") @PathVariable("userId") String userId);
+      @NotBlank(message = "invalid.field.userId") @PathVariable("userId") String userId, HttpServletRequest request);
 }

@@ -3,6 +3,7 @@ package com.didan.forum.users.exception;
 import com.didan.forum.users.config.locale.Translator;
 import com.didan.forum.users.dto.Status;
 import com.didan.forum.users.dto.response.GeneralResponse;
+import com.didan.forum.users.utils.SubstringURIUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -20,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,6 +37,27 @@ public class GlobalException extends ResponseEntityExceptionHandler implements
     ResponseErrorHandler {
 
   @Override
+  protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
+      HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatusCode status,
+      WebRequest request) {
+    Status statusDto = new Status(SubstringURIUtils.cutURI(request.getDescription(false)),
+        HttpStatus.METHOD_NOT_ALLOWED.value(),
+        ex.getMessage(),
+        LocalDateTime.now());
+    return new ResponseEntity<>(new GeneralResponse<>(statusDto, null), HttpStatus.METHOD_NOT_ALLOWED);
+  }
+
+  @Override
+  protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(
+      HttpMediaTypeNotSupportedException ex, HttpHeaders headers, HttpStatusCode status,
+      WebRequest request) {
+    Status statusDto = new Status(SubstringURIUtils.cutURI(request.getDescription(false)), HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),
+        ex.getMessage(),
+        LocalDateTime.now());
+    return new ResponseEntity<>(new GeneralResponse<>(statusDto, null), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+  }
+
+  @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
       HttpHeaders headers, HttpStatusCode status, WebRequest request) {
     Map<String, String> validationErrors = new HashMap<>();
@@ -44,7 +68,7 @@ public class GlobalException extends ResponseEntityExceptionHandler implements
       String errorMessage = Translator.toLocale(error.getDefaultMessage());
       validationErrors.put(fieldName, errorMessage);
     });
-    Status statusDto = new Status(request.getDescription(false), HttpStatus.BAD_REQUEST.value(),
+    Status statusDto = new Status(SubstringURIUtils.cutURI(request.getDescription(false)), HttpStatus.BAD_REQUEST.value(),
         "Input validation error",
         LocalDateTime.now());
     return new ResponseEntity<>(
@@ -57,7 +81,7 @@ public class GlobalException extends ResponseEntityExceptionHandler implements
   @ExceptionHandler(Exception.class)
   public final ResponseEntity<GeneralResponse<Void>> handleAllExceptions(Exception ex,
       WebRequest request) {
-    Status statusDto = new Status(request.getDescription(false),
+    Status statusDto = new Status(SubstringURIUtils.cutURI(request.getDescription(false)),
         HttpStatus.INTERNAL_SERVER_ERROR.value(),
         ex.getMessage(),
         LocalDateTime.now());
@@ -71,7 +95,7 @@ public class GlobalException extends ResponseEntityExceptionHandler implements
   @Override
   protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex,
       HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-    Status statusDto = new Status(request.getDescription(false),
+    Status statusDto = new Status(SubstringURIUtils.cutURI(request.getDescription(false)),
         HttpStatus.NOT_FOUND.value(),
         ex.getMessage(),
         LocalDateTime.now());
@@ -85,7 +109,7 @@ public class GlobalException extends ResponseEntityExceptionHandler implements
   @Override
   protected ResponseEntity<Object> handleNoResourceFoundException(NoResourceFoundException ex,
       HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-    Status statusDto = new Status(request.getDescription(false),
+    Status statusDto = new Status(SubstringURIUtils.cutURI(request.getDescription(false)),
         HttpStatus.NOT_FOUND.value(),
         ex.getMessage(),
         LocalDateTime.now());
@@ -99,7 +123,7 @@ public class GlobalException extends ResponseEntityExceptionHandler implements
   @ExceptionHandler(ResourceAlreadyExistException.class)
   public final ResponseEntity<GeneralResponse<Void>> handleUserAlreadyExistException(
       ResourceAlreadyExistException ex, WebRequest request) {
-    Status statusDto = new Status(request.getDescription(false), HttpStatus.CONFLICT.value(),
+    Status statusDto = new Status(SubstringURIUtils.cutURI(request.getDescription(false)), HttpStatus.CONFLICT.value(),
         ex.getMessage(),
         LocalDateTime.now());
 
@@ -113,7 +137,7 @@ public class GlobalException extends ResponseEntityExceptionHandler implements
   @ExceptionHandler(ResourceNotFoundException.class)
   public final ResponseEntity<GeneralResponse<Void>> handleResourceNotFoundException(
       ResourceNotFoundException ex, WebRequest request) {
-    Status statusDto = new Status(request.getDescription(false), HttpStatus.NOT_FOUND.value(),
+    Status statusDto = new Status(SubstringURIUtils.cutURI(request.getDescription(false)), HttpStatus.NOT_FOUND.value(),
         ex.getMessage(),
         LocalDateTime.now());
     return new ResponseEntity<>(
@@ -123,7 +147,7 @@ public class GlobalException extends ResponseEntityExceptionHandler implements
   @ExceptionHandler(ErrorActionException.class)
   public final ResponseEntity<GeneralResponse<Void>> handleActionException(
       ErrorActionException ex, WebRequest request) {
-    Status statusDto = new Status(request.getDescription(false), HttpStatus.BAD_REQUEST.value(),
+    Status statusDto = new Status(SubstringURIUtils.cutURI(request.getDescription(false)), HttpStatus.BAD_REQUEST.value(),
         ex.getMessage(),
         LocalDateTime.now());
     return new ResponseEntity<>(

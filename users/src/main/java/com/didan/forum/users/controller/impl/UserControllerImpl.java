@@ -13,6 +13,7 @@ import com.didan.forum.users.dto.response.UserResponseDto;
 import com.didan.forum.users.exception.ErrorActionException;
 import com.didan.forum.users.service.IUserService;
 import com.didan.forum.users.utils.ImageGenerator;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -38,19 +39,19 @@ public class UserControllerImpl implements IUserController {
   private String baseUrl;
 
   @Override
-  public ResponseEntity<GeneralResponse<LoginResponseDto>> loginUser(LoginRequestDto requestDto) {
+  public ResponseEntity<GeneralResponse<LoginResponseDto>> loginUser(LoginRequestDto requestDto, HttpServletRequest request) {
     log.info("===== Start logging in user =====");
     LoginResponseDto responseDto = userService.loginUser(requestDto);
-    Status status = new Status("/users/login", HttpStatus.OK.value(), "User logged in successfully",
+    Status status = new Status(request.getRequestURI(), HttpStatus.OK.value(), "User logged in successfully",
         LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, responseDto), HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<Void>> logoutUser(LogoutRequestDto requestDto) {
+  public ResponseEntity<GeneralResponse<Void>> logoutUser(LogoutRequestDto requestDto, HttpServletRequest request) {
     log.info("===== Start logging out user =====");
     userService.logoutUser(requestDto.getRefreshToken());
-    Status status = new Status("/users/logout", HttpStatus.OK.value(),
+    Status status = new Status(request.getRequestURI(), HttpStatus.OK.value(),
         "User logged out successfully",
         LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.OK);
@@ -58,37 +59,30 @@ public class UserControllerImpl implements IUserController {
 
   @Override
   public ResponseEntity<GeneralResponse<UserResponseDto>> createUser(
-      CreateUserRequestDto requestDto) {
+      CreateUserRequestDto requestDto, HttpServletRequest request) {
     log.info("===== Start creating user =====");
     UserResponseDto responseDto = userService.createUser(false, requestDto);
-    Status status = new Status("/users/register", HttpStatus.CREATED.value(),
+    Status status = new Status(request.getRequestURI(), HttpStatus.CREATED.value(),
         "User created successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, responseDto), HttpStatus.CREATED);
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<UserResponseDto>> updateUser(String userIdHeader,
-      String userId,
-      UpdateUserRequestDto requestDto) {
+  public ResponseEntity<GeneralResponse<UserResponseDto>> updateUser(UpdateUserRequestDto requestDto, HttpServletRequest request) {
     log.info("===== Start updating user =====");
-    if (!userIdHeader.equals(userId)) {
-      Status status = new Status("/users/update/" + userId, HttpStatus.FORBIDDEN.value(),
-          "You are not authorized to update this user",
-          LocalDateTime.now());
-      return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.FORBIDDEN);
-    }
-    UserResponseDto responseDto = userService.updateUser(userId, requestDto);
-    Status status = new Status("/users/update/" + userId, HttpStatus.OK.value(), "User updated "
+    UserResponseDto responseDto = userService.updateUser(request.getHeader("X-User-Id"),
+        requestDto);
+    Status status = new Status(request.getRequestURI(), HttpStatus.OK.value(), "User updated "
         + "successfully",
         LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, responseDto), HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<UserResponseDto>> getDetailUser(String userId) {
+  public ResponseEntity<GeneralResponse<UserResponseDto>> getDetailUser(String userId, HttpServletRequest request) {
     log.info("===== Start getting user details =====");
     UserResponseDto responseDto = userService.getDetailUser(userId);
-    Status status = new Status("/users/detail/" + userId, HttpStatus.OK.value(), "User details "
+    Status status = new Status(request.getRequestURI(), HttpStatus.OK.value(), "User details "
         + "retrieved successfully",
         LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, responseDto), HttpStatus.OK);
@@ -96,48 +90,41 @@ public class UserControllerImpl implements IUserController {
 
   @Override
   public ResponseEntity<GeneralResponse<List<UserResponseDto>>> findUsers(String keyword,
-      int page) {
+      int page, HttpServletRequest request) {
     log.info("===== Start finding users =====");
     if (!StringUtils.hasText(String.valueOf(page)) || page < 0) {
       page = 0;
     }
     List<UserResponseDto> responseDto = userService.findUsers(keyword, page, defaultSize);
-    Status status = new Status("/users/find", HttpStatus.OK.value(), "Users found successfully",
+    Status status = new Status(request.getRequestURI(), HttpStatus.OK.value(), "Users found successfully",
         LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, responseDto), HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<Void>> updatePasswordByUser(String userIdHeader,
-      String userId, ChangePasswordUserDto requestDto) {
+  public ResponseEntity<GeneralResponse<Void>> updatePasswordByUser(ChangePasswordUserDto requestDto, HttpServletRequest request) {
     log.info("===== Start updating password by user =====");
-    if (!userIdHeader.equals(userId)) {
-      Status status = new Status("/users/update/password/" + userId, HttpStatus.FORBIDDEN.value(),
-          "You are not authorized to update password this user",
-          LocalDateTime.now());
-      return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.FORBIDDEN);
-    }
-    userService.updatePassword(userId, requestDto);
-    Status status = new Status("/users/update/password/" + userId, HttpStatus.OK.value(),
+    userService.updatePassword(request.getHeader("X-User-Id"), requestDto);
+    Status status = new Status(request.getRequestURI(), HttpStatus.OK.value(),
         "Password updated successfully",
         LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<Void>> requestResetPassword(String userId) {
+  public ResponseEntity<GeneralResponse<Void>> requestResetPassword(String userId, HttpServletRequest request) {
     log.info("===== Start requesting reset password =====");
     userService.requestResetPassword(userId);
-    Status status = new Status("/users/reset/password/" + userId, HttpStatus.OK.value(),
+    Status status = new Status(request.getRequestURI(), HttpStatus.OK.value(),
         "Reset password requested successfully",
         LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<byte[]> getQRCode(String userId) {
+  public ResponseEntity<byte[]> getQRCode(HttpServletRequest request) {
     byte[] bytes = new byte[0];
-    String pathUserDetails = baseUrl + "/users/detail/" + userId;
+    String pathUserDetails = baseUrl + "/users/detail/" + request.getHeader("X-User-Id");
     try {
       bytes = ImageGenerator.generateQRCodeImage(pathUserDetails, 350, 350);
     } catch (Exception e) {
@@ -145,5 +132,10 @@ public class UserControllerImpl implements IUserController {
     }
     return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=" + "qrcode")
         .contentType(MediaType.IMAGE_PNG).body(bytes);
+  }
+
+  @Override
+  public boolean checkUserExists(String userId, HttpServletRequest request) {
+    return userService.checkUserExist(userId);
   }
 }

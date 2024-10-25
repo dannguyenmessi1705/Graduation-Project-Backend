@@ -33,6 +33,7 @@ import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -168,6 +169,7 @@ public class UserServiceImpl implements IUserService {
 
   @Override
   @Transactional
+  @Modifying
   public UserResponseDto updateUser(String userId, UpdateUserRequestDto requestDto) {
     userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -191,6 +193,7 @@ public class UserServiceImpl implements IUserService {
 
   @Override
   @Transactional
+  @Modifying
   public UserResponseDto updateUserByAdmin(String userId, UpdateUserAdminRequestDto requestDto) {
     userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -263,6 +266,7 @@ public class UserServiceImpl implements IUserService {
 
   @Override
   @Transactional
+  @Modifying
   public void updatePassword(String userId, ChangePasswordUserDto requestDto) {
     UserEntity user = userRepository.findById(userId).orElseThrow(
         () -> new ResourceNotFoundException("User not found"));
@@ -279,6 +283,7 @@ public class UserServiceImpl implements IUserService {
 
   @Override
   @Transactional
+  @Modifying
   public void updatePasswordAdmin(String userId, ChangePasswordAdminDto requestDto) {
     UserEntity user = userRepository.findById(userId).orElseThrow(
         () -> new ResourceNotFoundException("User not found"));
@@ -292,6 +297,7 @@ public class UserServiceImpl implements IUserService {
 
   @Override
   @Transactional
+  @Modifying
   public void deleteUser(String userId) {
     UserEntity user = userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -316,8 +322,15 @@ public class UserServiceImpl implements IUserService {
     log.info("Is the Communication request successfully triggered ? : {}", isSendKafka);
   }
 
+  @Override
+  public boolean checkUserExist(String userId) {
+    return userRepository.existsById(userId);
+  }
+
   private String getUrlMinio(String path) {
     String url = minioService.getPresignedObjectUrl(bucketName, path);
     return minioService.getUTF8ByURLDecoder(url);
   }
+
+
 }

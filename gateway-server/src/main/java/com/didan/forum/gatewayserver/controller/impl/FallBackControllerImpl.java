@@ -21,7 +21,7 @@ public class FallBackControllerImpl implements FallBackController {
   public Mono<GeneralResponse<Void>> contactSupport() {
     Locale locale = LocaleContextHolder.getLocale();
     Status statusDto = new Status("/forum/contact-support", 503,
-        messageSource.getMessage("service.unavailable", null, locale), LocalDateTime.now());
+        messageSource.getMessage("service.unavailable", null, locale), LocalDateTime.now().toString());
     return Mono.just(new GeneralResponse<>(
         statusDto,
         null));

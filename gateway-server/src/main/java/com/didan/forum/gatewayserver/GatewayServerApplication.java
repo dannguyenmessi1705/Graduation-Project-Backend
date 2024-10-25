@@ -60,14 +60,22 @@ public class GatewayServerApplication {
   @Bean
   RouteLocator routeLocator(RouteLocatorBuilder builder) {
     return builder.routes()
-        .route(p -> p.path("/forum/**")
+        .route(p -> p.path("/forum/users/**")
             .filters(f -> f
-                .rewritePath("/forum/(?<remaining>.*)", "/${remaining}")
+                .rewritePath("/forum/users(?<remaining>.*)", "/users/${remaining}")
                 .addRequestHeader("Time-Requested", LocalDateTime.now().toString())
                 .circuitBreaker(config -> config
                     .setName("usersCircuitBreaker")
                     .setFallbackUri("forward:/contact-support")))
             .uri("lb://USERS"))
+        .route(p -> p.path("/forum/posts/**")
+            .filters(f -> f
+                .rewritePath("/forum/posts/(?<remaining>.*)", "/posts/${remaining}")
+                .addRequestHeader("Time-Requested", LocalDateTime.now().toString())
+                .circuitBreaker(config -> config
+                    .setName("postsCircuitBreaker")
+                    .setFallbackUri("forward:/contact-support")))
+            .uri("lb://POSTS"))
         .build();
   }
 

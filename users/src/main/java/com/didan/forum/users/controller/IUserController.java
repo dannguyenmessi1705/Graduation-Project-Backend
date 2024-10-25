@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
@@ -59,7 +60,7 @@ public interface IUserController {
   )
   @PostMapping(path = "/login")
   ResponseEntity<GeneralResponse<LoginResponseDto>> loginUser(
-      @Valid @RequestBody LoginRequestDto requestDto);
+      @Valid @RequestBody LoginRequestDto requestDto, HttpServletRequest request);
 
   @Operation(
       summary = "Logout from user account",
@@ -83,7 +84,7 @@ public interface IUserController {
   )
   @PostMapping(path = "/logout")
   ResponseEntity<GeneralResponse<Void>> logoutUser(
-      @Valid @RequestBody LogoutRequestDto requestDto);
+      @Valid @RequestBody LogoutRequestDto requestDto, HttpServletRequest request);
 
   @Operation(
       summary = "Create a new user account",
@@ -107,7 +108,7 @@ public interface IUserController {
   )
   @PostMapping(path = "/register", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   ResponseEntity<GeneralResponse<UserResponseDto>> createUser(
-      @Valid @ModelAttribute CreateUserRequestDto requestDto);
+      @Valid @ModelAttribute CreateUserRequestDto requestDto, HttpServletRequest request);
 
   @Operation(
       summary = "Update user account",
@@ -129,12 +130,10 @@ public interface IUserController {
           )
       }
   )
-  @PutMapping(path = "/update/{userId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes =
+  @PutMapping(path = "/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes =
       MediaType.MULTIPART_FORM_DATA_VALUE)
   ResponseEntity<GeneralResponse<UserResponseDto>> updateUser(
-      @NotBlank(message = "Not authorized") @RequestHeader("X-User-Id") String userIdHeader,
-      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId,
-      @ModelAttribute UpdateUserRequestDto requestDto);
+      @ModelAttribute UpdateUserRequestDto requestDto, HttpServletRequest request);
 
   @Operation(
       summary = "Get user account details",
@@ -158,7 +157,8 @@ public interface IUserController {
   )
   @GetMapping(path = "/detail/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<GeneralResponse<UserResponseDto>> getDetailUser(
-      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId);
+      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId,
+      HttpServletRequest request);
 
   @Operation(
       summary = "Find users",
@@ -183,7 +183,7 @@ public interface IUserController {
   @GetMapping(path = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<GeneralResponse<List<UserResponseDto>>> findUsers(
       @NotBlank(message = "blank.field.keyword") @RequestParam("keyword") String keyword,
-      @RequestParam("page") int page);
+      @RequestParam("page") int page, HttpServletRequest request);
 
   @Operation(
       summary = "Update user password",
@@ -205,11 +205,8 @@ public interface IUserController {
           )
       }
   )
-  @PutMapping(path = "/update/password/{userId}")
-  ResponseEntity<GeneralResponse<Void>> updatePasswordByUser(
-      @NotBlank(message = "Not Auth") @RequestHeader("X-User-Id") String userIdHeader,
-      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId,
-      @Valid @RequestBody ChangePasswordUserDto requestDto);
+  @PutMapping(path = "/update/password")
+  ResponseEntity<GeneralResponse<Void>> updatePasswordByUser(@Valid @RequestBody ChangePasswordUserDto requestDto, HttpServletRequest request);
 
   @Operation(
       summary = "Request password reset",
@@ -233,7 +230,7 @@ public interface IUserController {
   )
   @PostMapping(path = "/reset/password/{userId}")
   ResponseEntity<GeneralResponse<Void>> requestResetPassword(
-      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId);
+      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId, HttpServletRequest request);
 
   @Operation(
       summary = "Get QR code for user account",
@@ -255,7 +252,13 @@ public interface IUserController {
           )
       }
   )
-  @GetMapping(path = "/qrcode/{userId}", produces = MediaType.IMAGE_PNG_VALUE)
-  ResponseEntity<byte[]> getQRCode(
-      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId);
+  @GetMapping(path = "/qrcode", produces = MediaType.IMAGE_PNG_VALUE)
+  ResponseEntity<byte[]> getQRCode(HttpServletRequest request);
+
+  @Operation(
+      summary = "Check if user exists",
+      description = "Check if user exists with the provided user ID"
+  )
+  @GetMapping("/check/{userId}")
+  boolean checkUserExists(@NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId, HttpServletRequest request);
 }
