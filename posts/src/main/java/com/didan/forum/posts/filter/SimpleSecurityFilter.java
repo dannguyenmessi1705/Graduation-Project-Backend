@@ -22,7 +22,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
-@Order(1)
+@Order(2)
 public class SimpleSecurityFilter extends OncePerRequestFilter {
   @Value("${private.route}")
   private Set<String> privateRoutes;
@@ -36,8 +36,13 @@ public class SimpleSecurityFilter extends OncePerRequestFilter {
     String pathUrl = request.getRequestURI();
     if (privateRoutes.stream().anyMatch(pathUrl::contains)) {
       String userId = request.getHeader("X-User-Id");
+      if (!StringUtils.hasText(userId)) {
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        return;
+      }
       log.info("Verify userId: {}", userId);
-      if (!StringUtils.hasText(userId) || ! usersFeignClient.checkUserExists(userId, request)) {
+      ResponseEntity<GeneralResponse<Boolean>> responseEntity = usersFeignClient.checkUserExists(userId);
+      if (!responseEntity.getStatusCode().is2xxSuccessful() || !responseEntity.getBody().getData()) {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         return;
       }

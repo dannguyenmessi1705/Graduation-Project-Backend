@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -60,7 +58,7 @@ public interface IUserController {
   )
   @PostMapping(path = "/login")
   ResponseEntity<GeneralResponse<LoginResponseDto>> loginUser(
-      @Valid @RequestBody LoginRequestDto requestDto, HttpServletRequest request);
+      @Valid @RequestBody LoginRequestDto requestDto);
 
   @Operation(
       summary = "Logout from user account",
@@ -84,7 +82,7 @@ public interface IUserController {
   )
   @PostMapping(path = "/logout")
   ResponseEntity<GeneralResponse<Void>> logoutUser(
-      @Valid @RequestBody LogoutRequestDto requestDto, HttpServletRequest request);
+      @Valid @RequestBody LogoutRequestDto requestDto);
 
   @Operation(
       summary = "Create a new user account",
@@ -108,7 +106,7 @@ public interface IUserController {
   )
   @PostMapping(path = "/register", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   ResponseEntity<GeneralResponse<UserResponseDto>> createUser(
-      @Valid @ModelAttribute CreateUserRequestDto requestDto, HttpServletRequest request);
+      @Valid @ModelAttribute CreateUserRequestDto requestDto);
 
   @Operation(
       summary = "Update user account",
@@ -133,7 +131,7 @@ public interface IUserController {
   @PutMapping(path = "/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes =
       MediaType.MULTIPART_FORM_DATA_VALUE)
   ResponseEntity<GeneralResponse<UserResponseDto>> updateUser(
-      @ModelAttribute UpdateUserRequestDto requestDto, HttpServletRequest request);
+      @ModelAttribute UpdateUserRequestDto requestDto);
 
   @Operation(
       summary = "Get user account details",
@@ -157,8 +155,7 @@ public interface IUserController {
   )
   @GetMapping(path = "/detail/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<GeneralResponse<UserResponseDto>> getDetailUser(
-      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId,
-      HttpServletRequest request);
+      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId);
 
   @Operation(
       summary = "Find users",
@@ -183,7 +180,7 @@ public interface IUserController {
   @GetMapping(path = "/find", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<GeneralResponse<List<UserResponseDto>>> findUsers(
       @NotBlank(message = "blank.field.keyword") @RequestParam("keyword") String keyword,
-      @RequestParam("page") int page, HttpServletRequest request);
+      @RequestParam("page") int page);
 
   @Operation(
       summary = "Update user password",
@@ -206,7 +203,7 @@ public interface IUserController {
       }
   )
   @PutMapping(path = "/update/password")
-  ResponseEntity<GeneralResponse<Void>> updatePasswordByUser(@Valid @RequestBody ChangePasswordUserDto requestDto, HttpServletRequest request);
+  ResponseEntity<GeneralResponse<Void>> updatePasswordByUser(@Valid @RequestBody ChangePasswordUserDto requestDto);
 
   @Operation(
       summary = "Request password reset",
@@ -230,7 +227,7 @@ public interface IUserController {
   )
   @PostMapping(path = "/reset/password/{userId}")
   ResponseEntity<GeneralResponse<Void>> requestResetPassword(
-      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId, HttpServletRequest request);
+      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId);
 
   @Operation(
       summary = "Get QR code for user account",
@@ -253,12 +250,13 @@ public interface IUserController {
       }
   )
   @GetMapping(path = "/qrcode", produces = MediaType.IMAGE_PNG_VALUE)
-  ResponseEntity<byte[]> getQRCode(HttpServletRequest request);
+  ResponseEntity<byte[]> getQRCode();
 
   @Operation(
       summary = "Check if user exists",
       description = "Check if user exists with the provided user ID"
   )
   @GetMapping("/check/{userId}")
-  boolean checkUserExists(@NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId, HttpServletRequest request);
+  ResponseEntity<GeneralResponse<Boolean>> checkUserExists(@NotBlank(message = "blank.field.userid") @PathVariable(
+      "userId") String userId);
 }

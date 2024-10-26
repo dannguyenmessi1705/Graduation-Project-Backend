@@ -7,9 +7,9 @@ import com.didan.forum.users.dto.request.CreateUserRequestDto;
 import com.didan.forum.users.dto.request.UpdateUserAdminRequestDto;
 import com.didan.forum.users.dto.response.GeneralResponse;
 import com.didan.forum.users.dto.response.UserResponseDto;
+import com.didan.forum.users.filter.RequestContext;
 import com.didan.forum.users.service.IKeycloakUserService;
 import com.didan.forum.users.service.IUserService;
-import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,54 +28,59 @@ public class KeycloakUserControllerImpl implements IKeycloakUserController {
 
   @Override
   public ResponseEntity<GeneralResponse<List<UserResponseDto>>> getAllUsersFromKeycloak(
-      HttpServletRequest request) {
+  ) {
     List<UserResponseDto> users = keycloakUserService.getAllUsersFromKeycloak();
-    Status status = new Status(request.getRequestURI(), HttpStatus.OK.value(), "Users "
-        + "retrieved successfully", LocalDateTime.now());
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(),
+        "Users "
+            + "retrieved successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, users), HttpStatus.OK);
   }
 
   @Override
   public ResponseEntity<GeneralResponse<UserResponseDto>> getUserDetailsFromKeycloak(
-      String userId, HttpServletRequest request) {
+      String userId) {
     UserResponseDto userKeycloak = keycloakUserService.getUserDetailsFromKeycloak(userId);
-    Status status = new Status(request.getRequestURI(), HttpStatus.OK.value(), "User "
-        + "details retrieved successfully", LocalDateTime.now());
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(),
+        "User "
+            + "details retrieved successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, userKeycloak), HttpStatus.OK);
   }
 
   @Override
   public ResponseEntity<GeneralResponse<UserResponseDto>> createUserInKeycloak(
-      CreateUserRequestDto user, HttpServletRequest request) {
+      CreateUserRequestDto user) {
     UserResponseDto createdUser = userService.createUser(true, user);
-    Status status = new Status(request.getRequestURI(), HttpStatus.CREATED.value(), "User "
+    Status status = new Status(RequestContext.getRequest().getRequestURI(),
+        HttpStatus.CREATED.value(), "User "
         + "created successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, createdUser), HttpStatus.CREATED);
   }
 
   @Override
   public ResponseEntity<GeneralResponse<UserResponseDto>> updateUserInKeycloak(
-      UpdateUserAdminRequestDto requestDto, String userId, HttpServletRequest request) {
+      UpdateUserAdminRequestDto requestDto, String userId) {
     UserResponseDto updatedUser = userService.updateUserByAdmin(userId, requestDto);
-    Status status = new Status(request.getRequestURI(), HttpStatus.OK.value(), "User "
-        + "updated successfully", LocalDateTime.now());
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(),
+        "User "
+            + "updated successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, updatedUser), HttpStatus.OK);
   }
 
   @Override
   public ResponseEntity<GeneralResponse<UserResponseDto>> updateUserPasswordInKeycloak(
-      String userId, ChangePasswordAdminDto requestDto, HttpServletRequest request) {
+      String userId, ChangePasswordAdminDto requestDto) {
     userService.updatePasswordAdmin(userId, requestDto);
-    Status status = new Status(request.getRequestURI(),
+    Status status = new Status(RequestContext.getRequest().getRequestURI(),
         HttpStatus.OK.value(),
         "User password updated successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<Void>> deleteUserFromKeycloak(String userId, HttpServletRequest request) {
+  public ResponseEntity<GeneralResponse<Void>> deleteUserFromKeycloak(String userId) {
     userService.deleteUser(userId);
-    Status status = new Status(request.getRequestURI(), HttpStatus.NO_CONTENT.value(),
+    Status status = new Status(RequestContext.getRequest().getRequestURI(),
+        HttpStatus.NO_CONTENT.value(),
         "User "
             + "deleted successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.NO_CONTENT);

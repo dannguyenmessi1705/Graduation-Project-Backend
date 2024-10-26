@@ -17,7 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
-@Order(1)
+@Order(2)
 public class SimpleSecurityFilter extends OncePerRequestFilter {
   private final UserRepository userRepository;
 

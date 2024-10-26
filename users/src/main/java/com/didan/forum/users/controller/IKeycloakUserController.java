@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
@@ -56,7 +55,7 @@ public interface IKeycloakUserController {
   )
   @GetMapping("/all")
   ResponseEntity<GeneralResponse<List<UserResponseDto>>> getAllUsersFromKeycloak(
-      HttpServletRequest request);
+  );
 
   @Operation(
       summary = "Get user details",
@@ -80,8 +79,8 @@ public interface IKeycloakUserController {
   )
   @GetMapping("/{userId}")
   ResponseEntity<GeneralResponse<UserResponseDto>> getUserDetailsFromKeycloak(
-      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId,
-      HttpServletRequest request);
+      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId
+      );
 
   @Operation(
       summary = "Create user",
@@ -106,8 +105,7 @@ public interface IKeycloakUserController {
   @PostMapping(path = "/create", produces = MediaType.APPLICATION_JSON_VALUE, consumes =
       MediaType.MULTIPART_FORM_DATA_VALUE)
   ResponseEntity<GeneralResponse<UserResponseDto>> createUserInKeycloak(
-      @Valid @ModelAttribute CreateUserRequestDto user,
-      HttpServletRequest request);
+      @Valid @ModelAttribute CreateUserRequestDto user);
 
   @Operation(
       summary = "Update user",
@@ -133,7 +131,7 @@ public interface IKeycloakUserController {
       MediaType.MULTIPART_FORM_DATA_VALUE)
   ResponseEntity<GeneralResponse<UserResponseDto>> updateUserInKeycloak(
       @Valid @ModelAttribute UpdateUserAdminRequestDto requestDto,
-      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId, HttpServletRequest request);
+      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId);
 
   @Operation(
       summary = "Update user password",
@@ -158,7 +156,7 @@ public interface IKeycloakUserController {
   @PutMapping(path = "/{userId}/password", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<GeneralResponse<UserResponseDto>> updateUserPasswordInKeycloak(
       @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId,
-      @Valid @RequestBody ChangePasswordAdminDto requestDto, HttpServletRequest request);
+      @Valid @RequestBody ChangePasswordAdminDto requestDto);
 
   @Operation(
       summary = "Delete user",
@@ -182,6 +180,6 @@ public interface IKeycloakUserController {
   )
   @DeleteMapping("/{userId}/delete")
   ResponseEntity<GeneralResponse<Void>> deleteUserFromKeycloak(
-      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId, HttpServletRequest request);
+      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId);
 
 }

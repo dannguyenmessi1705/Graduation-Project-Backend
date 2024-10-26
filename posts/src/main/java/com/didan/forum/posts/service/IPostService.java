@@ -1,5 +1,8 @@
 package com.didan.forum.posts.service;
 
-public interface IPostService {
+import com.didan.forum.posts.entity.PostEntity;
 
+public interface IPostService {
+  void validatePost(String postId);
+  PostEntity getPostById(String postId);
 }

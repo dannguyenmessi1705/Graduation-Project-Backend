@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
@@ -60,8 +59,7 @@ public interface IKeycloakRoleController {
   @GetMapping("/get-roles-user/{userId}")
   ResponseEntity<GeneralResponse<List<RoleKeycloakEntity>>> getAllRolesOfUserFromKeycloak(
       @NotBlank(message = "blank.field.userid")
-      @PathVariable("userId") String userId,
-      HttpServletRequest request);
+      @PathVariable("userId") String userId);
 
   @Operation(
       summary = "Add a role to a user",
@@ -92,8 +90,7 @@ public interface IKeycloakRoleController {
   )
   @PostMapping("/add-role-user")
   ResponseEntity<GeneralResponse<Void>> addRoleToUserInKeycloak(
-      @Valid @RequestBody AddRoleToUserDto requestDto,
-      HttpServletRequest request);
+      @Valid @RequestBody AddRoleToUserDto requestDto);
 
   @Operation(
       summary = "Remove a role from a user",
@@ -124,8 +121,7 @@ public interface IKeycloakRoleController {
   )
   @DeleteMapping("/remove-role-user")
   ResponseEntity<GeneralResponse<Void>> removeRoleFromUserInKeycloak(
-      @Valid @RequestBody AddRoleToUserDto requestDto,
-      HttpServletRequest request);
+      @Valid @RequestBody AddRoleToUserDto requestDto);
 
   @Operation(
       summary = "Get all roles from Keycloak",
@@ -148,7 +144,7 @@ public interface IKeycloakRoleController {
       }
   )
   @GetMapping("/all")
-  ResponseEntity<GeneralResponse<List<RoleKeycloakEntity>>> getAllRolesFromKeycloak(HttpServletRequest request);
+  ResponseEntity<GeneralResponse<List<RoleKeycloakEntity>>> getAllRolesFromKeycloak();
 
   @Operation(
       summary = "Get a role from Keycloak",
@@ -180,8 +176,7 @@ public interface IKeycloakRoleController {
   @GetMapping("/get-role/{roleName}")
   ResponseEntity<GeneralResponse<RoleKeycloakEntity>> getRoleFromKeycloak(
       @NotBlank(message = "blank.field.roleName")
-      @PathVariable("roleName") String roleName,
-      HttpServletRequest request);
+      @PathVariable("roleName") String roleName);
 
   @Operation(
       summary = "Create a role in Keycloak",
@@ -205,8 +200,7 @@ public interface IKeycloakRoleController {
   )
   @PostMapping("/create-role")
   ResponseEntity<GeneralResponse<Void>> createRoleInKeycloak(
-      @Valid @RequestBody CreateNewRoleDto role,
-      HttpServletRequest request);
+      @Valid @RequestBody CreateNewRoleDto role);
 
   @Operation(
       summary = "Delete a role from Keycloak",
@@ -238,6 +232,5 @@ public interface IKeycloakRoleController {
   @DeleteMapping("/delete-role/{roleName}")
   ResponseEntity<GeneralResponse<Void>> deleteRoleFromKeycloak(
       @NotBlank(message = "blank.field.roleName")
-      @PathVariable("roleName") String roleName,
-      HttpServletRequest request);
+      @PathVariable("roleName") String roleName);
 }

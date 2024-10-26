@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface UsersFeignClient {
   @GetMapping(path = "users/detail/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<GeneralResponse<UserResponseDto>> getDetailUser(
-      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId,
-      HttpServletRequest request);
+      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId);
 
-  @GetMapping("/check/{userId}")
-  boolean checkUserExists(@NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId, HttpServletRequest request);
+  @GetMapping("/users/check/{userId}")
+  ResponseEntity<GeneralResponse<Boolean>> checkUserExists(@NotBlank(message = "blank.field.userid") @PathVariable(
+      "userId") String userId);
 }

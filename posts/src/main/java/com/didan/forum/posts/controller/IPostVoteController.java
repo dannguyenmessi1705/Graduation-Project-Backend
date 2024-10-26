@@ -50,8 +50,7 @@ public interface IPostVoteController {
   @PostMapping("/add/{postId}")
   ResponseEntity<GeneralResponse<Void>> votePost(
       @NotBlank(message = "blank.field.postId") @PathVariable("postId") String postId,
-      @NotBlank(message = "blank.field.vote.type") @Pattern(regexp = "UP|DOWN|up|down", message = "invalid.vote.type") @RequestParam("type") String type,
-      HttpServletRequest request);
+      @NotBlank(message = "blank.field.vote.type") @Pattern(regexp = "UP|DOWN|up|down", message = "invalid.vote.type") @RequestParam("type") String type);
 
   @Operation(
       summary = "Revoke a vote",
@@ -75,8 +74,7 @@ public interface IPostVoteController {
   )
   @DeleteMapping("/revoke/{postId}")
   ResponseEntity<GeneralResponse<Void>> revokeVote(
-      @NotBlank(message = "blank.field.postId") @PathVariable("postId") String postId,
-      HttpServletRequest request);
+      @NotBlank(message = "blank.field.postId") @PathVariable("postId") String postId);
 
   @Operation(
       summary = "Count votes of a post",
@@ -102,14 +100,32 @@ public interface IPostVoteController {
   ResponseEntity<GeneralResponse<Long>> countVotes(
       @NotBlank(message = "blank.field.postId") @PathVariable("postId") String postId,
       @NotBlank(message = "blank.field.vote.type") @Pattern(regexp = "UP|DOWN|up|down", message =
-          "invalid.vote.type") @RequestParam("type") String type,
-      HttpServletRequest request);
+          "invalid.vote.type") @RequestParam("type") String type);
 
+  @Operation(
+      summary = "Get votes of a post",
+      description = "Get votes of a post",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "Votes retrieved successfully",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          )
+      }
+  )
   @GetMapping("/get/{postId}")
   ResponseEntity<GeneralResponse<List<PostVoteResponseDto>>> getVotesType(
       @NotBlank(message = "blank.field.postId") @PathVariable("postId") String postId,
       @NotBlank(message = "blank.field.vote.type") @Pattern(regexp = "UP|DOWN|up|down", message =
-          "invalid.vote.type") @RequestParam("type") String type,
-      HttpServletRequest request);
+          "invalid.vote.type") @RequestParam("type") String type);
 
 }

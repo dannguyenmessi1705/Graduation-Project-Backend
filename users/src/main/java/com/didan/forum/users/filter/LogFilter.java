@@ -17,7 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Configuration
 @Slf4j
-@Order(2)
+@Order(3)
 public class LogFilter extends OncePerRequestFilter {
   @Value("${spring.application.name}")
   private String applicationName;

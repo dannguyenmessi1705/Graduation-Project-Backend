@@ -4,8 +4,8 @@ import com.didan.forum.users.controller.IRoleController;
 import com.didan.forum.users.dto.Status;
 import com.didan.forum.users.dto.response.GeneralResponse;
 import com.didan.forum.users.entity.RoleEntity;
+import com.didan.forum.users.filter.RequestContext;
 import com.didan.forum.users.service.IRoleService;
-import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +22,10 @@ public class RoleControllerImpl implements IRoleController {
   private final IRoleService roleService;
 
   @Override
-  public ResponseEntity<GeneralResponse<List<RoleEntity>>> getRoles(String userId, HttpServletRequest request) {
+  public ResponseEntity<GeneralResponse<List<RoleEntity>>> getRoles(String userId) {
     log.info("========Get roles of user========");
     List<RoleEntity> roles = roleService.queryRolesOfUser(userId);
-    Status status = new Status(request.getRequestURI(), HttpStatus.OK.value(), "Retrieved "
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Retrieved "
         + "roles of user", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, roles), HttpStatus.OK);
   }
