@@ -1,5 +1,6 @@
 package com.didan.forum.users.service.impl;
 
+import com.didan.forum.users.constant.RoleConstant;
 import com.didan.forum.users.dto.request.ChangePasswordAdminDto;
 import com.didan.forum.users.dto.request.UpdateUserAdminRequestDto;
 import com.didan.forum.users.entity.TokenRequestEntity;
@@ -7,6 +8,7 @@ import com.didan.forum.users.entity.UserEntity;
 import com.didan.forum.users.exception.ResourceNotFoundException;
 import com.didan.forum.users.repository.TokenRequestRepository;
 import com.didan.forum.users.repository.UserRepository;
+import com.didan.forum.users.service.IKeycloakRoleService;
 import com.didan.forum.users.service.IKeycloakUserService;
 import com.didan.forum.users.service.IRedisService;
 import com.didan.forum.users.service.IVerifyService;
@@ -25,6 +27,7 @@ public class ValidateServiceImpl implements IVerifyService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final IKeycloakUserService keycloakUserService;
+  private final IKeycloakRoleService keycloakRoleService;
 
   @Override
   public void activateUser(String token) {
@@ -33,6 +36,8 @@ public class ValidateServiceImpl implements IVerifyService {
     String userId = tokenRequestEntity.getUserId();
     keycloakUserService.updateUserInKeycloak(userId,
         UpdateUserAdminRequestDto.builder().isVerified(true).build());
+    keycloakRoleService.removeRoleFromUserInKeycloak(userId, RoleConstant.ROLE_INACTIVE.getRole());
+    keycloakRoleService.addRoleToUserInKeycloak(userId, RoleConstant.ROLE_USER.getRole());
     tokenRequestRepository.delete(tokenRequestEntity);
   }
 

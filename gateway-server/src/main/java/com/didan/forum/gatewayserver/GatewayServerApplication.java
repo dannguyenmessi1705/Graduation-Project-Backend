@@ -76,8 +76,8 @@ public class GatewayServerApplication {
                 .circuitBreaker(config -> config
                     .setName("usersCircuitBreaker")
                     .setFallbackUri("forward:/contact-support"))
-                .metadata(RESPONSE_TIMEOUT_ATTR, 1000)
-                .metadata(CONNECT_TIMEOUT_ATTR, 2000))
+                .metadata(RESPONSE_TIMEOUT_ATTR, 7000)
+                .metadata(CONNECT_TIMEOUT_ATTR, 10000))
             .uri("lb://USERS"))
         .route(p -> p.path("/forum/posts/**")
             .filters(f -> f
@@ -93,7 +93,7 @@ public class GatewayServerApplication {
   @Bean
   public Customizer<Resilience4JCircuitBreakerFactory> globalCustomConfiguration() {
     return factory -> factory.configureDefault(id -> new Resilience4JConfigBuilder(id)
-        .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(3)).build())
+        .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(10)).cancelRunningFuture(true).build())
         .circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
         .build());
   }

@@ -217,11 +217,11 @@ public class UserServiceImpl implements IUserService {
 
   @Override
   public LoginResponseDto loginUser(LoginRequestDto requestDto) {
-    UserEntity user = userRepository.findFirstByUsernameIgnoreCase(requestDto.getUsername())
-        .orElseThrow(() -> new ResourceAlreadyExistException("username or password doesn't match"));
-    if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
-      throw new ResourceAlreadyExistException("username or password doesn't match");
-    }
+//    UserEntity user = userRepository.findFirstByUsernameIgnoreCase(requestDto.getUsername())
+//        .orElseThrow(() -> new ResourceAlreadyExistException("username or password doesn't match"));
+//    if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+//      throw new ResourceAlreadyExistException("username or password doesn't match");
+//    }
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
