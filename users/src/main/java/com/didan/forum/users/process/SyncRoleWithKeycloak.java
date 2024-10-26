@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -47,10 +48,18 @@ public class SyncRoleWithKeycloak {
 
   // Lập lịch cho việc đồng bộ dữ liệu giữa hệ thống và Keycloak mỗi 5 phút
   @Scheduled(initialDelay = 0, fixedDelayString = "${app.schedule.fixedDelay.milliseconds}")
+  @Transactional
   public void syncRole() {
     log.info("Start to sync role with Keycloak");
     List<RoleEntity> roleEntities = loadingCache.get("roles-keycloak");
-    roleRepository.saveAll(roleEntities);
+    for (RoleEntity newRole : roleEntities) {
+      RoleEntity existingRole = roleRepository.findById(newRole.getId())
+          .orElse(null);
+      if (existingRole == null || !existingRole.getName().equals(newRole.getName())) {
+        roleRepository.save(newRole);
+        log.info("Updated role: {}", newRole.getName());
+      }
+    }
     log.info("Finish to sync role with Keycloak");
   }
 

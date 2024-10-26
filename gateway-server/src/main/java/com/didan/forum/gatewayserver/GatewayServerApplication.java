@@ -1,5 +1,10 @@
 package com.didan.forum.gatewayserver;
 
+import static org.springframework.cloud.gateway.support.RouteMetadataUtils.CONNECT_TIMEOUT_ATTR;
+import static org.springframework.cloud.gateway.support.RouteMetadataUtils.RESPONSE_TIMEOUT_ATTR;
+
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
+import io.github.resilience4j.timelimiter.TimeLimiterConfig;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -9,9 +14,13 @@ import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
+import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
+import org.springframework.cloud.client.circuitbreaker.Customizer;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
@@ -66,7 +75,9 @@ public class GatewayServerApplication {
                 .addRequestHeader("Time-Requested", LocalDateTime.now().toString())
                 .circuitBreaker(config -> config
                     .setName("usersCircuitBreaker")
-                    .setFallbackUri("forward:/contact-support")))
+                    .setFallbackUri("forward:/contact-support"))
+                .metadata(RESPONSE_TIMEOUT_ATTR, 1000)
+                .metadata(CONNECT_TIMEOUT_ATTR, 2000))
             .uri("lb://USERS"))
         .route(p -> p.path("/forum/posts/**")
             .filters(f -> f
@@ -77,6 +88,14 @@ public class GatewayServerApplication {
                     .setFallbackUri("forward:/contact-support")))
             .uri("lb://POSTS"))
         .build();
+  }
+
+  @Bean
+  public Customizer<Resilience4JCircuitBreakerFactory> globalCustomConfiguration() {
+    return factory -> factory.configureDefault(id -> new Resilience4JConfigBuilder(id)
+        .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(3)).build())
+        .circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
+        .build());
   }
 
 }
