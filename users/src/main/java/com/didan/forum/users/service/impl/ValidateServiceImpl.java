@@ -34,6 +34,7 @@ public class ValidateServiceImpl implements IVerifyService {
     TokenRequestEntity tokenRequestEntity = tokenRequestRepository.findById(token)
         .orElseThrow(() -> new ResourceNotFoundException("Token is expired or invalid"));
     String userId = tokenRequestEntity.getUserId();
+    userRepository.updateByIdAndVerified(userId, true);
     keycloakUserService.updateUserInKeycloak(userId,
         UpdateUserAdminRequestDto.builder().isVerified(true).build());
     keycloakRoleService.removeRoleFromUserInKeycloak(userId, RoleConstant.ROLE_INACTIVE.getRole());

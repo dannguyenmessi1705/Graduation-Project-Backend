@@ -76,6 +76,6 @@ public class UserEntity extends SuperClass implements Serializable {
   @Column
   private boolean isVerified;
 
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<UserRoleEntity> userRoles;
 }

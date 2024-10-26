@@ -1,7 +1,9 @@
 package com.didan.forum.users.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.io.Serializable;
@@ -26,6 +28,6 @@ public class RoleEntity extends SuperClass implements Serializable {
   @Column(unique = true)
   private String name;
 
-  @OneToMany(mappedBy = "role")
+  @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<UserRoleEntity> userRoles;
 }

@@ -93,7 +93,7 @@ public class GatewayServerApplication {
   @Bean
   public Customizer<Resilience4JCircuitBreakerFactory> globalCustomConfiguration() {
     return factory -> factory.configureDefault(id -> new Resilience4JConfigBuilder(id)
-        .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(10)).cancelRunningFuture(true).build())
+        .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(15)).cancelRunningFuture(true).build())
         .circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
         .build());
   }
