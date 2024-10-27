@@ -45,14 +45,23 @@ public class KeycloakUserServiceImpl implements IKeycloakUserService {
       log.debug("No users found in Keycloak");
       throw new ResourceNotFoundException("No users found in Keycloak");
     }
-    return MapperObjectKeycloakUtils.mapUsers(userReps);
+    return MapperObjectKeycloakUtils.mapUsers(userReps).stream()
+        .peek(user -> {
+          if (StringUtils.hasText(user.getPicture())) {
+            user.setPicture(getUrlMinio(user.getPicture()));
+          }
+        }).toList();
   }
 
   @Override
   public UserResponseDto getUserDetailsFromKeycloak(String userId) {
     try {
       UserRepresentation userRep = keycloak.realm(realm).users().get(userId).toRepresentation();
-      return MapperObjectKeycloakUtils.mapUser(userRep);
+      UserResponseDto userResponseDto = MapperObjectKeycloakUtils.mapUser(userRep);
+      if (StringUtils.hasText(userResponseDto.getPicture())) {
+        userResponseDto.setPicture(getUrlMinio(userResponseDto.getPicture()));
+      }
+      return userResponseDto;
     } catch (Exception e) {
       log.debug("User with id {} not found in Keycloak", userId);
       throw new ResourceNotFoundException("User with id " + userId + " not found in Keycloak");
@@ -130,9 +139,7 @@ public class KeycloakUserServiceImpl implements IKeycloakUserService {
         String contentType = requestDto.getPicture().getContentType();
         minio.uploadFile(bucketName, requestDto.getPicture(), picturePath, contentType);
         log.info("Avatar uploaded successfully");
-        String pictureUrl = minio.getUTF8ByURLDecoder(minio.getPresignedObjectUrl(bucketName,
-            picturePath));
-        updateUser.setPicture(pictureUrl);
+        updateUser.setPicture(picturePath);
       }
       UserRepresentation userRep = MapperObjectKeycloakUtils.mapUserRep(updateUser.getId(),
           updateUser.isVerified(), updateUser.getPicture(), MapperUtils.map(updateUser,
@@ -177,5 +184,10 @@ public class KeycloakUserServiceImpl implements IKeycloakUserService {
       log.debug("User with id {} not found in Keycloak", userId);
       throw new ResourceNotFoundException("User with id " + userId + " not found in Keycloak");
     }
+  }
+
+  private String getUrlMinio(String path) {
+    String url = minio.getPresignedObjectUrl(bucketName, path);
+    return minio.getUTF8ByURLDecoder(url);
   }
 }

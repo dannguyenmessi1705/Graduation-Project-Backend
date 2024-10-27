@@ -26,7 +26,7 @@ springdoc:
 app:
   cache:
     redis:
-      enabled: false
+      enabled: true
       host: localhost
       port: 6379
       timeoutSeconds: 60
@@ -34,6 +34,12 @@ app:
       maxIdle: 8
       minIdle: 0
       password:
+  pagination:
+    defaultSize: 10
+  schedule:
+    fixedDelay:
+      milliseconds: 300000
+  baseUrl: http://localhost:8072/forum
 
 private:
   route: /votes/add,votes/revoke
@@ -80,7 +86,9 @@ logging:
     level: "%5p [${spring.application.name},%X{Trace-Id},%X{Span-Id}]"
 
 minio:
-  access-key: didannguyen
-  secret-key: 17052002
-  endpoint: http://localhost:10000
-  bucket-name: posts
+  root:
+    user: didannguyen
+    password: 17052002
+    endpoint: http://localhost:10000
+  bucketName: ${spring.application.name}
+

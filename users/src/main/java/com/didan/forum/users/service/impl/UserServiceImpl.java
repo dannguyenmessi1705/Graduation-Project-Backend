@@ -91,7 +91,11 @@ public class UserServiceImpl implements IUserService {
 
     List<UserResponseDto> users = userRepository.findAllByUsernameContainingIgnoreCase(keyword,
             pageable).stream()
-        .map(user -> MapperUtils.map(user, UserResponseDto.class)).toList();
+        .map(user -> {
+          UserResponseDto userRes = MapperUtils.map(user, UserResponseDto.class);
+          userRes.setPicture(getUrlMinio(user.getPicture()));
+          return userRes;
+        }).toList();
 
     if (users.isEmpty()) {
       throw new ResourceNotFoundException("No user found");
@@ -103,7 +107,11 @@ public class UserServiceImpl implements IUserService {
   public UserResponseDto getDetailUser(String userId) {
     UserEntity user = userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-    return MapperUtils.map(user, UserResponseDto.class);
+    UserResponseDto userResponseDto = MapperUtils.map(user, UserResponseDto.class);
+    if (user.getPicture() != null) {
+      userResponseDto.setPicture(getUrlMinio(user.getPicture()));
+    }
+    return userResponseDto;
   }
 
   @Override
@@ -137,8 +145,8 @@ public class UserServiceImpl implements IUserService {
       minioService.uploadFile(bucketName, picturePath, inputStream, MediaType.IMAGE_PNG_VALUE);
     }
 
-    String pictureUrl = getUrlMinio(picturePath);
-    UserResponseDto userResponseDto = keycloakUserService.createUserInKeycloak(requestDto, pictureUrl,
+    UserResponseDto userResponseDto = keycloakUserService.createUserInKeycloak(requestDto,
+        picturePath,
         isVerified);
 
     log.info("Mapping CreateUserRequestDto to UserEntity");
