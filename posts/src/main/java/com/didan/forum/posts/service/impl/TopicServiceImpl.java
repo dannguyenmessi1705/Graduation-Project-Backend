@@ -5,6 +5,7 @@ import com.didan.forum.posts.dto.response.TopicResponseDto;
 import com.didan.forum.posts.entity.TopicEntity;
 import com.didan.forum.posts.exception.ResourceAlreadyExistException;
 import com.didan.forum.posts.exception.ResourceNotFoundException;
+import com.didan.forum.posts.repository.PostRepository;
 import com.didan.forum.posts.repository.TopicRepository;
 import com.didan.forum.posts.service.ITopicService;
 import com.didan.forum.posts.utils.MapperUtils;
@@ -13,6 +14,10 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class TopicServiceImpl implements ITopicService {
 
   private final TopicRepository topicRepository;
+  private final PostRepository postRepository;
+
+  @Value("${app.pagination.defaultSize}")
+  private int defaultSize;
 
   @Override
   public TopicResponseDto createTopicByAdmin(CreateTopicRequestDto requestDto) {
@@ -44,7 +53,7 @@ public class TopicServiceImpl implements ITopicService {
     Optional<TopicEntity> topicEntity = topicRepository.findById(topicId);
     return topicEntity.map(entity -> {
       TopicResponseDto topicResponseDto = MapperUtils.map(entity, TopicResponseDto.class);
-      Long postCount = (long) entity.getPosts().size();
+      Long postCount = postRepository.countPostEntityByTopic_Id(topicId);
       topicResponseDto.setTotalPosts(postCount);
       return topicResponseDto;
     }).orElseThrow(() -> {
@@ -54,17 +63,20 @@ public class TopicServiceImpl implements ITopicService {
   }
 
   @Override
-  public List<TopicResponseDto> getAllTopics() {
-    List<TopicEntity> topics = topicRepository.findAllByOrderByPostCountDescUpdatedAtDescNameAsc();
+  public List<TopicResponseDto> getAllTopics(int page) {
+    Pageable pageable = PageRequest.of(page, defaultSize);
+    Page<TopicEntity> topics =
+        topicRepository.findAllByOrderByPostCountDescUpdatedAtDescNameAsc(pageable);
     if (topics.isEmpty()) return List.of();
-    return mapTopicList(topics);
+    return mapTopicList(topics.stream().toList());
   }
 
   @Override
-  public List<TopicResponseDto> searchTopicsByName(String name) {
-    List<TopicEntity> topics = topicRepository.findTopicByNameContain(name);
+  public List<TopicResponseDto> searchTopicsByName(String name, int page) {
+    Pageable pageable = PageRequest.of(page, defaultSize);
+    Page<TopicEntity> topics = topicRepository.findTopicByNameContain(name, pageable);
     if (topics.isEmpty()) return List.of();
-    return mapTopicList(topics);
+    return mapTopicList(topics.stream().toList());
   }
 
   @Override
@@ -104,7 +116,7 @@ public class TopicServiceImpl implements ITopicService {
     List<TopicResponseDto> topicsResponse = new ArrayList<>();
     topics.forEach(topicEntity -> {
       TopicResponseDto topicResponseDto = MapperUtils.map(topicEntity, TopicResponseDto.class);
-      Long postCount = (long) topicEntity.getPosts().size();
+      Long postCount = postRepository.countPostEntityByTopic_Id(topicEntity.getId());
       topicResponseDto.setTotalPosts(postCount);
       topicsResponse.add(topicResponseDto);
     });

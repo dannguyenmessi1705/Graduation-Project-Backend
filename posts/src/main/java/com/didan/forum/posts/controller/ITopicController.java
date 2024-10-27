@@ -52,7 +52,7 @@ public interface ITopicController {
   )
   @PostMapping("/create")
   ResponseEntity<GeneralResponse<TopicResponseDto>> createTopic(@Valid @RequestBody
-      CreateTopicRequestDto requestDto, HttpServletRequest request);
+      CreateTopicRequestDto requestDto);
 
   @Operation(
       summary = "Get all topics",
@@ -75,7 +75,9 @@ public interface ITopicController {
       }
   )
   @GetMapping("/all")
-  ResponseEntity<GeneralResponse<List<TopicResponseDto>>> getAllTopics(HttpServletRequest request);
+  ResponseEntity<GeneralResponse<List<TopicResponseDto>>> getAllTopics(
+      @RequestParam(value = "page", defaultValue = "0") int page
+  );
 
   @Operation(
       summary = "Get a topic by name",
@@ -99,7 +101,8 @@ public interface ITopicController {
   )
   @GetMapping("/get")
   ResponseEntity<GeneralResponse<List<TopicResponseDto>>> getTopicsByName(@NotBlank(message = "blank.field.topic.name")
-      @RequestParam("name") String name, HttpServletRequest request);
+      @RequestParam("name") String name,
+      @RequestParam(value = "page", defaultValue = "0") int page);
 
   @Operation(
       summary = "Get details of a topic",
@@ -123,7 +126,7 @@ public interface ITopicController {
   )
   @GetMapping("/details/{topicId}")
   ResponseEntity<GeneralResponse<TopicResponseDto>> getTopicDetails(@NotBlank(message = "blank.field.topic.id")
-      @PathVariable("topicId") String topicId, HttpServletRequest request);
+      @PathVariable("topicId") String topicId);
 
   @Operation(
       summary = "Update a topic by admin",
@@ -148,7 +151,7 @@ public interface ITopicController {
   @PutMapping("/update/{topicId}")
   ResponseEntity<GeneralResponse<TopicResponseDto>> updateTopic(@NotBlank(message = "blank.field.topic.id")
       @PathVariable("topicId") String topicId,
-      @Valid @RequestBody CreateTopicRequestDto requestDto, HttpServletRequest request);
+      @Valid @RequestBody CreateTopicRequestDto requestDto);
 
   @Operation(
       summary = "Delete a topic by admin",
@@ -173,7 +176,6 @@ public interface ITopicController {
   @DeleteMapping("/delete/{topicId}")
   ResponseEntity<GeneralResponse<Void>> deleteTopic(
       @NotBlank(message = "blank.field.topic.id")
-      @PathVariable("topicId") String topicId,
-      HttpServletRequest request);
+      @PathVariable("topicId") String topicId);
 
 }

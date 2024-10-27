@@ -2,6 +2,7 @@ package com.didan.forum.posts.controller;
 
 import com.didan.forum.posts.dto.GeneralResponse;
 import com.didan.forum.posts.dto.request.CreatePostRequestDto;
+import com.didan.forum.posts.dto.request.UpdatePostRequestDto;
 import com.didan.forum.posts.dto.response.PostResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -9,15 +10,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RequestMapping("${spring.application.name}")
 @Validated
@@ -47,7 +53,8 @@ public interface IPostController {
       }
   )
   @PostMapping(path = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<GeneralResponse<PostResponseDto>> createPost(@Valid @ModelAttribute CreatePostRequestDto requestDto);
+  ResponseEntity<GeneralResponse<PostResponseDto>> createPost(
+      @Valid @ModelAttribute CreatePostRequestDto requestDto);
 
   @Operation(
       summary = "Update a post",
@@ -69,9 +76,12 @@ public interface IPostController {
           )
       }
   )
-  @PutMapping(path = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces =
+  @PutMapping(path = "/update/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces =
       MediaType.APPLICATION_JSON_VALUE)
-  ResponseEntity<GeneralResponse<Void>> updatePost();
+  ResponseEntity<GeneralResponse<PostResponseDto>> updatePost(
+      @NotBlank(message = "blank.field.postId") @PathVariable("postId") String postId,
+      @Valid @ModelAttribute UpdatePostRequestDto requestDto
+  );
 
   @Operation(
       summary = "Get list of posts",
@@ -94,7 +104,10 @@ public interface IPostController {
       }
   )
   @GetMapping("/")
-  ResponseEntity<GeneralResponse<Void>> getPosts();
+  ResponseEntity<GeneralResponse<List<PostResponseDto>>> getPosts(
+      @RequestParam(name = "searchType", defaultValue = "new") String searchType,
+      @RequestParam(name = "page", defaultValue = "0") int page
+  );
 
   @Operation(
       summary = "Get a post",
@@ -117,7 +130,9 @@ public interface IPostController {
       }
   )
   @GetMapping("/{postId}")
-  ResponseEntity<GeneralResponse<Void>> getPost();
+  ResponseEntity<GeneralResponse<PostResponseDto>> getPost(
+      @NotBlank(message = "blank.field.postId") @PathVariable("postId") String postId
+  );
 
   @Operation(
       summary = "Search for posts",
@@ -140,7 +155,11 @@ public interface IPostController {
       }
   )
   @GetMapping("/search")
-  ResponseEntity<GeneralResponse<Void>> searchPosts();
+  ResponseEntity<GeneralResponse<List<PostResponseDto>>> searchPosts(
+      @NotBlank(message = "blank.field.key") @RequestParam("key") String key,
+      @RequestParam(name = "searchType", defaultValue = "content") String searchType,
+      @RequestParam(name = "page", defaultValue = "0") int page
+  );
 
   @Operation(
       summary = "Get posts by topic",
@@ -163,7 +182,37 @@ public interface IPostController {
       }
   )
   @GetMapping("/topic/{topicId}")
-  ResponseEntity<GeneralResponse<Void>> getPostsByTopic();
+  ResponseEntity<GeneralResponse<List<PostResponseDto>>> getPostsByTopic(
+      @NotBlank(message = "blank.field.topicId") @PathVariable("topicId") String topicId,
+      @RequestParam(name = "type", defaultValue = "new") String type,
+      @RequestParam(name = "page", defaultValue = "0") int page
+  );
+
+  @Operation(
+      summary = "Get posts by user",
+      description = "Get posts by user",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "Posts retrieved successfully",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          )
+      }
+  )
+  @GetMapping("/author/{userId}")
+  ResponseEntity<GeneralResponse<List<PostResponseDto>>> getPostsByUser(
+      @NotBlank(message = "blank.field.userId") @PathVariable("userId") String userId,
+      @RequestParam(name = "page", defaultValue = "0") int page
+  );
 
   @Operation(
       summary = "Delete a post",
@@ -186,5 +235,7 @@ public interface IPostController {
       }
   )
   @DeleteMapping("/{postId}")
-  ResponseEntity<GeneralResponse<Void>> deletePost();
+  ResponseEntity<GeneralResponse<Void>> deletePost(
+      @NotBlank(message = "blank.field.postId") @PathVariable("postId") String postId
+  );
 }

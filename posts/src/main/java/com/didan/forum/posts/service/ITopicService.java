@@ -7,8 +7,8 @@ import java.util.List;
 public interface ITopicService {
   TopicResponseDto createTopicByAdmin(CreateTopicRequestDto createTopicRequestDto);
   TopicResponseDto getTopicById(String topicId);
-  List<TopicResponseDto> getAllTopics();
-  List<TopicResponseDto> searchTopicsByName(String name);
+  List<TopicResponseDto> getAllTopics(int page);
+  List<TopicResponseDto> searchTopicsByName(String name, int page);
   TopicResponseDto updateTopicByAdmin(String topicId, CreateTopicRequestDto createTopicRequestDto);
   void deleteTopicByAdmin(String topicId);
 }

@@ -37,37 +37,27 @@ public class RequestTraceFilter implements GlobalFilter {
     MDC.put(TrackingConstant.SPAN_ID.getHeaderKey(), generateSpanId());
     HttpHeaders httpHeaders = exchange.getRequest().getHeaders();
     String path = exchange.getRequest().getPath().toString();
-    if (isTraceIdPresent(httpHeaders)) {
-      log.debug("forum-correlation-id found in tracking filter: {}. ",
-          filterUtils.getTraceId(httpHeaders));
-    } else {
-      String traceId = generateTraceId();
-      filterUtils.setTraceId(exchange, traceId);
-      log.debug("trace-id generated in tracking filter: {}.", traceId);
-    }
+    String traceId = generateTraceId();
+    filterUtils.setTraceId(exchange, traceId);
+    log.debug("trace-id generated in tracking filter: {}.", traceId);
     if (privateRoutes.stream().anyMatch(path::contains)) {
-      if (isXUserIdPresent(httpHeaders)) {
-        log.debug("x-user-id found in tracking filter: {}. ",
-            filterUtils.getxUserId(httpHeaders));
-      } else {
-        String authHeader = httpHeaders.getFirst("Authorization");
-        if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
-          String token = authHeader.substring(7);
-          return jwtDecoder.decode(token).flatMap(
-              jwtToken -> {
-                String sub = jwtToken.getClaimAsString("sub");
-                if (StringUtils.hasText(sub)) {
-                  filterUtils.setxUserId(exchange, sub);
-                  log.debug("forum-x-user-id generated in tracking filter: {}.", sub);
-                }
-                return chain.filter(exchange);
-
+      String authHeader = httpHeaders.getFirst("Authorization");
+      if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
+        String token = authHeader.substring(7);
+        return jwtDecoder.decode(token).flatMap(
+            jwtToken -> {
+              String sub = jwtToken.getClaimAsString("sub");
+              if (StringUtils.hasText(sub)) {
+                filterUtils.setxUserId(exchange, sub);
+                log.debug("forum-x-user-id generated in tracking filter: {}.", sub);
               }
-          ).onErrorResume(e -> {
-            log.error("Error decoding token", e);
-            return chain.filter(exchange);
-          });
-        }
+              return chain.filter(exchange);
+
+            }
+        ).onErrorResume(e -> {
+          log.error("Error decoding token", e);
+          return chain.filter(exchange);
+        });
       }
     }
     return chain.filter(exchange).doFinally(

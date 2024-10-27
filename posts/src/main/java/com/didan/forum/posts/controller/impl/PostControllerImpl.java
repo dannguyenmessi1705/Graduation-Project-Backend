@@ -4,10 +4,12 @@ import com.didan.forum.posts.controller.IPostController;
 import com.didan.forum.posts.dto.GeneralResponse;
 import com.didan.forum.posts.dto.Status;
 import com.didan.forum.posts.dto.request.CreatePostRequestDto;
+import com.didan.forum.posts.dto.request.UpdatePostRequestDto;
 import com.didan.forum.posts.dto.response.PostResponseDto;
 import com.didan.forum.posts.filter.RequestContext;
 import com.didan.forum.posts.service.IPostService;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,32 +35,65 @@ public class PostControllerImpl implements IPostController {
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<Void>> updatePost() {
-    return null;
+  public ResponseEntity<GeneralResponse<PostResponseDto>> updatePost(
+      String postId,
+      UpdatePostRequestDto requestDto) {
+    log.info("===== Start updating post =====");
+    PostResponseDto responseEntity = postService.updatePost(RequestContext.getRequest().getHeader("X-User-Id"), postId, requestDto);
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Post updated successfully", LocalDateTime.now());
+    return new ResponseEntity<>(new GeneralResponse<>(status, responseEntity), HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<Void>> getPosts() {
-    return null;
+  public ResponseEntity<GeneralResponse<List<PostResponseDto>>> getPosts(String searchType,
+      int page) {
+    log.info("===== Start getting posts =====");
+    List<PostResponseDto> responseEntity = postService.getPosts(searchType, page);
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Posts retrieved successfully", LocalDateTime.now());
+    return new ResponseEntity<>(new GeneralResponse<>(status, responseEntity), HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<Void>> getPost() {
-    return null;
+  public ResponseEntity<GeneralResponse<PostResponseDto>> getPost(String postId) {
+    log.info("===== Start getting post =====");
+    PostResponseDto responseEntity = postService.getPost(postId);
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Post retrieved successfully", LocalDateTime.now());
+    return new ResponseEntity<>(new GeneralResponse<>(status, responseEntity), HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<Void>> searchPosts() {
-    return null;
+  public ResponseEntity<GeneralResponse<List<PostResponseDto>>> searchPosts(
+      String key, String searchType, int page) {
+    log.info("===== Start searching posts =====");
+    List<PostResponseDto> responseEntity = postService.searchPosts(key, searchType, page);
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Posts retrieved successfully", LocalDateTime.now());
+    return new ResponseEntity<>(new GeneralResponse<>(status, responseEntity), HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<Void>> getPostsByTopic() {
-    return null;
+  public ResponseEntity<GeneralResponse<List<PostResponseDto>>> getPostsByTopic(String topicId,
+      String type,
+      int page) {
+    log.info("===== Start getting posts by topic =====");
+    List<PostResponseDto> responseEntity = postService.getPostsByTopic(topicId, type, page);
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Posts retrieved successfully", LocalDateTime.now());
+    return new ResponseEntity<>(new GeneralResponse<>(status, responseEntity), HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<Void>> deletePost() {
-    return null;
+  public ResponseEntity<GeneralResponse<List<PostResponseDto>>> getPostsByUser(String userId,
+      int page) {
+    log.info("===== Start getting posts by user =====");
+    List<PostResponseDto> responseEntity = postService.getPostsByUser(userId, page);
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Posts retrieved successfully", LocalDateTime.now());
+    return new ResponseEntity<>(new GeneralResponse<>(status, responseEntity), HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<GeneralResponse<Void>> deletePost(String postId) {
+    log.info("===== Start deleting post =====");
+    postService.deletePost(RequestContext.getRequest().getHeader("X-User-Id"), postId);
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Post deleted successfully", LocalDateTime.now());
+    return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.OK);
   }
 }

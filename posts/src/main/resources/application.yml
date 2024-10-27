@@ -35,7 +35,7 @@ app:
       minIdle: 0
       password:
   pagination:
-    defaultSize: 10
+    defaultSize: 20
   schedule:
     fixedDelay:
       milliseconds: 300000
