@@ -7,6 +7,7 @@ import com.didan.forum.posts.dto.response.PostVoteResponseDto;
 import com.didan.forum.posts.entity.PostEntity;
 import com.didan.forum.posts.entity.PostVoteEntity;
 import com.didan.forum.posts.exception.ErrorActionException;
+import com.didan.forum.posts.repository.PostRepository;
 import com.didan.forum.posts.repository.PostVoteRepository;
 import com.didan.forum.posts.service.IPostService;
 import com.didan.forum.posts.service.IPostVoteService;
@@ -26,6 +27,7 @@ public class PostVoteServiceImpl implements IPostVoteService {
   private final IPostService postService;
   private final PostVoteRepository postVoteRepository;
   private final UsersFeignClient usersFeignClient;
+  private final PostRepository postRepository;
 
   @Override
   public void votePost(String postId, String userId, String voteType) {
@@ -43,6 +45,8 @@ public class PostVoteServiceImpl implements IPostVoteService {
         log.info("User {} change vote post {}", userId, postId);
         postVote.get().setVoteType(VoteType.valueOf(voteType.toLowerCase()));
         postVoteRepository.save(postVote.get());
+        postRepository.updateByIdAndInteractionScore(postId,
+            VoteType.UPVOTE.getName().equals(postVote.get().getVoteType().getName()) ? 2L : -2L);
       }
     } else {
       log.info("User {} vote post {}", userId, postId);
@@ -51,6 +55,8 @@ public class PostVoteServiceImpl implements IPostVoteService {
           .userId(userId)
           .voteType(VoteType.valueOf(voteType.toLowerCase()))
           .build());
+      postRepository.updateByIdAndInteractionScore(postId,
+          VoteType.UPVOTE.getName().equals(postVote.get().getVoteType().getName()) ? 1L : -1L);
     }
   }
 
@@ -63,6 +69,8 @@ public class PostVoteServiceImpl implements IPostVoteService {
     if (postVote.isPresent()) {
       log.info("User {} revoke vote post {}", userId, postId);
       postVoteRepository.delete(postVote.get());
+      postRepository.updateByIdAndInteractionScore(postId,
+          VoteType.UPVOTE.getName().equals(postVote.get().getVoteType().getName()) ? -1L : 1L);
     } else {
       log.info("User {} not vote post {}", userId, postId);
       throw new ErrorActionException("User not vote post");
