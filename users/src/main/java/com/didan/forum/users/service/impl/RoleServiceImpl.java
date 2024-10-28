@@ -1,12 +1,12 @@
 package com.didan.forum.users.service.impl;
 
-import com.didan.forum.users.entity.RoleEntity;
-import com.didan.forum.users.entity.UserRoleEntity;
+import com.didan.forum.users.entity.user.RoleEntity;
+import com.didan.forum.users.entity.user.UserRoleEntity;
 import com.didan.forum.users.entity.key.UserRoleId;
 import com.didan.forum.users.exception.ResourceAlreadyExistException;
 import com.didan.forum.users.exception.ResourceNotFoundException;
-import com.didan.forum.users.repository.RoleRepository;
-import com.didan.forum.users.repository.UserRoleRepository;
+import com.didan.forum.users.repository.user.RoleRepository;
+import com.didan.forum.users.repository.user.UserRoleRepository;
 import com.didan.forum.users.service.IRoleService;
 import java.util.List;
 import java.util.stream.Collectors;

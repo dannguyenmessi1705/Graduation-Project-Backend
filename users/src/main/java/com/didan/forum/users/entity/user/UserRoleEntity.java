@@ -1,5 +1,6 @@
-package com.didan.forum.users.entity;
+package com.didan.forum.users.entity.user;
 
+import com.didan.forum.users.entity.SuperClass;
 import com.didan.forum.users.entity.key.UserRoleId;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;

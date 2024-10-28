@@ -1,4 +1,4 @@
-package com.didan.forum.posts.entity;
+package com.didan.forum.posts.entity.post;
 
 import com.didan.forum.posts.constant.VoteType;
 import jakarta.persistence.Column;

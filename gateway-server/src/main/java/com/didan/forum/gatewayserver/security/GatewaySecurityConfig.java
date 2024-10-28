@@ -32,10 +32,16 @@ public class GatewaySecurityConfig {
             exchanges
                 .pathMatchers("/forum/api-docs/**", "/forum/swagger-ui/**", "/forum/users/api-docs/**")
                 .permitAll()
-                .pathMatchers("/forum/users/update/**", "/forum/users/reset/**")
+                .pathMatchers("/forum/users/update/**", "/forum/users/qrcode/**", "/forum/users"
+                    + "/role/**", "/forum/users/report/**", "/forum/posts/report/**", "/forum"
+                    + "/posts/votes/add/**", "/forum/posts/votes/revoke/**", "/forum/posts/delete"
+                    + "/**", "/forum/posts/new/**", "/forum/posts/update/**", "/forum/posts"
+                    + "/report/**")
                 .hasAnyRole("user", "admin")
                 .pathMatchers("/forum/users/keycloak/**", "/forum/posts/topic/update/**",
-                    "/forum/posts/topic/delete/**", "/forum/posts/topic/create/**")
+                    "/forum/posts/topic/delete/**", "/forum/posts/topic/create/**", "/forum/topic"
+                        + "/create/**", "/forum/topic/update/**", "/forum/topic/delete/**",
+                    "/forum/posts/admin/delete/**")
                 .hasRole("admin")
                 .anyExchange()
                 .permitAll())

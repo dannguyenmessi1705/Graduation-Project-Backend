@@ -1,5 +1,6 @@
-package com.didan.forum.posts.entity;
+package com.didan.forum.posts.entity.post;
 
+import com.didan.forum.posts.entity.SuperClass;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

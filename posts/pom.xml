@@ -11,6 +11,7 @@
   </parent>
   <groupId>com.didan.forum</groupId>
   <artifactId>posts</artifactId>
+  <packaging>jar</packaging>
   <version>0.0.1-SNAPSHOT</version>
   <name>posts</name>
   <description>posts</description>
@@ -161,6 +162,19 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <version>3.3.2</version>
+        <configuration>
+          <from>
+            <image>eclipse-temurin:21-jre</image>
+          </from>
+          <to>
+            <image>dannguyenmessi/${project.artifactId}:v1</image>
+          </to>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>

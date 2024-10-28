@@ -1,6 +1,6 @@
-package com.didan.forum.users.repository;
+package com.didan.forum.users.repository.user;
 
-import com.didan.forum.users.entity.UserEntity;
+import com.didan.forum.users.entity.user.UserEntity;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;

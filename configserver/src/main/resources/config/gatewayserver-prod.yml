@@ -1,12 +1,24 @@
-spring.cloud:
-  gateway:
-    discovery:
-      locator:
-        enabled: false
-        lower-case-service-id: true
-    httpclient:
-      connect-timeout: 10000 # Thoi gian toi da de ket noi toi service
-      response-timeout: 10s # Thoi gian toi da de nhan phan hoi tu service
+server:
+  port: 8072
+
+spring:
+  application:
+    name: gatewayserver
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://${oauth.openId.server}/realms/forum
+          jwk-set-uri: http://${oauth.openId.server}/realms/forum/protocol/openid-connect/certs
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+          lower-case-service-id: true
+      httpclient:
+        connect-timeout: 10000 # Thoi gian toi da de ket noi toi service
+        response-timeout: 10s # Thoi gian toi da de nhan phan hoi tu service
 
 eureka:
   instance:
@@ -16,3 +28,69 @@ eureka:
     register-with-eureka: true
     service-url:
       defaultZone: http://localhost:8070/eureka/
+
+oauth:
+  openId:
+    server: localhost:7080
+    url: http://${oauth.openId.server}/realms/forum/.well-known/openid-configuration
+
+#  data:
+#    redis:
+#      connect-timeout: 2s
+#      host: localhost
+#      port: 6379
+#      timeout: 1s
+
+private:
+  route: users/update,users/qrcode,posts/update,comments/update,votes/add,votes/revoke,posts/update,posts/report,posts/new,posts/delete
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
+    config-url: /api-docs/swagger-config
+    urls:
+      - url: /api-docs
+        name: API Gateway Service
+        display-name: API Gateway Service
+      - url: /forum/users/api-docs
+        name: Users Service
+        display-name: Users Service
+      - url: /forum/posts/api-docs
+        name: Posts Service
+        display-name: Posts Service
+    oauth:
+      client-id: forum-authentication
+      client-secret: l2WiWQULnEFt9KrgySvFK03QtVf9K4DO
+  enable-native-support: true
+
+info:
+  app:
+    name: "gatewayserver"
+    description: "Forum Gateway Server Application Microservices"
+    version: "1.0.0"
+
+logging:
+  level:
+    com:
+      didan:
+        microservices:
+          gatewaysever: debug
+  pattern:
+    level: "%5p [${spring.application.name},%X{Trace-Id},%X{Span-Id}]"

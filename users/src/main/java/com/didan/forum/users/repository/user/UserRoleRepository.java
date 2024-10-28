@@ -1,6 +1,6 @@
-package com.didan.forum.users.repository;
+package com.didan.forum.users.repository.user;
 
-import com.didan.forum.users.entity.UserRoleEntity;
+import com.didan.forum.users.entity.user.UserRoleEntity;
 import com.didan.forum.users.entity.key.UserRoleId;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -6,12 +6,14 @@ import com.didan.forum.users.dto.request.ChangePasswordUserDto;
 import com.didan.forum.users.dto.request.CreateUserRequestDto;
 import com.didan.forum.users.dto.request.LoginRequestDto;
 import com.didan.forum.users.dto.request.LogoutRequestDto;
+import com.didan.forum.users.dto.request.ReportUserDto;
 import com.didan.forum.users.dto.request.UpdateUserRequestDto;
 import com.didan.forum.users.dto.response.GeneralResponse;
 import com.didan.forum.users.dto.response.LoginResponseDto;
 import com.didan.forum.users.dto.response.UserResponseDto;
 import com.didan.forum.users.exception.ErrorActionException;
 import com.didan.forum.users.filter.RequestContext;
+import com.didan.forum.users.service.IReportUserService;
 import com.didan.forum.users.service.IUserService;
 import com.didan.forum.users.utils.ImageGenerator;
 import java.time.LocalDateTime;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserControllerImpl implements IUserController {
 
   private final IUserService userService;
+  private final IReportUserService reportUserService;
 
   @Value("${app.pagination.defaultSize}")
   private int defaultSize;
@@ -142,5 +145,16 @@ public class UserControllerImpl implements IUserController {
         isExistUser ? "User exists" : "User does not exist",
         LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, isExistUser), HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<GeneralResponse<Void>> reportUser(String userId,
+      ReportUserDto reportUserDto) {
+    log.info("===== Start reporting user =====");
+    reportUserService.reportUser(RequestContext.getRequest().getHeader("X-User-Id"), userId, reportUserDto);
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(),
+        "User reported successfully",
+        LocalDateTime.now());
+    return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.OK);
   }
 }

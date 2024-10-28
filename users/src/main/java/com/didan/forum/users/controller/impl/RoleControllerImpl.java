@@ -3,7 +3,7 @@ package com.didan.forum.users.controller.impl;
 import com.didan.forum.users.controller.IRoleController;
 import com.didan.forum.users.dto.Status;
 import com.didan.forum.users.dto.response.GeneralResponse;
-import com.didan.forum.users.entity.RoleEntity;
+import com.didan.forum.users.entity.user.RoleEntity;
 import com.didan.forum.users.filter.RequestContext;
 import com.didan.forum.users.service.IRoleService;
 import java.time.LocalDateTime;

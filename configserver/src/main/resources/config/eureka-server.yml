@@ -10,3 +10,27 @@ eureka:
     service-url:
       defaultZone: https://${eureka.instance.hostname}:${server.port}/euraka/
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  level:
+    com:
+      didan:
+        forum:
+          eureka_server: debug

@@ -8,12 +8,12 @@ import com.didan.forum.posts.dto.request.CreatePostRequestDto;
 import com.didan.forum.posts.dto.request.UpdatePostRequestDto;
 import com.didan.forum.posts.dto.response.PostResponseDto;
 import com.didan.forum.posts.dto.response.PostResponseDto.UserInfo;
-import com.didan.forum.posts.entity.PostEntity;
-import com.didan.forum.posts.entity.TopicEntity;
+import com.didan.forum.posts.entity.post.PostEntity;
+import com.didan.forum.posts.entity.post.TopicEntity;
 import com.didan.forum.posts.exception.ErrorActionException;
 import com.didan.forum.posts.exception.ResourceNotFoundException;
-import com.didan.forum.posts.repository.PostRepository;
-import com.didan.forum.posts.repository.TopicRepository;
+import com.didan.forum.posts.repository.post.PostRepository;
+import com.didan.forum.posts.repository.post.TopicRepository;
 import com.didan.forum.posts.service.IPostService;
 import com.didan.forum.posts.service.IRedisService;
 import com.didan.forum.posts.service.client.UsersFeignClient;
@@ -186,6 +186,16 @@ public class PostServiceImpl implements IPostService {
       log.error("User with id {} is not the author of post with id {}", userId, postId);
       throw new ErrorActionException("User is not the author of this post");
     }
+    postRepository.delete(post);
+    log.info("Post with id {} deleted successfully", postId);
+  }
+
+  @Override
+  public void deletePost(String postId) {
+    PostEntity post = postRepository.findById(postId).orElseThrow(() -> {
+      log.error("Post with id {} not found", postId);
+      return new ResourceNotFoundException("Post with id " + postId + " not found");
+    });
     postRepository.delete(post);
     log.info("Post with id {} deleted successfully", postId);
   }

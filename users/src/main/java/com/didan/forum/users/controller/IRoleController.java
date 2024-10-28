@@ -1,7 +1,7 @@
 package com.didan.forum.users.controller;
 
 import com.didan.forum.users.dto.response.GeneralResponse;
-import com.didan.forum.users.entity.RoleEntity;
+import com.didan.forum.users.entity.user.RoleEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

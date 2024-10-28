@@ -4,14 +4,43 @@ server:
 spring:
   application:
     name: users
+  config:
+    import: optional:configserver:http://localhost:8071
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-  profiles:
-    active: "dev"
-  config:
-    import: optional:configserver:http://localhost:8071
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    defer-datasource-initialization: true
+  datasource:
+    userdb:
+      url: jdbc:mysql://localhost:3306/forum_users
+      username: 'root'
+      password: '17052002'
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        maximum-pool-size: 10
+        connection-timeout: 60000
+        max-lifetime: 590000
+    reportdb:
+      url: jdbc:mysql://localhost:3306/forum_reports
+      username: 'root'
+      password: '17052002'
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        maximum-pool-size: 10
+        connection-timeout: 60000
+        max-lifetime: 590000
+  sql:
+    init:
+      mode: always
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
   servlet:
     multipart:
       max-file-size: 25MB
@@ -34,6 +63,15 @@ spring:
         binder:
           brokers:
             - localhost:9092
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8070/eureka/
 
 springdoc:
   api-docs:
@@ -68,6 +106,9 @@ sendgrid:
   fromName: Forum Admin
   templateId: d-cb3c0b3bb8514de7991b0f47b12f8a6e
   urlVerify: ${app.baseUrl}/users/verify/
+
+private:
+  route: users/update,users/qrcode,users/report
 
 app:
   cache:

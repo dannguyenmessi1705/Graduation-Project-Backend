@@ -6,14 +6,21 @@ spring:
     name: gatewayserver
   config:
     import: optional:configserver:http://localhost:8071
-  profiles:
-    active: "dev"
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: http://${oauth.openId.server}/realms/forum
           jwk-set-uri: http://${oauth.openId.server}/realms/forum/protocol/openid-connect/certs
+  cloud:
+    kubernetes:
+      discovery:
+        all-namespaces: true
+        enabled: true
+        discovery-server-url: http://spring-cloud-kubernetes-discoveryserver:80/
+      httpclient:
+        connect-timeout: 10000 # Thoi gian toi da de ket noi toi service
+        response-timeout: 10s # Thoi gian toi da de nhan phan hoi tu service
 
 oauth:
   openId:
@@ -28,7 +35,7 @@ oauth:
 #      timeout: 1s
 
 private:
-  route: users/update,users/qrcode,posts/update,comments/update
+  route: users/update,users/qrcode,posts/update,comments/update,votes/add,votes/revoke,posts/update,posts/report,posts/new,posts/delete
 
 management:
   endpoints:

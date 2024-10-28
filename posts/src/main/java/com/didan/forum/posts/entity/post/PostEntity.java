@@ -1,5 +1,6 @@
-package com.didan.forum.posts.entity;
+package com.didan.forum.posts.entity.post;
 
+import com.didan.forum.posts.entity.SuperClass;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,7 +17,6 @@ import jakarta.persistence.Table;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,7 +27,6 @@ import lombok.ToString;
     indexes = {
         @Index(name = "idx_author_id", columnList = "author_id"),
         @Index(name = "idx_title", columnList = "title"),
-        @Index(name = "idx_content", columnList = "content")
     }
 )
 @AllArgsConstructor
@@ -39,8 +38,7 @@ public class PostEntity extends SuperClass {
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
-  @Lob
-  @Column(name = "title", nullable = false, length = 16777216)
+  @Column(name = "title", nullable = false, length = 255)
   private String title;
 
   @Lob

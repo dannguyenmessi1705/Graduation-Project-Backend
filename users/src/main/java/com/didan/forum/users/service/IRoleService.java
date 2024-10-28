@@ -1,6 +1,6 @@
 package com.didan.forum.users.service;
 
-import com.didan.forum.users.entity.RoleEntity;
+import com.didan.forum.users.entity.user.RoleEntity;
 import java.util.List;
 
 public interface IRoleService {

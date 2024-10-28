@@ -1,15 +1,42 @@
-spring.datasource:
-  url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL;NON_KEYWORDS=USER
-  driver-class-name: org.h2.Driver
-  username: 'sa'
-  password: ''
+server:
+  port: 8090
 
-spring.h2:
-  console:
-    enabled: true
-
-spring.jpa:
-  database-platform: org.hibernate.dialect.H2Dialect
+spring:
+  application:
+    name: posts
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 30MB
+  datasource:
+    postdb:
+      url: jdbc:h2:mem:postdb;DB_CLOSE_DELAY=-1;MODE=MySQL;NON_KEYWORDS=USER
+      username: 'root'
+      password: '17052002'
+      driver-class-name: org.h2.Driver
+      hikari:
+        maximum-pool-size: 10
+        connection-timeout: 60000
+        max-lifetime: 590000
+    reportdb:
+      url: jdbc:h2:mem:reportdb;DB_CLOSE_DELAY=-1;MODE=MySQL;NON_KEYWORDS=USER
+      username: 'root'
+      password: '17052002'
+      driver-class-name: org.h2.Driver
+      hikari:
+        maximum-pool-size: 10
+        connection-timeout: 60000
+        max-lifetime: 590000
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
 
 eureka:
   instance:
@@ -19,3 +46,79 @@ eureka:
     register-with-eureka: true
     service-url:
       defaultZone: http://localhost:8070/eureka/
+
+springdoc:
+  api-docs:
+    path: /posts/api-docs
+  swagger-ui:
+    path: /posts/swagger-ui
+
+app:
+  cache:
+    redis:
+      enabled: true
+      host: localhost
+      port: 6379
+      timeoutSeconds: 60
+      maxPoolSize: 8
+      maxIdle: 8
+      minIdle: 0
+      password:
+  pagination:
+    defaultSize: 20
+  schedule:
+    fixedDelay:
+      milliseconds: 300000
+  baseUrl: http://localhost:8072/forum
+
+private:
+  route: votes/add,votes/revoke,posts/update,posts/report,posts/new,posts/delete
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true
+    shutdown:
+      enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+endpoints:
+  shutdown:
+    enabled: true
+
+info:
+  app:
+    name: ${spring.application.name}
+    description: "Forum posts application"
+    version: "1.0.0"
+
+logging:
+  level:
+    com:
+      didan:
+        forum:
+          users: debug
+  pattern:
+    level: "%5p [${spring.application.name},%X{Trace-Id},%X{Span-Id}]"
+
+minio:
+  root:
+    user: didannguyen
+    password: 17052002
+    endpoint: http://localhost:10000
+  bucketName: ${spring.application.name}
+

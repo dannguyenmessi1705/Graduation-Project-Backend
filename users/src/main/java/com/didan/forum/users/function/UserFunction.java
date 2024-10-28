@@ -1,8 +1,8 @@
 package com.didan.forum.users.function;
 
 import com.didan.forum.users.dto.SendMailWithTemplate;
-import com.didan.forum.users.entity.TokenRequestEntity;
-import com.didan.forum.users.repository.TokenRequestRepository;
+import com.didan.forum.users.entity.redis.TokenRequestEntity;
+import com.didan.forum.users.repository.user.TokenRequestRepository;
 import com.didan.forum.users.service.sendgrid.SendgridService;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;

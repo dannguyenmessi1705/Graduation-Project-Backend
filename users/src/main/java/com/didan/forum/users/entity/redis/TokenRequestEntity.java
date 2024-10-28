@@ -1,4 +1,4 @@
-package com.didan.forum.users.entity;
+package com.didan.forum.users.entity.redis;
 
 import jakarta.persistence.Id;
 import java.io.Serializable;

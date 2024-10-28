@@ -2,11 +2,11 @@ package com.didan.forum.posts.service.impl;
 
 import com.didan.forum.posts.dto.request.CreateTopicRequestDto;
 import com.didan.forum.posts.dto.response.TopicResponseDto;
-import com.didan.forum.posts.entity.TopicEntity;
+import com.didan.forum.posts.entity.post.TopicEntity;
 import com.didan.forum.posts.exception.ResourceAlreadyExistException;
 import com.didan.forum.posts.exception.ResourceNotFoundException;
-import com.didan.forum.posts.repository.PostRepository;
-import com.didan.forum.posts.repository.TopicRepository;
+import com.didan.forum.posts.repository.post.PostRepository;
+import com.didan.forum.posts.repository.post.TopicRepository;
 import com.didan.forum.posts.service.ITopicService;
 import com.didan.forum.posts.utils.MapperUtils;
 import java.util.ArrayList;

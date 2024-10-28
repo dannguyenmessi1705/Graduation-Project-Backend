@@ -7,6 +7,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
   profiles:
     active: "dev"
@@ -16,6 +19,33 @@ spring:
     multipart:
       max-file-size: 25MB
       max-request-size: 30MB
+  datasource:
+    postdb:
+      url: jdbc:mysql://localhost:3306/forum_posts
+      username: 'root'
+      password: '17052002'
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        maximum-pool-size: 10
+        connection-timeout: 60000
+        max-lifetime: 590000
+    reportdb:
+      url: jdbc:mysql://localhost:3306/forum_reports
+      username: 'root'
+      password: '17052002'
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        maximum-pool-size: 10
+        connection-timeout: 60000
+        max-lifetime: 590000
+  sql:
+    init:
+      mode: always
+  cloud:
+    kubernetes:
+      discovery:
+        all-namespaces: true
+        discovery-server-url: http://spring-cloud-kubernetes-discoveryserver:80/
 
 springdoc:
   api-docs:
@@ -42,7 +72,7 @@ app:
   baseUrl: http://localhost:8072/forum
 
 private:
-  route: /votes/add,votes/revoke
+  route: votes/add,votes/revoke,posts/update,posts/report,posts/new,posts/delete
 management:
   endpoints:
     web:
@@ -87,8 +117,8 @@ logging:
 
 minio:
   root:
-    user: didannguyen
-    password: 17052002
+    user: minioadmin
+    password: minioadmin
     endpoint: http://localhost:10000
   bucketName: ${spring.application.name}
 

@@ -4,6 +4,7 @@ import com.didan.forum.users.dto.request.ChangePasswordUserDto;
 import com.didan.forum.users.dto.request.CreateUserRequestDto;
 import com.didan.forum.users.dto.request.LoginRequestDto;
 import com.didan.forum.users.dto.request.LogoutRequestDto;
+import com.didan.forum.users.dto.request.ReportUserDto;
 import com.didan.forum.users.dto.request.UpdateUserRequestDto;
 import com.didan.forum.users.dto.response.GeneralResponse;
 import com.didan.forum.users.dto.response.LoginResponseDto;
@@ -259,4 +260,29 @@ public interface IUserController {
   @GetMapping("/check/{userId}")
   ResponseEntity<GeneralResponse<Boolean>> checkUserExists(@NotBlank(message = "blank.field.userid") @PathVariable(
       "userId") String userId);
+
+  @Operation(
+      summary = "Report user",
+      description = "Report user with the provided details",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "User reported successfully",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          )
+      }
+  )
+  @PostMapping(path = "/report/{userId}")
+  ResponseEntity<GeneralResponse<Void>> reportUser(
+      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId,
+      @Valid @RequestBody ReportUserDto reportUserDto);
 }

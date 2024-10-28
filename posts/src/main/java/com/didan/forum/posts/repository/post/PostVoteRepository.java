@@ -1,12 +1,11 @@
-package com.didan.forum.posts.repository;
+package com.didan.forum.posts.repository.post;
 
 import com.didan.forum.posts.constant.VoteType;
-import com.didan.forum.posts.entity.PostVoteEntity;
+import com.didan.forum.posts.entity.post.PostVoteEntity;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface PostVoteRepository extends JpaRepository<PostVoteEntity, String> {

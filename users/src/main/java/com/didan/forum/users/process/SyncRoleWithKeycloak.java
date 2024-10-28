@@ -1,8 +1,8 @@
 package com.didan.forum.users.process;
 
-import com.didan.forum.users.entity.RoleEntity;
+import com.didan.forum.users.entity.user.RoleEntity;
 import com.didan.forum.users.entity.keycloak.RoleKeycloakEntity;
-import com.didan.forum.users.repository.RoleRepository;
+import com.didan.forum.users.repository.user.RoleRepository;
 import com.didan.forum.users.service.IKeycloakRoleService;
 import com.didan.forum.users.utils.MapperUtils;
 import com.github.benmanes.caffeine.cache.CacheLoader;
@@ -11,7 +11,6 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import jakarta.annotation.PostConstruct;
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;

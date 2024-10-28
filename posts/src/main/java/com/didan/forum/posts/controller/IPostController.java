@@ -2,6 +2,7 @@ package com.didan.forum.posts.controller;
 
 import com.didan.forum.posts.dto.GeneralResponse;
 import com.didan.forum.posts.dto.request.CreatePostRequestDto;
+import com.didan.forum.posts.dto.request.ReportPostDto;
 import com.didan.forum.posts.dto.request.UpdatePostRequestDto;
 import com.didan.forum.posts.dto.response.PostResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -234,8 +236,59 @@ public interface IPostController {
           )
       }
   )
-  @DeleteMapping("/{postId}")
+  @DeleteMapping("/delete/{postId}")
   ResponseEntity<GeneralResponse<Void>> deletePost(
       @NotBlank(message = "blank.field.postId") @PathVariable("postId") String postId
+  );
+
+  @Operation(
+      summary = "Delete a post by admin",
+      description = "Delete a post by admin",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "Post deleted successfully",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          )
+      }
+  )
+  @DeleteMapping("/admin/delete/{postId}")
+  ResponseEntity<GeneralResponse<Void>> deletePostByAdmin(
+      @NotBlank(message = "blank.field.postId") @PathVariable("postId") String postId
+  );
+
+  @Operation(
+      summary = "Report a post",
+      description = "Report a post",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "Post reported successfully",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          )
+      }
+  )
+  @PostMapping("/report/{postId}")
+  ResponseEntity<GeneralResponse<Void>> reportPost(
+      @NotBlank(message = "blank.field.postId") @PathVariable("postId") String postId,
+      @Valid @RequestBody ReportPostDto reportPostDto
   );
 }

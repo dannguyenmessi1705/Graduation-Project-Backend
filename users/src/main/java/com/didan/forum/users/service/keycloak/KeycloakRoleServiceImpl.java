@@ -1,11 +1,10 @@
 package com.didan.forum.users.service.keycloak;
 
 import com.didan.forum.users.dto.request.CreateNewRoleDto;
-import com.didan.forum.users.entity.RoleEntity;
+import com.didan.forum.users.entity.user.RoleEntity;
 import com.didan.forum.users.entity.keycloak.RoleKeycloakEntity;
 import com.didan.forum.users.exception.ResourceAlreadyExistException;
 import com.didan.forum.users.exception.ResourceNotFoundException;
-import com.didan.forum.users.process.SyncRoleWithKeycloak;
 import com.didan.forum.users.service.IKeycloakRoleService;
 import com.didan.forum.users.service.IRoleService;
 import com.didan.forum.users.utils.MapperObjectKeycloakUtils;

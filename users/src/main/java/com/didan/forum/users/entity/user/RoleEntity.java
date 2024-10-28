@@ -1,5 +1,6 @@
-package com.didan.forum.users.entity;
+package com.didan.forum.users.entity.user;
 
+import com.didan.forum.users.entity.SuperClass;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

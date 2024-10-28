@@ -4,6 +4,7 @@ import com.didan.forum.users.dto.request.ChangePasswordAdminDto;
 import com.didan.forum.users.dto.request.ChangePasswordUserDto;
 import com.didan.forum.users.dto.request.CreateUserRequestDto;
 import com.didan.forum.users.dto.request.LoginRequestDto;
+import com.didan.forum.users.dto.request.ReportUserDto;
 import com.didan.forum.users.dto.request.UpdateUserAdminRequestDto;
 import com.didan.forum.users.dto.request.UpdateUserRequestDto;
 import com.didan.forum.users.dto.response.LoginResponseDto;

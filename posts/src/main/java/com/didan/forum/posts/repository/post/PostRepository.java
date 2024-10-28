@@ -1,7 +1,6 @@
-package com.didan.forum.posts.repository;
+package com.didan.forum.posts.repository.post;
 
-import com.didan.forum.posts.entity.PostEntity;
-import java.util.List;
+import com.didan.forum.posts.entity.post.PostEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
