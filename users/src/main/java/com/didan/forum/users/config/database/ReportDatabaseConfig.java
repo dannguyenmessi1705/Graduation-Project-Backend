@@ -51,7 +51,6 @@ public class ReportDatabaseConfig {
         .build();
   }
 
-  @Primary
   @Bean(name = "reportsTransactionManager")
   public PlatformTransactionManager reportsTransactionManager(@Qualifier("reportsEntityManagerFactory")
   LocalContainerEntityManagerFactoryBean postsEntityManagerFactory) {
