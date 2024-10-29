@@ -157,14 +157,6 @@ info:
     description: "Forum users application"
     version: "1.0.0"
 
-logging:
-  level:
-    com:
-      didan:
-        forum:
-          users: debug
-  pattern:
-    level: "%5p [${spring.application.name},%X{Trace-Id},%X{Span-Id}]"
 
 minio:
   root:

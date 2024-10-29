@@ -17,7 +17,7 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
   Optional<UserEntity> findFirstByPhoneNumber(String phoneNumber);
   List<UserEntity> findAllByUsernameContainingIgnoreCase(String username, Pageable pageable);
 
-  @Query(value = "UPDATE user u SET u.isVerifie = ?2 WHERE u.id = ?1", nativeQuery = true)
+  @Query(value = "UPDATE user u SET u.isVerified = ?2 WHERE u.id = ?1")
   @Modifying
   @Transactional
   void updateByIdAndVerified(String id, boolean verified);

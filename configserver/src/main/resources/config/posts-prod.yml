@@ -11,10 +11,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-  servlet:
-    multipart:
-      max-file-size: 25MB
-      max-request-size: 30MB
+    defer-datasource-initialization: true
   datasource:
     postdb:
       url: jdbc:mysql://localhost:3306/forum_posts
@@ -37,6 +34,10 @@ spring:
   sql:
     init:
       mode: always
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 30MB
 
 eureka:
   instance:
@@ -111,7 +112,7 @@ logging:
     com:
       didan:
         forum:
-          users: debug
+          posts: debug
   pattern:
     level: "%5p [${spring.application.name},%X{Trace-Id},%X{Span-Id}]"
 
@@ -121,4 +122,3 @@ minio:
     password: 17052002
     endpoint: http://localhost:10000
   bucketName: ${spring.application.name}
-

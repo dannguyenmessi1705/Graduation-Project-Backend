@@ -111,7 +111,7 @@ logging:
     com:
       didan:
         forum:
-          users: debug
+          posts: debug
   pattern:
     level: "%5p [${spring.application.name},%X{Trace-Id},%X{Span-Id}]"
 
@@ -121,4 +121,3 @@ minio:
     password: 17052002
     endpoint: http://localhost:10000
   bucketName: ${spring.application.name}
-

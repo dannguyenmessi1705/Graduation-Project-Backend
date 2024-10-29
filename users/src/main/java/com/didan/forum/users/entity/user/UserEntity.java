@@ -72,8 +72,9 @@ public class UserEntity extends SuperClass implements Serializable {
   @Column(length = 16777216)
   private String picture;
 
-  @Column
-  private boolean isVerified;
+  @Column(columnDefinition = "TINYINT(1)", name = "is_verified")
+
+  private boolean isVerified = false;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<UserRoleEntity> userRoles;

@@ -34,11 +34,6 @@ spring:
   sql:
     init:
       mode: always
-  h2:
-    console:
-      enabled: true
-      settings:
-        web-allow-others: true
   servlet:
     multipart:
       max-file-size: 25MB

@@ -34,8 +34,6 @@ spring:
   sql:
     init:
       mode: always
-  config:
-    import: optional:configserver:http://localhost:8071
   servlet:
     multipart:
       max-file-size: 25MB
@@ -97,9 +95,6 @@ sendgrid:
   templateId: d-cb3c0b3bb8514de7991b0f47b12f8a6e
   urlVerify: ${app.baseUrl}/users/verify/
 
-private:
-  route: users/update,users/qrcode,users/report
-
 app:
   cache:
     redis:
@@ -118,6 +113,8 @@ app:
       milliseconds: 300000
   baseUrl: http://localhost:8072/forum
 
+private:
+  route: users/update,users/qrcode,users/report
 management:
   endpoints:
     web:
