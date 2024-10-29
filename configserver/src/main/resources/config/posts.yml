@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: posts
+  config:
+    import: optional:configserver:http://localhost:8071
   jpa:
     hibernate:
       ddl-auto: update
@@ -43,6 +45,19 @@ spring:
       discovery:
         all-namespaces: true
         discovery-server-url: http://spring-cloud-kubernetes-discoveryserver:80/
+    stream:
+      kafka:
+        binder:
+          brokers:
+            - localhost:9092
+      bindings:
+        sendPostScore-out-0:
+          destination: post-score
+        listenPostScore-in-0:
+          destination: post-score
+          group: ${spring.application.name}
+    function:
+      definition: listenPostScore
 
 springdoc:
   api-docs:

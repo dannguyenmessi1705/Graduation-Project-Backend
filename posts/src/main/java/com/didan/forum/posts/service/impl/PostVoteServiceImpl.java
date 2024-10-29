@@ -2,6 +2,7 @@ package com.didan.forum.posts.service.impl;
 
 import com.didan.forum.posts.constant.VoteType;
 import com.didan.forum.posts.dto.GeneralResponse;
+import com.didan.forum.posts.dto.PostInteractionScoreMessage;
 import com.didan.forum.posts.dto.client.UserResponseDto;
 import com.didan.forum.posts.dto.response.PostVoteResponseDto;
 import com.didan.forum.posts.entity.post.PostEntity;
@@ -17,6 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,7 @@ public class PostVoteServiceImpl implements IPostVoteService {
   private final IPostService postService;
   private final PostVoteRepository postVoteRepository;
   private final UsersFeignClient usersFeignClient;
-  private final PostRepository postRepository;
+  private final StreamBridge streamBridge;
 
   @Override
   public void votePost(String postId, String userId, String voteType) {
@@ -42,21 +44,27 @@ public class PostVoteServiceImpl implements IPostVoteService {
         log.info("User {} already voted post {}", userId, postId);
         throw new ErrorActionException("User already voted post");
       } else {
-        log.info("User {} change vote post {}", userId, postId);
-        postVote.get().setVoteType(VoteType.valueOf(voteType.toLowerCase()));
+        log.info("User {} change vote post {} with vote {}", userId, postId, voteType);
+        postVote.get().setVoteType(VoteType.fromString(voteType));
         postVoteRepository.save(postVote.get());
-        postRepository.updateByIdAndInteractionScore(postId,
-            VoteType.UPVOTE.getName().equals(postVote.get().getVoteType().getName()) ? 2L : -2L);
+        PostInteractionScoreMessage postInteractionScoreMessage = PostInteractionScoreMessage.builder()
+            .postId(postId)
+            .interactionScore(VoteType.UPVOTE.getName().equals(voteType.toLowerCase()) ? 2L : -2L)
+            .build();
+        streamBridge.send("sendPostScore-out-0", postInteractionScoreMessage);
       }
     } else {
       log.info("User {} vote post {}", userId, postId);
       postVoteRepository.save(PostVoteEntity.builder()
           .post(post)
           .userId(userId)
-          .voteType(VoteType.valueOf(voteType.toLowerCase()))
+          .voteType(VoteType.fromString(voteType))
           .build());
-      postRepository.updateByIdAndInteractionScore(postId,
-          VoteType.UPVOTE.getName().equals(postVote.get().getVoteType().getName()) ? 1L : -1L);
+      PostInteractionScoreMessage postInteractionScoreMessage = PostInteractionScoreMessage.builder()
+          .postId(postId)
+          .interactionScore(VoteType.UPVOTE.getName().equals(voteType.toLowerCase()) ? 1L : -1L)
+          .build();
+      streamBridge.send("sendPostScore-out-0", postInteractionScoreMessage);
     }
   }
 
@@ -69,8 +77,11 @@ public class PostVoteServiceImpl implements IPostVoteService {
     if (postVote.isPresent()) {
       log.info("User {} revoke vote post {}", userId, postId);
       postVoteRepository.delete(postVote.get());
-      postRepository.updateByIdAndInteractionScore(postId,
-          VoteType.UPVOTE.getName().equals(postVote.get().getVoteType().getName()) ? -1L : 1L);
+      PostInteractionScoreMessage postInteractionScoreMessage = PostInteractionScoreMessage.builder()
+          .postId(postId)
+          .interactionScore(VoteType.UPVOTE.getName().equals(postVote.get().getVoteType().getName()) ? -1L : 1L)
+          .build();
+      streamBridge.send("sendPostScore-out-0", postInteractionScoreMessage);
     } else {
       log.info("User {} not vote post {}", userId, postId);
       throw new ErrorActionException("User not vote post");

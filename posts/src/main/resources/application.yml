@@ -47,19 +47,13 @@ spring:
           brokers:
             - localhost:9092
       bindings:
-        sendPost-out-0:
-          destination: post-register
-        listenPost-in-0:
-          destination: post-register
-          group: ${spring.application.name}
-        listenPost-out-0:
-          destination: post-registe
-          group: ${spring.application.name}
-        receivePost-in-0:
-          destination: post-registe
+        sendPostScore-out-0:
+          destination: post-score
+        listenPostScore-in-0:
+          destination: post-score
           group: ${spring.application.name}
     function:
-      definition: listenPost;receivePost
+      definition: listenPostScore
 
 eureka:
   instance:

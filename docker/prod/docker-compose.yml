@@ -157,7 +157,6 @@ services:
           memory: 700m
     environment:
       SPRING_APPLICATION_NAME: eureka-server
-      SPRING_PROFILES_ACTIVE: prod
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
     depends_on:
       configserver:
@@ -165,195 +164,195 @@ services:
     networks:
       - didan
 
-  gatewayserver:
-    image: dannguyenmessi/gateway-server:v1
-    container_name: gatewayserver
-    ports:
-      - "8072:8072"
-    deploy:
-      resources:
-        limits:
-          memory: 700m
-    environment:
-      SPRING_APPLICATION_NAME: gatewayserver
-      SPRING_PROFILES_ACTIVE: prod
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      OAUTH_OPENID_SERVER: keycloak:8080
-    depends_on:
-      configserver:
-        condition: service_healthy
-      eurekaserver:
-        condition: service_healthy
-      users-service:
-        condition: service_healthy
-    networks:
-      - didan
-
-  report-db:
-    image: mysql:8.0
-    container_name: reports-db
-    ports:
-      - "3310:3306"
-    healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: reportsdb
-      MYSQL_USER: reports
-      MYSQL_PASSWORD: 17052002
-    volumes:
-      - ../data/reportsdb:/var/lib/mysql
-    networks:
-      - didan
-
-  users-db:
-    image: mysql:8.0
-    container_name: users-db
-    ports:
-      - "3308:3306"
-    healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: usersdb
-      MYSQL_USER: users
-      MYSQL_PASSWORD: 17052002
-    volumes:
-      - ../data/usersdb:/var/lib/mysql
-    networks:
-      - didan
-
-  users-service:
-    image: dannguyenmessi/users:v1
-    container_name: users-service
-    ports:
-      - "8080:8080"
-    healthcheck:
-      test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
-    deploy:
-      resources:
-        limits:
-          memory: 700m
-    environment:
-      SPRING_APPLICATION_NAME: users
-      SPRING_PROFILES_ACTIVE: prod
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: kafka:29092
-      SPRING_DATASOURCE_USERDB_URL: jdbc:mysql://users-db:3306/usersdb
-      SPRING_DATASOURCE_USERDB_USERNAME: users
-      SPRING_DATASOURCE_USERSDB_PASSWORD: 17052002
-      SPRING_DATASOURCE_REPORTDB_URL: jdbc:mysql://report-db:3306/reportsdb
-      SPRING_DATASOURCE_REPORTDB_USERNAME: reports
-      SPRING_DATASOURCE_REPORTDB_PASSWORD: 17052002
-      OAUTH_OPENID_SERVER: keycloak:8080
-      APP_CACHE_REDIS_ENABLED: true
-      APP_CACHE_REDIS_HOST: redis
-      APP_CACHE_REDIS_PORT: 6379
-      APP_PAGINATION_DEFAULTSIZE: 10
-      APP_SCHEDULE_FIXEDDELAY_MILLISECONDS: 300000
-      APP_BASEURL: http://gatewayserver:8072/forum
-      MINIO_ROOT_USER: didannguyen
-      MINIO_ROOT_PASSWORD: 17052002
-      MINIO_ROOT_ENDPOINT: http://minio:9000
-    depends_on:
-      configserver:
-        condition: service_healthy
-      eurekaserver:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
-      users-db:
-        condition: service_healthy
-      report-db:
-        condition: service_healthy
-    networks:
-      - didan
-
-  posts-db:
-    image: mysql:8.0
-    container_name: posts-db
-    ports:
-      - "3309:3306"
-    healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: postsdb
-      MYSQL_USER: posts
-      MYSQL_PASSWORD: 17052002
-    volumes:
-      - ../data/postsdb:/var/lib/mysql
-    networks:
-      - didan
-
-  posts-service:
-    image: dannguyenmessi/posts:v1
-    container_name: posts-service
-    ports:
-      - "8090:8090"
-    healthcheck:
-      test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
-    deploy:
-      resources:
-        limits:
-          memory: 700m
-    environment:
-      SPRING_APPLICATION_NAME: posts
-      SPRING_PROFILES_ACTIVE: prod
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      #      SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: kafka:29092
-      #      OAUTH_OPENID_SERVER: keycloak:8080
-      SPRING_DATASOURCE_POSTDB_URL: jdbc:mysql://posts-db:3306/postsdb
-      SPRING_DATASOURCE_POSTDB_USERNAME: posts
-      SPRING_DATASOURCE_POSTSDB_PASSWORD: 17052002
-      SPRING_DATASOURCE_REPORTDB_URL: jdbc:mysql://report-db:3306/reportsdb
-      SPRING_DATASOURCE_REPORTDB_USERNAME: reports
-      SPRING_DATASOURCE_REPORTDB_PASSWORD: 17052002
-      APP_CACHE_REDIS_ENABLED: true
-      APP_CACHE_REDIS_HOST: redis
-      APP_CACHE_REDIS_PORT: 6379
-      APP_PAGINATION_DEFAULTSIZE: 20
-      #      APP_SCHEDULE_FIXEDDELAY_MILLISECONDS: 300000
-      APP_BASEURL: http://gatewayserver:8072/forum
-      MINIO_ROOT_USER: didannguyen
-      MINIO_ROOT_PASSWORD: 17052002
-      MINIO_ROOT_ENDPOINT: http://minio:9000
-    depends_on:
-      configserver:
-        condition: service_healthy
-      eurekaserver:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
-      posts-db:
-        condition: service_healthy
-      report-db:
-        condition: service_healthy
-    networks:
-      - didan
+#  gatewayserver:
+#    image: dannguyenmessi/gateway-server:v1
+#    container_name: gateway-server
+#    ports:
+#      - "8072:8072"
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 700m
+#    environment:
+#      SPRING_APPLICATION_NAME: gateway-server
+#      SPRING_PROFILES_ACTIVE: prod
+#      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+#      OAUTH_OPENID_SERVER: keycloak:8080
+#    depends_on:
+#      configserver:
+#        condition: service_healthy
+#      eurekaserver:
+#        condition: service_healthy
+#      users-service:
+#        condition: service_healthy
+#    networks:
+#      - didan
+#
+#  report-db:
+#    image: mysql:8.0
+#    container_name: reports-db
+#    ports:
+#      - "3310:3306"
+#    healthcheck:
+#      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 10
+#      start_period: 10s
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root
+#      MYSQL_DATABASE: reportsdb
+#      MYSQL_USER: reports
+#      MYSQL_PASSWORD: 17052002
+#    volumes:
+#      - ../data/reportsdb:/var/lib/mysql
+#    networks:
+#      - didan
+#
+#  users-db:
+#    image: mysql:8.0
+#    container_name: users-db
+#    ports:
+#      - "3308:3306"
+#    healthcheck:
+#      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 10
+#      start_period: 10s
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root
+#      MYSQL_DATABASE: usersdb
+#      MYSQL_USER: users
+#      MYSQL_PASSWORD: 17052002
+#    volumes:
+#      - ../data/usersdb:/var/lib/mysql
+#    networks:
+#      - didan
+#
+#  users-service:
+#    image: dannguyenmessi/users:v1
+#    container_name: users-service
+#    ports:
+#      - "8080:8080"
+#    healthcheck:
+#      test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
+#      interval: 10s
+#      timeout: 5s
+#      retries: 10
+#      start_period: 10s
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 700m
+#    environment:
+#      SPRING_APPLICATION_NAME: users
+#      SPRING_PROFILES_ACTIVE: prod
+#      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+#      SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: kafka:29092
+#      SPRING_DATASOURCE_USERDB_URL: jdbc:mysql://users-db:3306/usersdb
+#      SPRING_DATASOURCE_USERDB_USERNAME: users
+#      SPRING_DATASOURCE_USERSDB_PASSWORD: 17052002
+#      SPRING_DATASOURCE_REPORTDB_URL: jdbc:mysql://report-db:3306/reportsdb
+#      SPRING_DATASOURCE_REPORTDB_USERNAME: reports
+#      SPRING_DATASOURCE_REPORTDB_PASSWORD: 17052002
+#      OAUTH_OPENID_SERVER: keycloak:8080
+#      APP_CACHE_REDIS_ENABLED: true
+#      APP_CACHE_REDIS_HOST: redis
+#      APP_CACHE_REDIS_PORT: 6379
+#      APP_PAGINATION_DEFAULTSIZE: 10
+#      APP_SCHEDULE_FIXEDDELAY_MILLISECONDS: 300000
+#      APP_BASEURL: http://gatewayserver:8072/forum
+#      MINIO_ROOT_USER: didannguyen
+#      MINIO_ROOT_PASSWORD: 17052002
+#      MINIO_ROOT_ENDPOINT: http://minio:9000
+#    depends_on:
+#      configserver:
+#        condition: service_healthy
+#      eurekaserver:
+#        condition: service_healthy
+#      minio:
+#        condition: service_healthy
+#      users-db:
+#        condition: service_healthy
+#      report-db:
+#        condition: service_healthy
+#    networks:
+#      - didan
+#
+#  posts-db:
+#    image: mysql:8.0
+#    container_name: posts-db
+#    ports:
+#      - "3309:3306"
+#    healthcheck:
+#      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 10
+#      start_period: 10s
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root
+#      MYSQL_DATABASE: postsdb
+#      MYSQL_USER: posts
+#      MYSQL_PASSWORD: 17052002
+#    volumes:
+#      - ../data/postsdb:/var/lib/mysql
+#    networks:
+#      - didan
+#
+#  posts-service:
+#    image: dannguyenmessi/posts:v1
+#    container_name: posts-service
+#    ports:
+#      - "8090:8090"
+#    healthcheck:
+#      test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
+#      interval: 10s
+#      timeout: 5s
+#      retries: 10
+#      start_period: 10s
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 700m
+#    environment:
+#      SPRING_APPLICATION_NAME: posts
+#      SPRING_PROFILES_ACTIVE: prod
+#      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+#      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+#      SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: kafka:29092
+#      #      OAUTH_OPENID_SERVER: keycloak:8080
+#      SPRING_DATASOURCE_POSTDB_URL: jdbc:mysql://posts-db:3306/postsdb
+#      SPRING_DATASOURCE_POSTDB_USERNAME: posts
+#      SPRING_DATASOURCE_POSTSDB_PASSWORD: 17052002
+#      SPRING_DATASOURCE_REPORTDB_URL: jdbc:mysql://report-db:3306/reportsdb
+#      SPRING_DATASOURCE_REPORTDB_USERNAME: reports
+#      SPRING_DATASOURCE_REPORTDB_PASSWORD: 17052002
+#      APP_CACHE_REDIS_ENABLED: true
+#      APP_CACHE_REDIS_HOST: redis
+#      APP_CACHE_REDIS_PORT: 6379
+#      APP_PAGINATION_DEFAULTSIZE: 20
+#      #      APP_SCHEDULE_FIXEDDELAY_MILLISECONDS: 300000
+#      APP_BASEURL: http://gatewayserver:8072/forum
+#      MINIO_ROOT_USER: didannguyen
+#      MINIO_ROOT_PASSWORD: 17052002
+#      MINIO_ROOT_ENDPOINT: http://minio:9000
+#    depends_on:
+#      configserver:
+#        condition: service_healthy
+#      eurekaserver:
+#        condition: service_healthy
+#      minio:
+#        condition: service_healthy
+#      posts-db:
+#        condition: service_healthy
+#      report-db:
+#        condition: service_healthy
+#    networks:
+#      - didan
 
 networks:
   didan:

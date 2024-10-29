@@ -3,7 +3,9 @@ server:
 
 spring:
   application:
-    name: gatewayserver
+    name: gateway-server
+  config:
+    import: optional:configserver:http://localhost:8071
   security:
     oauth2:
       resourceserver:

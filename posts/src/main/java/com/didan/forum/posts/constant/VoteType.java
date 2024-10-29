@@ -14,5 +14,14 @@ public enum VoteType {
   VoteType(String name) {
     this.name = name;
   }
+
+  public static VoteType fromString(String name) {
+    for (VoteType voteType : VoteType.values()) {
+      if (voteType.getName().equalsIgnoreCase(name)) {
+        return voteType;
+      }
+    }
+    throw new IllegalArgumentException("No enum constant for value: " + name);
+  }
 }
 

@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: posts
+  config:
+    import: optional:configserver:http://localhost:8071
   jpa:
     hibernate:
       ddl-auto: update
@@ -38,6 +40,20 @@ spring:
     multipart:
       max-file-size: 25MB
       max-request-size: 30MB
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers:
+            - localhost:9092
+      bindings:
+        sendPostScore-out-0:
+          destination: post-score
+        listenPostScore-in-0:
+          destination: post-score
+          group: ${spring.application.name}
+    function:
+      definition: listenPostScore
 
 eureka:
   instance:

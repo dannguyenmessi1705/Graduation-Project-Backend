@@ -21,7 +21,7 @@ public interface PostRepository extends JpaRepository<PostEntity, String> {
   @Transactional
   @Modifying
   @Query(value = "UPDATE posts p SET p.interactionScore = p.interactionScore + ?2 WHERE p.id = ?1")
-  PostEntity updateByIdAndInteractionScore(String postId, Long score);
+  void updateByIdAndInteractionScore(String postId, Long score);
 
   @Query(value = "SELECT p FROM posts p ORDER BY p.interactionScore DESC, COALESCE(p.updatedAt, p"
       + ".createdAt) DESC, p.title ASC")
