@@ -25,6 +25,5 @@ public class CreateTopicRequestDto {
   )
   @NotBlank(message = "blank.field.topic.name")
   @Size(min = 3, max = 255, message = "invalid.field.topic.name")
-  @Pattern(regexp = "^[a-zA-Z0-9 ]+$", message = "invalid.field.topic.name")
   private String name;
 }

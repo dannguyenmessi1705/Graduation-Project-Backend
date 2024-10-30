@@ -16,9 +16,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class SuperClass {
   @CreatedDate
-  @Column(updatable = false)
+  @Column(name = "created_at", updatable = false)
   private LocalDateTime createdAt;
   @LastModifiedDate
-  @Column(insertable = false)
+  @Column(name = "updated_at", insertable = false)
   private LocalDateTime updatedAt;
 }

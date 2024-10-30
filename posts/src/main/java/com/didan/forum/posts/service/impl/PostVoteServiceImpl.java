@@ -92,14 +92,14 @@ public class PostVoteServiceImpl implements IPostVoteService {
   public Long countVotePost(String postId, String voteType) {
     validateVoteType(voteType);
     return postVoteRepository.countPostVoteEntityByPostIdAndVoteTypeIsLike(postId,
-        VoteType.valueOf(voteType.toLowerCase()));
+        VoteType.fromString(voteType));
   }
 
   @Override
   public List<PostVoteResponseDto> getVotesPost(String postId, String voteType) {
     validateVoteType(voteType);
     return postVoteRepository.findPostVoteEntityByPostIdAndVoteTypeIsLike(postId,
-        VoteType.valueOf(voteType.toLowerCase())).stream()
+        VoteType.fromString(voteType)).stream()
         .map(postVoteEntity -> {
           ResponseEntity<GeneralResponse<UserResponseDto>> user =
               usersFeignClient.getDetailUser(postVoteEntity.getUserId());

@@ -1,6 +1,7 @@
 services:
   read:
     image: grafana/loki:3.0.0
+    container_name: read-loki
     command: "-config.file=/etc/loki/config.yaml -target=read"
     ports:
       - 3101:3100
@@ -22,6 +23,7 @@ services:
 
   write:
     image: grafana/loki:3.0.0
+    container_name: write-loki
     command: "-config.file=/etc/loki/config.yaml -target=write"
     ports:
       - 3102:3100
@@ -41,6 +43,7 @@ services:
 
   alloy:
     image: grafana/alloy-dev:latest
+    container_name: alloy
     volumes:
       - ../observability/alloy/alloy-local-config.yaml:/etc/alloy/config.alloy:ro
       - /var/run/docker.sock:/var/run/docker.sock
@@ -54,6 +57,7 @@ services:
 
   minio-log:
     image: minio/minio
+    container_name: minio-log
     entrypoint:
       - sh
       - -euc
@@ -80,6 +84,7 @@ services:
 
   grafana:
     image: grafana/grafana:latest
+    container_name: grafana
     environment:
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
       - GF_AUTH_ANONYMOUS_ENABLED=true
@@ -105,6 +110,7 @@ services:
 
   backend:
     image: grafana/loki:3.0.0
+    container_name: backend-loki
     volumes:
       - ../observability/loki/loki-config.yaml:/etc/loki/config.yaml
     ports:
@@ -118,6 +124,7 @@ services:
 
   gateway:
     image: nginx:latest
+    container_name: gateway-nginx
     depends_on:
       - read
       - write
@@ -209,6 +216,7 @@ services:
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.2
+    container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -221,6 +229,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.3.2
+    container_name: kafka
     healthcheck:
       test: nc -z localhost 9092 || exit -1
       start_period: 15s
@@ -322,7 +331,7 @@ services:
       KC_DB_PASSWORD: 17052002
     depends_on:
       keycloakdb:
-        condition: service_started
+        condition: service_healthy
     volumes:
       - ../data/keycloak:/opt/keycloak/data/
     networks:
@@ -484,9 +493,9 @@ services:
       minio:
         condition: service_healthy
       users-db:
-        condition: service_started
+        condition: service_healthy
       report-db:
-        condition: service_started
+        condition: service_healthy
     networks:
       - didan
 
@@ -556,9 +565,9 @@ services:
       minio:
         condition: service_healthy
       posts-db:
-        condition: service_started
+        condition: service_healthy
       report-db:
-        condition: service_started
+        condition: service_healthy
     networks:
       - didan
 
