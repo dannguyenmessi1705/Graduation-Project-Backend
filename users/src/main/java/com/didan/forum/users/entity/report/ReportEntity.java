@@ -40,8 +40,8 @@ import lombok.ToString;
 public class ReportEntity extends SuperClass implements Serializable {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
   @Column(name = "report_type", nullable = false)
   @Enumerated(EnumType.STRING)

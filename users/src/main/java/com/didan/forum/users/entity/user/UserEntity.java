@@ -1,6 +1,7 @@
 package com.didan.forum.users.entity.user;
 
 import com.didan.forum.users.entity.SuperClass;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,7 +24,7 @@ import lombok.ToString;
 @Table(indexes = {
     @Index(name = "idx_user_email", columnList = "email"),
     @Index(name = "idx_user_username", columnList = "username"),
-    @Index(name = "idx_phone_number", columnList = "phoneNumber")
+    @Index(name = "idx_phone_number", columnList = "phone_number"),
 })
 @AllArgsConstructor
 @NoArgsConstructor
@@ -35,47 +36,47 @@ public class UserEntity extends SuperClass implements Serializable {
   @Id
   private String id;
 
-  @Column
+  @Column(name = "first_name")
   private String firstName;
 
-  @Column
+  @Column(name = "last_name")
   private String lastName;
 
-  @Column(unique = true)
+  @Column(name = "email", unique = true)
   private String email;
 
-  @Column(unique = true, updatable = false)
+  @Column(name = "username", unique = true, updatable = false)
   private String username;
 
-  @Column
+  @Column(name = "password")
   private String password;
 
-  @Column
+  @Column(name = "birth_day")
   private LocalDate birthDay;
 
-  @Column
+  @Column(name = "country")
   private String country;
 
-  @Column(unique = true)
+  @Column(name = "phone_number", unique = true)
   private String phoneNumber;
 
-  @Column
+  @Column(name = "gender")
   private String gender;
 
-  @Column
+  @Column(name = "city")
   private String city;
 
-  @Column
+  @Column(name = "postal_code")
   private Long postalCode;
 
   @Lob
-  @Column(length = 16777216)
+  @Column(name = "picture", length = 16777216)
   private String picture;
 
   @Column(columnDefinition = "TINYINT(1)", name = "is_verified")
-
   private boolean isVerified = false;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JsonManagedReference
   private List<UserRoleEntity> userRoles;
 }

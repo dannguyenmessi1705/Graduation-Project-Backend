@@ -1,6 +1,7 @@
 package com.didan.forum.users.entity.user;
 
 import com.didan.forum.users.entity.SuperClass;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,6 +30,8 @@ public class RoleEntity extends SuperClass implements Serializable {
   @Column(unique = true)
   private String name;
 
+
   @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @JsonManagedReference
   private List<UserRoleEntity> userRoles;
 }

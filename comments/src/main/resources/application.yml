@@ -4,18 +4,58 @@ server:
 spring:
   application:
     name: comments
+  config:
+    import: optional:configserver:http://localhost:8071
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-  profiles:
-    active: "dev"
-  config:
-    import: optional:configserver:http://localhost:8071
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    defer-datasource-initialization: true
   servlet:
     multipart:
       max-file-size: 25MB
       max-request-size: 30MB
+  datasource:
+    commentdb:
+      url: jdbc:mysql://localhost:3306/forum_comments
+      username: 'root'
+      password: '17052002'
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        maximum-pool-size: 10
+        connection-timeout: 60000
+        max-lifetime: 590000
+    reportdb:
+      url: jdbc:mysql://localhost:3306/forum_reports
+      username: 'root'
+      password: '17052002'
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        maximum-pool-size: 10
+        connection-timeout: 60000
+        max-lifetime: 590000
+  sql:
+    init:
+      mode: always
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers:
+            - localhost:9092
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8070/eureka/
+
 
 springdoc:
   api-docs:
@@ -23,22 +63,26 @@ springdoc:
   swagger-ui:
     path: /comments/swagger-ui
 
-oauth:
-  openId:
-    url: http://localhost:7080/realms/forum/.well-known/openid-configuration
-
-
 app:
   cache:
     redis:
-      enabled: false
-      host: 'redis://redis-12610.c252.ap-southeast-1-1.ec2.redns.redis-cloud.com'
-      port: 12610
+      enabled: true
+      host: localhost
+      port: 6379
       timeoutSeconds: 60
       maxPoolSize: 8
       maxIdle: 8
       minIdle: 0
-      password: "jfz74hpkdMFx6qTfjIZT4kOixxq9iFB6"
+      password:
+  pagination:
+    defaultSize: 20
+  schedule:
+    fixedDelay:
+      miliseconds: 300000
+  baseUrl: http://localhost:8072/forum
+
+private:
+  route: votes/add,votes/revoke,comments/update,comments/report,comments/new,comments/delete
 
 management:
   endpoints:
@@ -78,12 +122,13 @@ logging:
     com:
       didan:
         forum:
-          users: debug
+          comments: debug
   pattern:
-    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+    level: "%5p [${spring.application.name},%X{Trace-Id},%X{Span-Id}]"
 
 minio:
-  access-key: IFxmZQZnzwfeigv79Lo3
-  secret-key: M64UOvH5OAFZx7q4V1fGi6BbOmH9PXaAtfuyW9x3
-  endpoint: http://localhost:10000
-  bucket-name: materials
+  root:
+    user: didannguyen
+    password: 17052002
+    endpoint: http://localhost:10000
+  bucketName: ${spring.application.name}

@@ -1,6 +1,8 @@
-package com.didan.forum.comments.service.impl;
+package com.didan.forum.comments.service.redis;
 
-import com.didan.forum.comments.service.RedisService;
+
+
+import com.didan.forum.comments.service.IRedisService;
 import com.didan.forum.comments.utils.ObjectMapperUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.concurrent.TimeUnit;
@@ -13,10 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
-@Lazy
 @RequiredArgsConstructor
+@Lazy
 @Slf4j
-public class RedisServiceImpl implements RedisService {
+public class RedisServiceImpl implements IRedisService {
 
   private final RedisTemplate<String, Object> redisTemplate;
 

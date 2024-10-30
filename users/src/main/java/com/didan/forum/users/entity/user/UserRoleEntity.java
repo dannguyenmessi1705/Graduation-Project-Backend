@@ -2,6 +2,7 @@ package com.didan.forum.users.entity.user;
 
 import com.didan.forum.users.entity.SuperClass;
 import com.didan.forum.users.entity.key.UserRoleId;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -25,9 +26,11 @@ public class UserRoleEntity extends SuperClass implements Serializable {
 
   @ManyToOne
   @JoinColumn(name = "user_id", insertable = false, updatable = false)
+  @JsonBackReference
   private UserEntity user;
 
   @ManyToOne
   @JoinColumn(name = "role_id", insertable = false, updatable = false)
+  @JsonBackReference
   private RoleEntity role;
 }

@@ -2,6 +2,7 @@ package com.didan.forum.posts.service.impl;
 
 import com.didan.forum.posts.constant.SearchType;
 import com.didan.forum.posts.constant.SortType;
+import com.didan.forum.posts.constant.VoteType;
 import com.didan.forum.posts.dto.GeneralResponse;
 import com.didan.forum.posts.dto.client.UserResponseDto;
 import com.didan.forum.posts.dto.request.CreatePostRequestDto;
@@ -168,8 +169,8 @@ public class PostServiceImpl implements IPostService {
             .username(user.getUsername())
             .build())
         .fileAttachments(post.getFilesAttached())
-        .totalUpvotes(post.getVotes().stream().filter(v -> v.getVoteType().getName().equals("UPVOTE")).count())
-        .totalDownvotes(post.getVotes().stream().filter(v -> v.getVoteType().getName().equals("DOWNVOTE")).count())
+        .totalUpvotes(post.getVotes().stream().filter(v -> v.getVoteType().equals(VoteType.UPVOTE)).count())
+        .totalDownvotes(post.getVotes().stream().filter(v -> v.getVoteType().equals(VoteType.DOWNVOTE)).count())
         .totalComments(0L)
         .createdAt(post.getCreatedAt())
         .updatedAt(post.getUpdatedAt())
@@ -278,10 +279,8 @@ public class PostServiceImpl implements IPostService {
             .username(user.getUsername())
             .build())
         .fileAttachments(post.getFilesAttached().stream().map(this::getUrlMaterial).toList())
-        .totalUpvotes(post.getVotes().stream().filter(v -> v.getVoteType().getName().equalsIgnoreCase(
-            "UPVOTE")).count())
-        .totalDownvotes(post.getVotes().stream().filter(v -> v.getVoteType().getName().equalsIgnoreCase(
-            "DOWNVOTE")).count())
+        .totalUpvotes(post.getVotes().stream().filter(v -> v.getVoteType().equals(VoteType.UPVOTE)).count())
+        .totalDownvotes(post.getVotes().stream().filter(v -> v.getVoteType().equals(VoteType.DOWNVOTE)).count())
         .totalComments(0L)
         .createdAt(post.getCreatedAt())
         .updatedAt(post.getUpdatedAt())

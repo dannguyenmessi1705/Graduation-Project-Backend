@@ -11,8 +11,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,7 +36,6 @@ import lombok.ToString;
 @Builder
 public class TopicEntity extends SuperClass {
   @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
 
   @Column(name = "name", nullable = false)
@@ -43,5 +44,10 @@ public class TopicEntity extends SuperClass {
   @JsonIgnore
   @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<PostEntity> posts;
+
+  @PrePersist
+  public void init() {
+    this.id = UUID.randomUUID().toString().replace("-", "");
+  }
 
 }
