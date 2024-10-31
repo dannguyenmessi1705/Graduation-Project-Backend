@@ -32,7 +32,7 @@ public class RoleEntity extends SuperClass implements Serializable {
   private String name;
 
 
-  @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
   @JsonManagedReference
   @JsonIgnore
   private List<UserRoleEntity> userRoles;

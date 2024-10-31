@@ -93,7 +93,8 @@ public class UserServiceImpl implements IUserService {
             pageable).stream()
         .map(user -> {
           UserResponseDto userRes = MapperUtils.map(user, UserResponseDto.class);
-          userRes.setPicture(getUrlMinio(user.getPicture()));
+          userRes.setPicture(StringUtils.hasText(user.getPicture()) ?
+              getUrlMinio(user.getPicture()) : null);
           return userRes;
         }).toList();
 
@@ -109,7 +110,8 @@ public class UserServiceImpl implements IUserService {
         .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     UserResponseDto userResponseDto = MapperUtils.map(user, UserResponseDto.class);
     if (user.getPicture() != null) {
-      userResponseDto.setPicture(getUrlMinio(user.getPicture()));
+      userResponseDto.setPicture(StringUtils.hasText(user.getPicture()) ?
+          getUrlMinio(user.getPicture()) : null);
     }
     return userResponseDto;
   }

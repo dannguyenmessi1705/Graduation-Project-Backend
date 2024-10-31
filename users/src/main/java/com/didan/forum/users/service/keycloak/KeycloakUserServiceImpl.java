@@ -48,7 +48,8 @@ public class KeycloakUserServiceImpl implements IKeycloakUserService {
     return MapperObjectKeycloakUtils.mapUsers(userReps).stream()
         .peek(user -> {
           if (StringUtils.hasText(user.getPicture())) {
-            user.setPicture(getUrlMinio(user.getPicture()));
+            user.setPicture(StringUtils.hasText(user.getPicture()) ?
+                getUrlMinio(user.getPicture()) : null);
           }
         }).toList();
   }
@@ -59,7 +60,8 @@ public class KeycloakUserServiceImpl implements IKeycloakUserService {
       UserRepresentation userRep = keycloak.realm(realm).users().get(userId).toRepresentation();
       UserResponseDto userResponseDto = MapperObjectKeycloakUtils.mapUser(userRep);
       if (StringUtils.hasText(userResponseDto.getPicture())) {
-        userResponseDto.setPicture(getUrlMinio(userResponseDto.getPicture()));
+        userResponseDto.setPicture(StringUtils.hasText(userResponseDto.getPicture()) ?
+            getUrlMinio(userResponseDto.getPicture()) : null);
       }
       return userResponseDto;
     } catch (Exception e) {

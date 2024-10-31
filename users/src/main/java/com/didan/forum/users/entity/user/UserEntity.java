@@ -1,6 +1,7 @@
 package com.didan.forum.users.entity.user;
 
 import com.didan.forum.users.entity.SuperClass;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -76,7 +77,8 @@ public class UserEntity extends SuperClass implements Serializable {
   @Column(columnDefinition = "TINYINT(1)", name = "is_verified")
   private boolean isVerified = false;
 
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   @JsonManagedReference
+  @JsonIgnore
   private List<UserRoleEntity> userRoles;
 }
