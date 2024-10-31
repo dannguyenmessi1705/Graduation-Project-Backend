@@ -202,18 +202,6 @@ services:
     networks:
       - didan
 
-  tempo:
-    image: grafana/tempo
-    container_name: tempo
-    command: -config.file /etc/tempo-config.yml
-    ports:
-      - "3110:3100"
-      - "4317:4317"
-    volumes:
-      - ../observability/tempo/tempo-config.yml:/etc/tempo-config.yml
-    networks:
-      - didan
-
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.2
     container_name: zookeeper
@@ -331,7 +319,7 @@ services:
       KC_DB_PASSWORD: 17052002
     depends_on:
       keycloakdb:
-        condition: service_healthy
+        condition: service_started
     volumes:
       - ../data/keycloak:/opt/keycloak/data/
     networks:
@@ -377,7 +365,7 @@ services:
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
     depends_on:
       configserver:
-        condition: service_healthy
+        condition: service_started
     networks:
       - didan
 
@@ -398,11 +386,11 @@ services:
       OAUTH_OPENID_SERVER: keycloak:8080
     depends_on:
       configserver:
-        condition: service_healthy
+        condition: service_started
       eurekaserver:
-        condition: service_healthy
+        condition: service_started
       users-service:
-        condition: service_healthy
+        condition: service_started
     networks:
       - didan
 
@@ -487,15 +475,15 @@ services:
       MINIO_ROOT_ENDPOINT: http://minio:9000
     depends_on:
       configserver:
-        condition: service_healthy
+        condition: service_started
       eurekaserver:
-        condition: service_healthy
+        condition: service_started
       minio:
-        condition: service_healthy
+        condition: service_started
       users-db:
-        condition: service_healthy
+        condition: service_started
       report-db:
-        condition: service_healthy
+        condition: service_started
     networks:
       - didan
 
@@ -559,15 +547,15 @@ services:
       MINIO_ROOT_ENDPOINT: http://minio:9000
     depends_on:
       configserver:
-        condition: service_healthy
+        condition: service_started
       eurekaserver:
-        condition: service_healthy
+        condition: service_started
       minio:
-        condition: service_healthy
+        condition: service_started
       posts-db:
-        condition: service_healthy
+        condition: service_started
       report-db:
-        condition: service_healthy
+        condition: service_started
     networks:
       - didan
 

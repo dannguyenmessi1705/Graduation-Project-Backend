@@ -2,6 +2,7 @@ package com.didan.forum.posts.filter;
 
 import com.didan.forum.posts.dto.GeneralResponse;
 import com.didan.forum.posts.dto.client.UserResponseDto;
+import com.didan.forum.posts.service.VerifyUserService;
 import com.didan.forum.posts.service.client.UsersFeignClient;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,7 +28,7 @@ public class SimpleSecurityFilter extends OncePerRequestFilter {
   @Value("${private.route}")
   private Set<String> privateRoutes;
 
-  private final UsersFeignClient usersFeignClient;
+  private final VerifyUserService verifyUserService;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -41,8 +42,7 @@ public class SimpleSecurityFilter extends OncePerRequestFilter {
         return;
       }
       log.info("Verify userId: {}", userId);
-      ResponseEntity<GeneralResponse<Boolean>> responseEntity = usersFeignClient.checkUserExists(userId);
-      if (!responseEntity.getStatusCode().is2xxSuccessful() || !responseEntity.getBody().getData()) {
+      if (!Boolean.TRUE.equals(verifyUserService.verifyUser(userId))) {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         return;
       }
