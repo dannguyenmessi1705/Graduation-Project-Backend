@@ -1,5 +1,6 @@
 package com.didan.forum.posts.service;
 
+import com.didan.forum.posts.dto.client.UserResponseDto;
 import com.didan.forum.posts.dto.request.CreatePostRequestDto;
 import com.didan.forum.posts.dto.request.UpdatePostRequestDto;
 import com.didan.forum.posts.dto.response.PostResponseDto;
@@ -18,4 +19,6 @@ public interface IPostService {
   List<PostResponseDto> searchPosts(String key, String searchType, int page);
   List<PostResponseDto> getPostsByTopic(String topicId, String type, int page);
   List<PostResponseDto> getPostsByUser(String userId, int page);
+  Boolean checkPostExist(String postId);
+  UserResponseDto getUserData(String userId);
 }

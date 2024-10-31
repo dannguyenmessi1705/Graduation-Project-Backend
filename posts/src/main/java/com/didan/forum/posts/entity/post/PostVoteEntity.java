@@ -1,6 +1,7 @@
 package com.didan.forum.posts.entity.post;
 
 import com.didan.forum.posts.constant.VoteType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -41,6 +42,7 @@ public class PostVoteEntity {
 
   @ManyToOne
   @JoinColumn(name = "post_id", nullable = false)
+  @JsonBackReference
   private PostEntity post;
 
   @Column(name = "vote_type", nullable = false)

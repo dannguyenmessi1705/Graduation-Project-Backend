@@ -291,4 +291,29 @@ public interface IPostController {
       @NotBlank(message = "blank.field.postId") @PathVariable("postId") String postId,
       @Valid @RequestBody ReportPostDto reportPostDto
   );
+
+  @Operation(
+      summary = "Check if post exists",
+      description = "Check if post exists",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "Post exists",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "404",
+              description = "Post does not exist",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          )
+      }
+  )
+  @GetMapping("/exists/{postId}")
+  ResponseEntity<GeneralResponse<Boolean>> checkPostExist(
+      @NotBlank(message = "blank.field.postId") @PathVariable("postId") String postId
+  );
 }

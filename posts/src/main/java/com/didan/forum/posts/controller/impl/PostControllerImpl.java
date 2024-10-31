@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 public class PostControllerImpl implements IPostController {
+
   private final IPostService postService;
   private final IReportPostService reportPostService;
 
@@ -42,8 +43,10 @@ public class PostControllerImpl implements IPostController {
       String postId,
       UpdatePostRequestDto requestDto) {
     log.info("===== Start updating post =====");
-    PostResponseDto responseEntity = postService.updatePost(RequestContext.getRequest().getHeader("X-User-Id"), postId, requestDto);
-    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Post updated successfully", LocalDateTime.now());
+    PostResponseDto responseEntity = postService.updatePost(
+        RequestContext.getRequest().getHeader("X-User-Id"), postId, requestDto);
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(),
+        "Post updated successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, responseEntity), HttpStatus.OK);
   }
 
@@ -52,7 +55,8 @@ public class PostControllerImpl implements IPostController {
       int page) {
     log.info("===== Start getting posts =====");
     List<PostResponseDto> responseEntity = postService.getPosts(searchType, page);
-    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Posts retrieved successfully", LocalDateTime.now());
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(),
+        "Posts retrieved successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, responseEntity), HttpStatus.OK);
   }
 
@@ -60,7 +64,8 @@ public class PostControllerImpl implements IPostController {
   public ResponseEntity<GeneralResponse<PostResponseDto>> getPost(String postId) {
     log.info("===== Start getting post =====");
     PostResponseDto responseEntity = postService.getPost(postId);
-    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Post retrieved successfully", LocalDateTime.now());
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(),
+        "Post retrieved successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, responseEntity), HttpStatus.OK);
   }
 
@@ -69,7 +74,8 @@ public class PostControllerImpl implements IPostController {
       String key, String searchType, int page) {
     log.info("===== Start searching posts =====");
     List<PostResponseDto> responseEntity = postService.searchPosts(key, searchType, page);
-    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Posts retrieved successfully", LocalDateTime.now());
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(),
+        "Posts retrieved successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, responseEntity), HttpStatus.OK);
   }
 
@@ -79,7 +85,8 @@ public class PostControllerImpl implements IPostController {
       int page) {
     log.info("===== Start getting posts by topic =====");
     List<PostResponseDto> responseEntity = postService.getPostsByTopic(topicId, type, page);
-    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Posts retrieved successfully", LocalDateTime.now());
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(),
+        "Posts retrieved successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, responseEntity), HttpStatus.OK);
   }
 
@@ -88,7 +95,8 @@ public class PostControllerImpl implements IPostController {
       int page) {
     log.info("===== Start getting posts by user =====");
     List<PostResponseDto> responseEntity = postService.getPostsByUser(userId, page);
-    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Posts retrieved successfully", LocalDateTime.now());
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(),
+        "Posts retrieved successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, responseEntity), HttpStatus.OK);
   }
 
@@ -96,7 +104,8 @@ public class PostControllerImpl implements IPostController {
   public ResponseEntity<GeneralResponse<Void>> deletePost(String postId) {
     log.info("===== Start deleting post =====");
     postService.deletePost(RequestContext.getRequest().getHeader("X-User-Id"), postId);
-    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Post deleted successfully", LocalDateTime.now());
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(),
+        "Post deleted successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.OK);
   }
 
@@ -104,7 +113,8 @@ public class PostControllerImpl implements IPostController {
   public ResponseEntity<GeneralResponse<Void>> deletePostByAdmin(String postId) {
     log.info("===== Start deleting post by admin =====");
     postService.deletePost(postId);
-    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Post deleted successfully", LocalDateTime.now());
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(),
+        "Post deleted successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.OK);
   }
 
@@ -112,8 +122,24 @@ public class PostControllerImpl implements IPostController {
   public ResponseEntity<GeneralResponse<Void>> reportPost(String postId,
       ReportPostDto reportPostDto) {
     log.info("===== Start reporting post =====");
-    reportPostService.reportPost(RequestContext.getRequest().getHeader("X-User-Id"), postId, reportPostDto);
-    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), "Post reported successfully", LocalDateTime.now());
+    reportPostService.reportPost(RequestContext.getRequest().getHeader("X-User-Id"), postId,
+        reportPostDto);
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(),
+        "Post reported successfully", LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<GeneralResponse<Boolean>> checkPostExist(String postId) {
+    log.info("===== Start checking post exist =====");
+    Boolean responseEntity = postService.checkPostExist(postId);
+    String message = "";
+    if (Boolean.TRUE.equals(responseEntity)) {
+      message = "Post exist";
+    } else {
+      message = "Post does not exist";
+    }
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(), message, LocalDateTime.now());
+    return new ResponseEntity<>(new GeneralResponse<>(status, responseEntity), HttpStatus.OK);
   }
 }

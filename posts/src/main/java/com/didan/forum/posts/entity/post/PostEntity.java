@@ -1,6 +1,8 @@
 package com.didan.forum.posts.entity.post;
 
 import com.didan.forum.posts.entity.SuperClass;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -57,8 +59,10 @@ public class PostEntity extends SuperClass {
 
   @ManyToOne
   @JoinColumn(name = "topic_id", nullable = false)
+  @JsonBackReference
   private TopicEntity topic;
 
-  @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonManagedReference
   private List<PostVoteEntity> votes;
 }

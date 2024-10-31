@@ -101,14 +101,12 @@ public class PostVoteServiceImpl implements IPostVoteService {
     return postVoteRepository.findPostVoteEntityByPostIdAndVoteTypeIsLike(postId,
         VoteType.fromString(voteType)).stream()
         .map(postVoteEntity -> {
-          ResponseEntity<GeneralResponse<UserResponseDto>> user =
-              usersFeignClient.getDetailUser(postVoteEntity.getUserId());
-          if (user.getStatusCode().is2xxSuccessful()) {
-            UserResponseDto userResponseDto = Objects.requireNonNull(user.getBody()).getData();
+          UserResponseDto user = postService.getUserData(postVoteEntity.getUserId());
+          if (user != null) {
             return PostVoteResponseDto.builder()
                 .userId(postVoteEntity.getUserId())
-                .fullName(userResponseDto.getFirstName() + " " + userResponseDto.getLastName())
-                .username(userResponseDto.getUsername())
+                .fullName(user.getFirstName() + " " + user.getLastName())
+                .username(user.getUsername())
                 .build();
           } else {
             return null;

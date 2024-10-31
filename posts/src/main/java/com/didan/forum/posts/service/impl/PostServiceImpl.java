@@ -1,5 +1,6 @@
 package com.didan.forum.posts.service.impl;
 
+import com.didan.forum.posts.constant.RedisCacheConstant;
 import com.didan.forum.posts.constant.SearchType;
 import com.didan.forum.posts.constant.SortType;
 import com.didan.forum.posts.constant.VoteType;
@@ -17,6 +18,7 @@ import com.didan.forum.posts.repository.post.PostRepository;
 import com.didan.forum.posts.repository.post.TopicRepository;
 import com.didan.forum.posts.service.IPostService;
 import com.didan.forum.posts.service.IRedisService;
+import com.didan.forum.posts.service.client.CommentsFeignClient;
 import com.didan.forum.posts.service.client.UsersFeignClient;
 import com.didan.forum.posts.service.minio.MinioService;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,14 +45,14 @@ public class PostServiceImpl implements IPostService {
   private final UsersFeignClient usersFeignClient;
   private final MinioService minioService;
   private final IRedisService redisService;
+  private final StreamBridge streamBridge;
+  private final CommentsFeignClient commentsFeignClient;
 
   @Value("${minio.bucketName}")
   private String bucketName;
 
   @Value("${app.pagination.defaultSize}")
   private int defaultSize;
-
-  private static final String USER_CACHE = "userdata";
 
   @Override
   public void validatePost(String postId) {
@@ -115,7 +118,8 @@ public class PostServiceImpl implements IPostService {
             .email(user.getEmail())
             .username(user.getUsername())
             .build())
-        .fileAttachments(newPost.getFilesAttached())
+        .fileAttachments(newPost.getFilesAttached() != null ?
+            newPost.getFilesAttached().stream().map(this::getUrlMaterial).toList() : List.of())
         .totalUpvotes(0L)
         .totalDownvotes(0L)
         .totalComments(0L)
@@ -158,20 +162,30 @@ public class PostServiceImpl implements IPostService {
     postRepository.save(post);
     log.info("Post with id {} updated successfully", postId);
 
+    UserInfo author = new UserInfo();
+    if (user != null) {
+      author = UserInfo.builder()
+          .id(user.getId())
+          .username(user.getUsername())
+          .email(user.getEmail())
+          .build();
+    } else {
+      author = UserInfo.builder()
+          .id(post.getAuthorId())
+          .username("Unknown")
+          .email("Unknown")
+          .build();
+    }
     return PostResponseDto.builder()
         .id(post.getId())
         .title(post.getTitle())
         .topicId(post.getTopic().getId())
         .content(post.getContent())
-        .author(UserInfo.builder()
-            .id(post.getAuthorId())
-            .email(user.getEmail())
-            .username(user.getUsername())
-            .build())
+        .author(author)
         .fileAttachments(post.getFilesAttached())
         .totalUpvotes(post.getVotes().stream().filter(v -> v.getVoteType().equals(VoteType.UPVOTE)).count())
         .totalDownvotes(post.getVotes().stream().filter(v -> v.getVoteType().equals(VoteType.DOWNVOTE)).count())
-        .totalComments(0L)
+        .totalComments(getTotalComments(post.getId()))
         .createdAt(post.getCreatedAt())
         .updatedAt(post.getUpdatedAt())
         .build();
@@ -188,6 +202,7 @@ public class PostServiceImpl implements IPostService {
       throw new ErrorActionException("User is not the author of this post");
     }
     postRepository.delete(post);
+    streamBridge.send("postDeleted-out-0", postId);
     log.info("Post with id {} deleted successfully", postId);
   }
 
@@ -198,6 +213,7 @@ public class PostServiceImpl implements IPostService {
       return new ResourceNotFoundException("Post with id " + postId + " not found");
     });
     postRepository.delete(post);
+    streamBridge.send("postDeleted-out-0", postId);
     log.info("Post with id {} deleted successfully", postId);
   }
 
@@ -211,7 +227,7 @@ public class PostServiceImpl implements IPostService {
     } else {
       posts = postRepository.findAllByOrderByUpdatedAtDescCreatedAtDescTitleAsc(pageable);
     }
-    return mapPostList(posts.stream().toList());
+    return posts.getTotalElements() != 0 ? mapPostList(posts.stream().toList()) : List.of();
   }
 
   @Override
@@ -234,7 +250,7 @@ public class PostServiceImpl implements IPostService {
       posts = postRepository.findPostEntityByContentContainingOrderByInteractionScoreDescUpdatedAtDescCreatedAtDescTitleAsc(
           key, pageable);
     }
-    return mapPostList(posts.stream().toList());
+    return posts.getTotalElements() != 0 ? mapPostList(posts.stream().toList()) : List.of();
   }
 
   @Override
@@ -251,7 +267,7 @@ public class PostServiceImpl implements IPostService {
     } else {
       posts = postRepository.findPostEntityByTopicIdOrderByUpdatedAtDescCreatedAtDesc(topicId, pageable);
     }
-    return mapPostList(posts.stream().toList());
+    return posts.getTotalElements() != 0 ? mapPostList(posts.stream().toList()) : List.of();
   }
 
   @Override
@@ -259,7 +275,12 @@ public class PostServiceImpl implements IPostService {
     Pageable pageable = PageRequest.of(page, defaultSize);
     Page<PostEntity> posts = postRepository.findPostEntityByAuthorIdOrderByInteractionScoreDescUpdatedAtDescCreatedAtDescTitleAsc(
         userId, pageable);
-    return mapPostList(posts.stream().toList());
+    return posts.getTotalElements() != 0 ? mapPostList(posts.stream().toList()) : List.of();
+  }
+
+  @Override
+  public Boolean checkPostExist(String postId) {
+    return postRepository.existsById(postId);
   }
 
   private List<PostResponseDto> mapPostList(List<PostEntity> list) {
@@ -268,20 +289,31 @@ public class PostServiceImpl implements IPostService {
 
   private PostResponseDto mapPost(PostEntity post) {
     UserResponseDto user = getUserData(post.getAuthorId());
+    UserInfo author = new UserInfo();
+    if (user != null) {
+      author = UserInfo.builder()
+          .id(user.getId())
+          .username(user.getUsername())
+          .email(user.getEmail())
+          .build();
+    } else {
+      author = UserInfo.builder()
+          .id(post.getAuthorId())
+          .username("Unknown")
+          .email("Unknown")
+          .build();
+    }
     return PostResponseDto.builder()
         .id(post.getId())
         .title(post.getTitle())
         .topicId(post.getTopic().getId())
         .content(post.getContent())
-        .author(UserInfo.builder()
-            .id(user.getId())
-            .email(user.getEmail())
-            .username(user.getUsername())
-            .build())
-        .fileAttachments(post.getFilesAttached().stream().map(this::getUrlMaterial).toList())
+        .author(author)
+        .fileAttachments(post.getFilesAttached() != null ?
+            post.getFilesAttached().stream().map(this::getUrlMaterial).toList() : List.of())
         .totalUpvotes(post.getVotes().stream().filter(v -> v.getVoteType().equals(VoteType.UPVOTE)).count())
         .totalDownvotes(post.getVotes().stream().filter(v -> v.getVoteType().equals(VoteType.DOWNVOTE)).count())
-        .totalComments(0L)
+        .totalComments(getTotalComments(post.getId()))
         .createdAt(post.getCreatedAt())
         .updatedAt(post.getUpdatedAt())
         .build();
@@ -292,15 +324,40 @@ public class PostServiceImpl implements IPostService {
     return minioService.getUTF8ByURLDecoder(url);
   }
 
-  private UserResponseDto getUserData(String userId) {
-    UserResponseDto cachedUser = redisService.getCache(USER_CACHE, userId, UserResponseDto.class);
+  @Override
+  public UserResponseDto getUserData(String userId) {
+    UserResponseDto cachedUser = redisService.getCache(RedisCacheConstant.USER_CACHE.getCacheName(), userId,
+        UserResponseDto.class);
     if (cachedUser != null) {
       return cachedUser;
     }
     ResponseEntity<GeneralResponse<UserResponseDto>> requestUsers =
         usersFeignClient.getDetailUser(userId);
-    UserResponseDto user = Objects.requireNonNull(requestUsers.getBody()).getData();
-    redisService.setCache(USER_CACHE, userId, user, 3600);
-    return user;
+    if (requestUsers.getStatusCode().is2xxSuccessful()) {
+      UserResponseDto userResponseDto = Objects.requireNonNull(requestUsers.getBody()).getData();
+      redisService.setCache(RedisCacheConstant.USER_CACHE.getCacheName(), userId, userResponseDto, 3600);
+      return userResponseDto;
+    } else {
+      redisService.setCache(RedisCacheConstant.USER_CACHE.getCacheName(), userId, null, 3600);
+      return null;
+    }
+  }
+
+  private Long getTotalComments(String postId) {
+    Long totalCommentsInCache = redisService.getCache(RedisCacheConstant.COMMENT_QUANTITY_CACHE.getCacheName(), postId
+        , Long.class);
+    if (totalCommentsInCache != null) {
+      return totalCommentsInCache;
+    }
+    ResponseEntity<GeneralResponse<Long>> requestComments =
+        commentsFeignClient.countComments(postId);
+    if (requestComments.getStatusCode().is2xxSuccessful()) {
+      Long totalComments = Objects.requireNonNull(requestComments.getBody()).getData();
+      redisService.setCache(RedisCacheConstant.COMMENT_QUANTITY_CACHE.getCacheName(), postId, totalComments, 3600);
+      return totalComments;
+    } else {
+      redisService.setCache(RedisCacheConstant.COMMENT_QUANTITY_CACHE.getCacheName(), postId, 0L, 3600);
+      return 0L;
+    }
   }
 }

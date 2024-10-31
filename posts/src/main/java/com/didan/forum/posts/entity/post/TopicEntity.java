@@ -2,6 +2,7 @@ package com.didan.forum.posts.entity.post;
 
 import com.didan.forum.posts.entity.SuperClass;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -44,6 +45,7 @@ public class TopicEntity extends SuperClass {
 
   @JsonIgnore
   @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+  @JsonManagedReference
   private List<PostEntity> posts;
 
 }

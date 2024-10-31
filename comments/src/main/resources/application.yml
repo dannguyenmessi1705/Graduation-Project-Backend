@@ -46,6 +46,21 @@ spring:
         binder:
           brokers:
             - localhost:9092
+      bindings:
+        postDeleted-in-0:
+          destination: post-delete
+          group: ${spring.application.name}
+        sendCommentScore-out-0:
+          destination: comment-score
+        listenCommentScore-in-0:
+          destination: comment-score
+          group: ${spring.application.name}
+        sendPostScore-out-0:
+          destination: post-score
+        commentAction-out-0:
+          destination: comment-action
+    function:
+      definition: postDeleted;listenCommentScore
 
 eureka:
   instance:
