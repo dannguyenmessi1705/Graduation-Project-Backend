@@ -1,4 +1,4 @@
-package com.didan.forum.users.repository.user;
+package com.didan.forum.users.repository;
 
 import com.didan.forum.users.entity.redis.TokenRequestEntity;
 import org.springframework.data.repository.CrudRepository;

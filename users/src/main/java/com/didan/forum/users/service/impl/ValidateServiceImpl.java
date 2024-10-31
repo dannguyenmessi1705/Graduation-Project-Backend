@@ -6,7 +6,7 @@ import com.didan.forum.users.dto.request.UpdateUserAdminRequestDto;
 import com.didan.forum.users.entity.redis.TokenRequestEntity;
 import com.didan.forum.users.entity.user.UserEntity;
 import com.didan.forum.users.exception.ResourceNotFoundException;
-import com.didan.forum.users.repository.user.TokenRequestRepository;
+import com.didan.forum.users.repository.TokenRequestRepository;
 import com.didan.forum.users.repository.user.UserRepository;
 import com.didan.forum.users.service.IKeycloakRoleService;
 import com.didan.forum.users.service.IKeycloakUserService;

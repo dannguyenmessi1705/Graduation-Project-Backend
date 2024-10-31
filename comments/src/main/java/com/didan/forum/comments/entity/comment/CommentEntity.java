@@ -37,8 +37,8 @@ import lombok.ToString;
 @Builder
 public class CommentEntity extends SuperClass {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
   @Lob
   @Column(name = "content", nullable = false, length = 16777216)
@@ -58,7 +58,7 @@ public class CommentEntity extends SuperClass {
   private String postId;
 
   @Column(name = "reply_to_comment_id", nullable = true)
-  private Long replyToCommentId;
+  private String replyToCommentId;
 
   @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<CommentVoteEntity> votes;

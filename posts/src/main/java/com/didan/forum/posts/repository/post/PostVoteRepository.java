@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PostVoteRepository extends JpaRepository<PostVoteEntity, String> {
+public interface PostVoteRepository extends JpaRepository<PostVoteEntity, Long> {
   Long countPostVoteEntityByPostIdAndVoteTypeIsLike(String postId, VoteType voteType);
   List<PostVoteEntity> findPostVoteEntityByPostIdAndVoteTypeIsLike(String postId, VoteType voteType);
   Optional<PostVoteEntity> findPostVoteEntityByPostIdAndUserId(String postId, String userId);
