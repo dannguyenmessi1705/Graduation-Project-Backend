@@ -87,6 +87,14 @@ public class GatewayServerApplication {
                     .setName("postsCircuitBreaker")
                     .setFallbackUri("forward:/contact-support")))
             .uri("lb://POSTS"))
+        .route(p -> p.path("/forum/comments/**")
+            .filters(f -> f
+                .rewritePath("/forum/comments/(?<remaining>.*)", "/comments/${remaining}")
+                .addRequestHeader("Time-Requested", LocalDateTime.now().toString())
+                .circuitBreaker(config -> config
+                    .setName("commentsCircuitBreaker")
+                    .setFallbackUri("forward:/contact-support")))
+            .uri("lb://COMMENTS"))
         .build();
   }
 

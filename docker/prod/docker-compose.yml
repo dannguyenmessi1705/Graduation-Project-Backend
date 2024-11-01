@@ -619,7 +619,7 @@ services:
       MYSQL_USER: comments
       MYSQL_PASSWORD: 17052002
     volumes:
-      - ../data/postsdb:/var/lib/mysql
+      - ../data/commentdb:/var/lib/mysql
     networks:
       - didan
 
@@ -644,9 +644,9 @@ services:
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
       SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: kafka:29092
-      SPRING_DATASOURCE_POSTDB_URL: jdbc:mysql://comments-db:3306/commentsdb
-      SPRING_DATASOURCE_POSTDB_USERNAME: comments
-      SPRING_DATASOURCE_POSTSDB_PASSWORD: 17052002
+      SPRING_DATASOURCE_COMMENTDB_URL: jdbc:mysql://comments-db:3306/commentsdb
+      SPRING_DATASOURCE_COMMENTDB_USERNAME: comments
+      SPRING_DATASOURCE_COMMENTDB_PASSWORD: 17052002
       SPRING_DATASOURCE_REPORTDB_URL: jdbc:mysql://report-db:3306/reportsdb
       SPRING_DATASOURCE_REPORTDB_USERNAME: reports
       SPRING_DATASOURCE_REPORTDB_PASSWORD: 17052002
