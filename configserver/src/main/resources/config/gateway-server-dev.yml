@@ -77,6 +77,9 @@ springdoc:
       - url: /forum/posts/api-docs
         name: Posts Service
         display-name: Posts Service
+      - url: /forum/comments/api-docs
+        name: Comments Service
+        display-name: Comments Service
     oauth:
       client-id: forum-authentication
       client-secret: l2WiWQULnEFt9KrgySvFK03QtVf9K4DO

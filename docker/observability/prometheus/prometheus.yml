@@ -11,6 +11,10 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: [ 'posts-service:8090' ]
+  - job_name: 'comments'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'comments-service:9000' ]
   - job_name: 'gateway-server'
     metrics_path: '/actuator/prometheus'
     static_configs:
