@@ -23,7 +23,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
-@Order(2)
+@Order(3)
 public class SimpleSecurityFilter extends OncePerRequestFilter {
   @Value("${private.route}")
   private Set<String> privateRoutes;

@@ -76,8 +76,8 @@ public class GatewayServerApplication {
                 .circuitBreaker(config -> config
                     .setName("usersCircuitBreaker")
                     .setFallbackUri("forward:/contact-support"))
-                .metadata(RESPONSE_TIMEOUT_ATTR, 7000)
-                .metadata(CONNECT_TIMEOUT_ATTR, 10000))
+                .metadata(RESPONSE_TIMEOUT_ATTR, 15000)
+                .metadata(CONNECT_TIMEOUT_ATTR, 20000))
             .uri("lb://USERS"))
         .route(p -> p.path("/forum/posts/**")
             .filters(f -> f
@@ -85,7 +85,9 @@ public class GatewayServerApplication {
                 .addRequestHeader("Time-Requested", LocalDateTime.now().toString())
                 .circuitBreaker(config -> config
                     .setName("postsCircuitBreaker")
-                    .setFallbackUri("forward:/contact-support")))
+                    .setFallbackUri("forward:/contact-support"))
+                .metadata(RESPONSE_TIMEOUT_ATTR, 15000)
+                .metadata(CONNECT_TIMEOUT_ATTR, 20000))
             .uri("lb://POSTS"))
         .route(p -> p.path("/forum/comments/**")
             .filters(f -> f
@@ -93,7 +95,9 @@ public class GatewayServerApplication {
                 .addRequestHeader("Time-Requested", LocalDateTime.now().toString())
                 .circuitBreaker(config -> config
                     .setName("commentsCircuitBreaker")
-                    .setFallbackUri("forward:/contact-support")))
+                    .setFallbackUri("forward:/contact-support"))
+                .metadata(RESPONSE_TIMEOUT_ATTR, 15000)
+                .metadata(CONNECT_TIMEOUT_ATTR, 20000))
             .uri("lb://COMMENTS"))
         .build();
   }
@@ -101,7 +105,7 @@ public class GatewayServerApplication {
   @Bean
   public Customizer<Resilience4JCircuitBreakerFactory> globalCustomConfiguration() {
     return factory -> factory.configureDefault(id -> new Resilience4JConfigBuilder(id)
-        .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(15)).cancelRunningFuture(true).build())
+        .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(30)).cancelRunningFuture(true).build())
         .circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
         .build());
   }

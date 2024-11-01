@@ -62,7 +62,7 @@ spring:
           destination: comment-action
           group: ${spring.application.name}
     function:
-      definition: listenPostScore
+      definition: listenPostScore;commentAction
 
 springdoc:
   api-docs:

@@ -1,9 +1,6 @@
 package com.didan.forum.posts.filter;
 
-import com.didan.forum.posts.dto.GeneralResponse;
-import com.didan.forum.posts.dto.client.UserResponseDto;
 import com.didan.forum.posts.service.VerifyUserService;
-import com.didan.forum.posts.service.client.UsersFeignClient;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
