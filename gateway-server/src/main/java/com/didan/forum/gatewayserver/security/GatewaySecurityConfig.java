@@ -25,7 +25,6 @@ import reactor.core.publisher.Mono;
 @Configuration
 @EnableWebFluxSecurity
 public class GatewaySecurityConfig {
-
   @Bean
   public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) throws Exception {
     return http.authorizeExchange(exchanges ->
@@ -36,12 +35,14 @@ public class GatewaySecurityConfig {
                     + "/role/**", "/forum/users/report/**", "/forum/posts/report/**", "/forum"
                     + "/posts/votes/add/**", "/forum/posts/votes/revoke/**", "/forum/posts/delete"
                     + "/**", "/forum/posts/new/**", "/forum/posts/update/**", "/forum/posts"
-                    + "/report/**")
+                    + "/report/**", "/forum/comments/report/**", "/forum/comments/delete/**",
+                    "/forum/comments/create/**", "/forum/comments/votes/add/**", "/forum/comments"
+                        + "/votes/revoke/**")
                 .hasAnyRole("user", "admin")
                 .pathMatchers("/forum/users/keycloak/**", "/forum/posts/topic/update/**",
                     "/forum/posts/topic/delete/**", "/forum/posts/topic/create/**", "/forum/topic"
                         + "/create/**", "/forum/topic/update/**", "/forum/topic/delete/**",
-                    "/forum/posts/admin/delete/**")
+                    "/forum/posts/admin/delete/**", "/forum/comments/admin/delete/**")
                 .hasRole("admin")
                 .anyExchange()
                 .permitAll())

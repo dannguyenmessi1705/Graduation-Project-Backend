@@ -56,6 +56,11 @@ spring:
         listenPostScore-in-0:
           destination: post-score
           group: ${spring.application.name}
+        deletePost-out-0:
+          destination: post-delete
+        commentAction-in-0:
+          destination: comment-action
+          group: ${spring.application.name}
     function:
       definition: listenPostScore
 
