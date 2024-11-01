@@ -7,5 +7,5 @@ public interface ICommentVoteService {
   void voteComment(String commentId, String userId, String voteType);
   void revokeVoteComment(String commentId, String userId);
   Long countVoteComment(String commentId, String voteType);
-  List<CommentVoteResponseDto> getVotesComment(String CommentId, String voteType);
+  List<CommentVoteResponseDto> getVotesComment(String commentId, String voteType);
 }

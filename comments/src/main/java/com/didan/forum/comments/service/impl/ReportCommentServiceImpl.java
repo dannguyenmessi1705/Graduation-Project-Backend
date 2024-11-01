@@ -19,16 +19,16 @@ public class ReportCommentServiceImpl implements IReportCommentService {
   private final ICommentService commentService;
 
   @Override
-  public void reportComment(String userId, String postId, ReportCommentDto reportCommentDto) {
-    log.info("User {} is reporting post {}", userId, postId);
-    if (Boolean.FALSE.equals(commentService.checkCommentExist(postId))) {
-      log.error("Comment {} not found", postId);
+  public void reportComment(String userId, String commentId, ReportCommentDto reportCommentDto) {
+    log.info("User {} is reporting post {}", userId, commentId);
+    if (Boolean.FALSE.equals(commentService.checkCommentExist(commentId))) {
+      log.error("Comment {} not found", commentId);
       throw new ErrorActionException("Comment not found");
     }
     ReportEntity reportEntity = ReportEntity.builder()
         .reportContent(reportCommentDto.getContent())
         .subjectReportId(userId)
-        .objectId(postId)
+        .objectId(commentId)
         .reportType(ReportType.COMMENT)
         .build();
     reportRepository.save(reportEntity);

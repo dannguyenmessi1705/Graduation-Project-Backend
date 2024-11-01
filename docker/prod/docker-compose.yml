@@ -360,7 +360,7 @@ services:
       KC_DB_PASSWORD: 17052002
     depends_on:
       keycloakdb:
-        condition: service_started
+        condition: service_healthy
     volumes:
       - ../data/keycloak:/opt/keycloak/data/
     networks:
@@ -406,7 +406,7 @@ services:
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
     depends_on:
       configserver:
-        condition: service_started
+        condition: service_healthy
     networks:
       - didan
 
@@ -427,11 +427,15 @@ services:
       OAUTH_OPENID_SERVER: keycloak:8080
     depends_on:
       configserver:
-        condition: service_started
+        condition: service_healthy
       eurekaserver:
-        condition: service_started
+        condition: service_healthy
       users-service:
-        condition: service_started
+        condition: service_healthy
+      posts-service:
+        condition: service_healthy
+      comments-service:
+        condition: service_healthy
     networks:
       - didan
 
@@ -516,15 +520,15 @@ services:
       MINIO_ROOT_ENDPOINT: http://minio:9000
     depends_on:
       configserver:
-        condition: service_started
+        condition: service_healthy
       eurekaserver:
-        condition: service_started
+        condition: service_healthy
       minio:
-        condition: service_started
+        condition: service_healthy
       users-db:
-        condition: service_started
+        condition: service_healthy
       report-db:
-        condition: service_started
+        condition: service_healthy
     networks:
       - didan
 
@@ -570,7 +574,6 @@ services:
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
       SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: kafka:29092
-      #      OAUTH_OPENID_SERVER: keycloak:8080
       SPRING_DATASOURCE_POSTDB_URL: jdbc:mysql://posts-db:3306/postsdb
       SPRING_DATASOURCE_POSTDB_USERNAME: posts
       SPRING_DATASOURCE_POSTSDB_PASSWORD: 17052002
@@ -581,22 +584,91 @@ services:
       APP_CACHE_REDIS_HOST: redis
       APP_CACHE_REDIS_PORT: 6379
       APP_PAGINATION_DEFAULTSIZE: 20
-      #      APP_SCHEDULE_FIXEDDELAY_MILLISECONDS: 300000
       APP_BASEURL: http://gatewayserver:8072/forum
       MINIO_ROOT_USER: didannguyen
       MINIO_ROOT_PASSWORD: 17052002
       MINIO_ROOT_ENDPOINT: http://minio:9000
     depends_on:
       configserver:
-        condition: service_started
+        condition: service_healthy
       eurekaserver:
-        condition: service_started
+        condition: service_healthy
       minio:
-        condition: service_started
+        condition: service_healthy
       posts-db:
-        condition: service_started
+        condition: service_healthy
       report-db:
-        condition: service_started
+        condition: service_healthy
+    networks:
+      - didan
+
+  comments-db:
+    image: mysql:8.0
+    container_name: comments-db
+    ports:
+      - "3311:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: commentsdb
+      MYSQL_USER: comments
+      MYSQL_PASSWORD: 17052002
+    volumes:
+      - ../data/postsdb:/var/lib/mysql
+    networks:
+      - didan
+
+  comments-service:
+    image: dannguyenmessi/comments:v1
+    container_name: comments-service
+    ports:
+      - "9000:9000"
+    healthcheck:
+      test: "curl --fail --silent localhost:9000/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    environment:
+      SPRING_APPLICATION_NAME: comments
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+      SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: kafka:29092
+      SPRING_DATASOURCE_POSTDB_URL: jdbc:mysql://comments-db:3306/commentsdb
+      SPRING_DATASOURCE_POSTDB_USERNAME: comments
+      SPRING_DATASOURCE_POSTSDB_PASSWORD: 17052002
+      SPRING_DATASOURCE_REPORTDB_URL: jdbc:mysql://report-db:3306/reportsdb
+      SPRING_DATASOURCE_REPORTDB_USERNAME: reports
+      SPRING_DATASOURCE_REPORTDB_PASSWORD: 17052002
+      APP_CACHE_REDIS_ENABLED: true
+      APP_CACHE_REDIS_HOST: redis
+      APP_CACHE_REDIS_PORT: 6379
+      APP_PAGINATION_DEFAULTSIZE: 20
+      APP_BASEURL: http://gatewayserver:8072/forum
+      MINIO_ROOT_USER: didannguyen
+      MINIO_ROOT_PASSWORD: 17052002
+      MINIO_ROOT_ENDPOINT: http://minio:9000
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      comments-db:
+        condition: service_healthy
+      report-db:
+        condition: service_healthy
     networks:
       - didan
 

@@ -97,7 +97,7 @@ app:
   baseUrl: http://localhost:8072/forum
 
 private:
-  route: votes/add,votes/revoke,comments/update,comments/report,comments/new,comments/delete
+  route: comments/create,votes/revoke,votes/add,comments/report,comments/delete
 
 management:
   endpoints:
