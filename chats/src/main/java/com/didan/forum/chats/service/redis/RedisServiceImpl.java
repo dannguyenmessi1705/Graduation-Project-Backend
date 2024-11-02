@@ -1,6 +1,6 @@
-package com.didan.forum.chats.service.impl;
+package com.didan.forum.chats.service.redis;
 
-import com.didan.forum.chats.service.RedisService;
+import com.didan.forum.chats.service.IRedisService;
 import com.didan.forum.chats.utils.ObjectMapperUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.concurrent.TimeUnit;
@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
-@Lazy
 @RequiredArgsConstructor
+@Lazy
 @Slf4j
-public class RedisServiceImpl implements RedisService {
+public class RedisServiceImpl implements IRedisService {
 
   private final RedisTemplate<String, Object> redisTemplate;
 

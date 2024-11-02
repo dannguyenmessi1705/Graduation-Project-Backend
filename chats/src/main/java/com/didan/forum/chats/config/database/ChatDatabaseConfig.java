@@ -1,4 +1,4 @@
-package com.didan.forum.users.config.database;
+package com.didan.forum.chats.config.database;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,43 +22,43 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-    entityManagerFactoryRef = "usersEntityManagerFactory",
-    transactionManagerRef = "usersTransactionManager",
-    basePackages = {"com.didan.forum.users.repository.user"}
+    entityManagerFactoryRef = "chatsEntityManagerFactory",
+    transactionManagerRef = "chatsTransactionManager",
+    basePackages = {"com.didan.forum.chats.repository.chat"}
 )
-public class UserDatabaseConfig {
+public class ChatDatabaseConfig {
 
   @Primary
   @Bean
-  @ConfigurationProperties("spring.datasource.userdb")
-  public DataSourceProperties usersDataSourceProperties() {
+  @ConfigurationProperties("spring.datasource.chatdb")
+  public DataSourceProperties chatsDataSourceProperties() {
     return new DataSourceProperties();
   }
 
   @Primary
-  @Bean(name = "usersDataSource")
-  @ConfigurationProperties(prefix = "spring.datasource.userdb.hiraki")
-  public DataSource usersDataSource() {
-    return usersDataSourceProperties().initializeDataSourceBuilder().build();
+  @Bean(name = "chatsDataSource")
+  @ConfigurationProperties(prefix = "spring.datasource.chatdb.hiraki")
+  public DataSource chatsDataSource() {
+    return chatsDataSourceProperties().initializeDataSourceBuilder().build();
   }
 
   @Primary
-  @Bean(name = "usersEntityManagerFactory")
-  public LocalContainerEntityManagerFactoryBean userEntityManagerFactory(
-    EntityManagerFactoryBuilder builder, @Qualifier("usersDataSource") DataSource dataSource) {
+  @Bean(name = "chatsEntityManagerFactory")
+  public LocalContainerEntityManagerFactoryBean chatEntityManagerFactory(
+      EntityManagerFactoryBuilder builder, @Qualifier("chatsDataSource") DataSource dataSource) {
     return builder
         .dataSource(dataSource)
-        .packages("com.didan.forum.users.entity.user")
-        .persistenceUnit("users")
+        .packages("com.didan.forum.chats.entity.chat")
+        .persistenceUnit("chats")
         .properties(hibernateProperties())
         .build();
   }
 
   @Primary
-  @Bean(name = "usersTransactionManager")
-  public PlatformTransactionManager usersTransactionManager(@Qualifier("usersEntityManagerFactory")
-      LocalContainerEntityManagerFactoryBean usersEntityManagerFactory) {
-    return new JpaTransactionManager(Objects.requireNonNull(usersEntityManagerFactory.getObject()));
+  @Bean(name = "chatsTransactionManager")
+  public PlatformTransactionManager chatsTransactionManager(@Qualifier("chatsEntityManagerFactory")
+  LocalContainerEntityManagerFactoryBean chatsEntityManagerFactory) {
+    return new JpaTransactionManager(Objects.requireNonNull(chatsEntityManagerFactory.getObject()));
   }
 
   private Map<String, Object> hibernateProperties() {

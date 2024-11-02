@@ -44,7 +44,7 @@ public class CommentDatabaseConfig {
 
   @Primary
   @Bean(name = "commentsEntityManagerFactory")
-  public LocalContainerEntityManagerFactoryBean postEntityManagerFactory(
+  public LocalContainerEntityManagerFactoryBean commentEntityManagerFactory(
     EntityManagerFactoryBuilder builder, @Qualifier("commentsDataSource") DataSource dataSource) {
     return builder
         .dataSource(dataSource)
