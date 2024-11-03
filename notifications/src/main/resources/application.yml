@@ -1,21 +1,61 @@
 server:
-  port: 9020
-
+  port: 9010
 spring:
   application:
     name: notifications
+  config:
+    import: optional:configserver:http://localhost:8071
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-  profiles:
-    active: "dev"
-  config:
-    import: optional:configserver:http://localhost:8071
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    defer-datasource-initialization: true
   servlet:
     multipart:
       max-file-size: 25MB
       max-request-size: 30MB
+  datasource:
+    notificationdb:
+      url: jdbc:mysql://localhost:3306/forum_notifications
+      username: 'root'
+      password: '17052002'
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        maximum-pool-size: 10
+        connection-timeout: 60000
+        max-lifetime: 590000
+  sql:
+    init:
+      mode: always
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers:
+            - localhost:9092
+      bindings:
+        listenNotification-in-0:
+          destination: event-notification
+          group: ${spring.application.name}
+        userJoinForum-out-0:
+          destination: user-join-forum
+        listenUserJoinForum-in-0:
+          destination: user-join-forum
+          group: ${spring.application.name}
+    function:
+      definition: listenNotification;listenUserJoinForum
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8070/eureka/
 
 springdoc:
   api-docs:
@@ -23,22 +63,30 @@ springdoc:
   swagger-ui:
     path: /notifications/swagger-ui
 
-oauth:
-  openId:
-    url: http://localhost:7080/realms/forum/.well-known/openid-configuration
-
-
 app:
   cache:
     redis:
-      enabled: false
-      host: 'redis://redis-12610.c252.ap-southeast-1-1.ec2.redns.redis-cloud.com'
-      port: 12610
+      enabled: true
+      host: localhost
+      port: 6379
       timeoutSeconds: 60
       maxPoolSize: 8
       maxIdle: 8
       minIdle: 0
-      password: "jfz74hpkdMFx6qTfjIZT4kOixxq9iFB6"
+      password:
+  pagination:
+    default-size: 10
+  scheduled:
+    fixedDelay:
+      miliseconds: 60000
+  base-url: http://localhost:8072/forum
+  websocket:
+    endpoint: /notifications/ws
+    publish: /notifications/app
+    subscribe: /notifications/topic
+
+private:
+  route:
 
 management:
   endpoints:
@@ -70,7 +118,7 @@ endpoints:
 info:
   app:
     name: ${spring.application.name}
-    description: "Forum comments application"
+    description: "Forum notifications application"
     version: "1.0.0"
 
 logging:
@@ -78,12 +126,13 @@ logging:
     com:
       didan:
         forum:
-          users: debug
+          notifications: debug
   pattern:
-    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+    level: "%5p [${spring.application.name},%X{Trace-Id},%X{Span-Id}]"
 
 minio:
-  access-key: IFxmZQZnzwfeigv79Lo3
-  secret-key: M64UOvH5OAFZx7q4V1fGi6BbOmH9PXaAtfuyW9x3
-  endpoint: http://localhost:10000
-  bucket-name: materials
+  root:
+    user: didannguyen
+    password: 17052002
+    endpoint: http://localhost:10000
+  bucketName: ${spring.application.name}

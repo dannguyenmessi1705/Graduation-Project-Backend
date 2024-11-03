@@ -11,6 +11,7 @@
   </parent>
   <groupId>com.didan.forum</groupId>
   <artifactId>notifications</artifactId>
+  <packaging>jar</packaging>
   <version>0.0.1-SNAPSHOT</version>
   <name>notifications</name>
   <description>notifications</description>
@@ -59,7 +60,7 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-stream-binder-kafka-streams</artifactId>
+      <artifactId>spring-cloud-stream-binder-kafka</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
@@ -125,6 +126,14 @@
       <optional>true</optional>
     </dependency>
     <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-openfeign</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-websocket</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <scope>runtime</scope>
@@ -169,6 +178,19 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <version>3.3.2</version>
+        <configuration>
+          <from>
+            <image>eclipse-temurin:21-jre</image>
+          </from>
+          <to>
+            <image>dannguyenmessi/${project.artifactId}:v1</image>
+          </to>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>

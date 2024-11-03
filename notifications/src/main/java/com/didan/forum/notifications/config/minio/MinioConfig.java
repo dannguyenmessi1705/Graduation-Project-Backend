@@ -12,17 +12,17 @@ import org.springframework.context.annotation.Lazy;
 @Lazy
 @Data
 @Slf4j
-@ConfigurationProperties(prefix = "minio")
+@ConfigurationProperties(prefix = "minio.root")
 public class MinioConfig {
   private String endpoint;
-  private String accessKey;
-  private String secretKey;
+  private String user;
+  private String password;
 
   @Bean
   public MinioClient minioClient() {
     return MinioClient.builder()
         .endpoint(endpoint)
-        .credentials(accessKey, secretKey)
+        .credentials(user, password)
         .build();
   }
 }
