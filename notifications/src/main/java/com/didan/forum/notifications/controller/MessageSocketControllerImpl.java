@@ -1,4 +1,4 @@
-package com.didan.forum.notifications.controller.impl;
+package com.didan.forum.notifications.controller;
 
 import com.didan.forum.notifications.dto.UserJoinProducer;
 import java.util.Objects;

@@ -1,15 +1,51 @@
-spring.datasource:
-  url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL;NON_KEYWORDS=USER
-  driver-class-name: org.h2.Driver
-  username: 'sa'
-  password: ''
-
-spring.h2:
-  console:
-    enabled: true
-
-spring.jpa:
-  database-platform: org.hibernate.dialect.H2Dialect
+server:
+  port: 9010
+spring:
+  application:
+    name: notifications
+#  config:
+#    import: optional:configserver:http://localhost:8071
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 30MB
+  datasource:
+    notificationdb:
+      url: jdbc:h2:mem:notificationdb;DB_CLOSE_DELAY=-1;MODE=MySQL;NON_KEYWORDS=USER
+      username: 'root'
+      password: '17052002'
+      driver-class-name: org.h2.Driver
+      hikari:
+        maximum-pool-size: 10
+        connection-timeout: 60000
+        max-lifetime: 590000
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers:
+            - localhost:9092
+      bindings:
+        listenNotification-in-0:
+          destination: event-notification
+          group: ${spring.application.name}
+        userJoinForum-out-0:
+          destination: user-join-forum
+        listenUserJoinForum-in-0:
+          destination: user-join-forum
+          group: ${spring.application.name}
+    function:
+      definition: listenNotification;listenUserJoinForum
 
 eureka:
   instance:
@@ -19,3 +55,83 @@ eureka:
     register-with-eureka: true
     service-url:
       defaultZone: http://localhost:8070/eureka/
+
+springdoc:
+  api-docs:
+    path: /notifications/api-docs
+  swagger-ui:
+    path: /notifications/swagger-ui
+
+app:
+  cache:
+    redis:
+      enabled: true
+      host: localhost
+      port: 6379
+      timeoutSeconds: 60
+      maxPoolSize: 8
+      maxIdle: 8
+      minIdle: 0
+      password:
+  pagination:
+    default-size: 10
+  scheduled:
+    fixedDelay:
+      milliseconds: 60000
+  baseUrl: http://localhost:8072/forum
+  websocket:
+    endpoint: /notifications/ws
+    publish: /notifications/app
+    subscribe: /notifications/topic
+
+private:
+  route: notifications/delete,notifications/mark,notifications/read,notifications/unread
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true
+    shutdown:
+      enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+endpoints:
+  shutdown:
+    enabled: true
+
+info:
+  app:
+    name: ${spring.application.name}
+    description: "Forum notifications application"
+    version: "1.0.0"
+
+logging:
+  level:
+    com:
+      didan:
+        forum:
+          notifications: debug
+  pattern:
+    level: "%5p [${spring.application.name},%X{Trace-Id},%X{Span-Id}]"
+
+minio:
+  root:
+    user: didannguyen
+    password: 17052002
+    endpoint: http://localhost:10000
+  bucketName: ${spring.application.name}

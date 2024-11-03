@@ -1,9 +1,11 @@
 package com.didan.forum.notifications.function;
 
+import com.didan.forum.notifications.constant.RedisCacheConstant;
 import com.didan.forum.notifications.dto.NotificationConsumer;
 import com.didan.forum.notifications.dto.UserJoinProducer;
 import com.didan.forum.notifications.entity.notification.NotificationEntity;
 import com.didan.forum.notifications.repository.notification.NotificationRepository;
+import com.didan.forum.notifications.service.IRedisService;
 import com.didan.forum.notifications.utils.MapperUtils;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +25,8 @@ public class NotificationFunction {
   @Bean
   public Consumer<NotificationConsumer> listenNotification(
       NotificationRepository notificationRepository,
-      SimpMessageSendingOperations simpMessageSendingOperations) {
+      SimpMessageSendingOperations simpMessageSendingOperations,
+      IRedisService redisService) {
     return notificationConsumer -> {
       log.info("Notification received: {}", notificationConsumer);
       NotificationEntity notificationEntity = MapperUtils.map(notificationConsumer,
@@ -36,6 +39,7 @@ public class NotificationFunction {
             notificationEntity);
       }
       notificationRepository.save(notificationEntity);
+      redisService.deleteCache(RedisCacheConstant.NOTIFICATION_UNREAD_COUNT.getCacheName(), notificationEntity.getUserId());
     };
   }
 

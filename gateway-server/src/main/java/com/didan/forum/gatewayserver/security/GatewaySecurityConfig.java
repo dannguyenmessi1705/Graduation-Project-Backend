@@ -1,7 +1,5 @@
 package com.didan.forum.gatewayserver.security;
 
-import java.util.Set;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -25,6 +23,7 @@ import reactor.core.publisher.Mono;
 @Configuration
 @EnableWebFluxSecurity
 public class GatewaySecurityConfig {
+
   @Bean
   public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) throws Exception {
     return http.authorizeExchange(exchanges ->
@@ -32,17 +31,17 @@ public class GatewaySecurityConfig {
                 .pathMatchers("/forum/api-docs/**", "/forum/swagger-ui/**", "/forum/users/api-docs/**")
                 .permitAll()
                 .pathMatchers("/forum/users/update/**", "/forum/users/qrcode/**", "/forum/users"
-                    + "/role/**", "/forum/users/report/**", "/forum/posts/report/**", "/forum"
-                    + "/posts/votes/add/**", "/forum/posts/votes/revoke/**", "/forum/posts/delete"
-                    + "/**", "/forum/posts/new/**", "/forum/posts/update/**", "/forum/posts"
-                    + "/report/**", "/forum/comments/report/**", "/forum/comments/delete/**",
+                        + "/role/**", "/forum/users/report/**", "/forum/posts/report/**", "/forum"
+                        + "/posts/votes/add/**", "/forum/posts/votes/revoke/**", "/forum/posts/delete"
+                        + "/**", "/forum/posts/new/**", "/forum/posts/update/**", "/forum/posts"
+                        + "/report/**", "/forum/comments/report/**", "/forum/comments/delete/**",
                     "/forum/comments/create/**", "/forum/comments/votes/add/**", "/forum/comments"
-                        + "/votes/revoke/**")
+                        + "/votes/revoke/**", "/forum/notifications/delete/**", "/forum/notifications/mark/**",
+                    "/forum/notifications/read/**", "/forum/notifications/unread/**")
                 .hasAnyRole("user", "admin")
                 .pathMatchers("/forum/users/keycloak/**", "/forum/posts/topic/update/**",
-                    "/forum/posts/topic/delete/**", "/forum/posts/topic/create/**", "/forum/topic"
-                        + "/create/**", "/forum/topic/update/**", "/forum/topic/delete/**",
-                    "/forum/posts/admin/delete/**", "/forum/comments/admin/delete/**")
+                    "/forum/posts/topic/delete/**", "/forum/posts/topic/create/**", "/forum/posts/topic/delete/**",
+                    "/forum/posts/admin/delete/**", "/forum/comments/admin/delete/**", "/forum/notifications/admin/create/**")
                 .hasRole("admin")
                 .anyExchange()
                 .permitAll())

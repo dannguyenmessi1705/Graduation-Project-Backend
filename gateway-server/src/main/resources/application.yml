@@ -35,7 +35,7 @@ oauth:
 #      timeout: 1s
 
 private:
-  route: users/update,users/qrcode,posts/update,comments/update,votes/add,votes/revoke,posts/update,posts/report,posts/new,posts/delete,comments/create,votes/revoke,votes/add,comments/report,comments/delete
+  route: users/update,users/qrcode,posts/update,comments/update,votes/add,votes/revoke,posts/update,posts/report,posts/new,posts/delete,comments/create,votes/revoke,votes/add,comments/report,comments/delete,notifications/delete,notifications/mark,notifications/read,notifications/unread
 
 management:
   endpoints:
@@ -71,6 +71,9 @@ springdoc:
       - url: /forum/comments/api-docs
         name: Comments Service
         display-name: Comments Service
+      - url: /forum/notifications/api-docs
+        name: Notification Service
+        display-name: Notification Service
     oauth:
       client-id: forum-authentication
       client-secret: l2WiWQULnEFt9KrgySvFK03QtVf9K4DO

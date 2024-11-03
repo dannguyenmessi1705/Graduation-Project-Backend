@@ -4,9 +4,9 @@ server:
 spring:
   application:
     name: comments
-  config:
-    #    import: optional:configserver:http://localhost:8071
-    #  jpa:
+#  config:
+#    import: optional:configserver:http://localhost:8071
+  jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
@@ -63,6 +63,8 @@ spring:
           destination: post-score
         commentAction-out-0:
           destination: comment-action
+    function:
+      definition: postDeleted;listenCommentScore
 
 springdoc:
   api-docs:
@@ -85,7 +87,7 @@ app:
     defaultSize: 20
   schedule:
     fixedDelay:
-      miliseconds: 300000
+      milliseconds: 300000
   baseUrl: http://localhost:8072/forum
 
 private:

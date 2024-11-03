@@ -37,6 +37,8 @@ spring:
           brokers:
             - localhost:9092
       bindings:
+        sendNotification-out-0:
+          destination: event-notification
         listenNotification-in-0:
           destination: event-notification
           group: ${spring.application.name}
@@ -78,15 +80,15 @@ app:
     default-size: 10
   scheduled:
     fixedDelay:
-      miliseconds: 60000
-  base-url: http://localhost:8072/forum
+      milliseconds: 60000
+  baseUrl: http://localhost:8072/forum
   websocket:
     endpoint: /notifications/ws
     publish: /notifications/app
     subscribe: /notifications/topic
 
 private:
-  route:
+  route: notifications/delete,notifications/mark,notifications/read,notifications/unread
 
 management:
   endpoints:

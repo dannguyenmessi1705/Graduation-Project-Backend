@@ -1,20 +1,133 @@
-#spring.datasource:
-#  url: "{cipher}bdcc54d2600287278982f45d78301b73696363e43db61b8a845b2e245c22bd75314b3f3b955070978e0be1d044b4c147ce3ec00495eb1061e798d69ddf916ce06943af6345012a3508942b236e23c5fa970dd77a3c24a7e5bbbc26f7be92ad56de4926fd13883587c23f80d62ff726ff639788a38cf84800d13a5f401709949a"
-#  username: "{cipher}b447891ee31d0b9c6b59e13be85e45c65fcb3cc0b158fe5ec2029785db396c71"
-#  password: "{cipher}414f97e948d86739788fed29c146445159bd1d999932821c860d3590a389039b6ef11ebaf606dce2a1a723cd74190345"
-
-spring.jpa:
-  properties:
+server:
+  port: 9010
+spring:
+  application:
+    name: notifications
+#  config:
+#    import: optional:configserver:http://localhost:8071
+  jpa:
     hibernate:
-      dialect: org.hibernate.dialect.MySQL8Dialect
-  defer-datasource-initialization: true
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    defer-datasource-initialization: true
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 30MB
+  datasource:
+    notificationdb:
+      url: jdbc:mysql://localhost:3306/forum_notifications
+      username: 'root'
+      password: '17052002'
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        maximum-pool-size: 10
+        connection-timeout: 60000
+        max-lifetime: 590000
+  sql:
+    init:
+      mode: always
+  cloud:
+    kubernetes:
+      discovery:
+        all-namespaces: true
+        discovery-server-url: http://spring-cloud-kubernetes-discoveryserver:80/
+    stream:
+      kafka:
+        binder:
+          brokers:
+            - localhost:9092
+      bindings:
+        listenNotification-in-0:
+          destination: event-notification
+          group: ${spring.application.name}
+        userJoinForum-out-0:
+          destination: user-join-forum
+        listenUserJoinForum-in-0:
+          destination: user-join-forum
+          group: ${spring.application.name}
+    function:
+      definition: listenNotification;listenUserJoinForum
 
-spring.sql:
-  init:
-    mode: always
+springdoc:
+  api-docs:
+    path: /notifications/api-docs
+  swagger-ui:
+    path: /notifications/swagger-ui
 
-spring.cloud:
-  kubernetes:
-    discovery:
-      all-namespaces: true
-      discovery-server-url: http://spring-cloud-kubernetes-discoveryserver:80/
+app:
+  cache:
+    redis:
+      enabled: true
+      host: localhost
+      port: 6379
+      timeoutSeconds: 60
+      maxPoolSize: 8
+      maxIdle: 8
+      minIdle: 0
+      password:
+  pagination:
+    default-size: 10
+  scheduled:
+    fixedDelay:
+      milliseconds: 60000
+  baseUrl: http://localhost:8072/forum
+  websocket:
+    endpoint: /notifications/ws
+    publish: /notifications/app
+    subscribe: /notifications/topic
+
+private:
+  route: notifications/delete,notifications/mark,notifications/read,notifications/unread
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true
+    shutdown:
+      enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+endpoints:
+  shutdown:
+    enabled: true
+
+info:
+  app:
+    name: ${spring.application.name}
+    description: "Forum notifications application"
+    version: "1.0.0"
+
+logging:
+  level:
+    com:
+      didan:
+        forum:
+          notifications: debug
+  pattern:
+    level: "%5p [${spring.application.name},%X{Trace-Id},%X{Span-Id}]"
+
+minio:
+  root:
+    user: didannguyen
+    password: 17052002
+    endpoint: http://localhost:10000
+  bucketName: ${spring.application.name}

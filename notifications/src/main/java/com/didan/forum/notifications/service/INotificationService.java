@@ -1,5 +1,6 @@
 package com.didan.forum.notifications.service;
 
+import com.didan.forum.notifications.dto.request.CreateNotificationRequestDto;
 import com.didan.forum.notifications.entity.notification.NotificationEntity;
 import java.util.List;
 
@@ -11,4 +12,5 @@ public interface INotificationService {
   void markAllAsRead(String userId);
   void deleteNotification(String userId, Long notificationId);
   void deleteAllNotifications(String userId);
+  NotificationEntity createNotificationByAdmin(CreateNotificationRequestDto requestDto);
 }

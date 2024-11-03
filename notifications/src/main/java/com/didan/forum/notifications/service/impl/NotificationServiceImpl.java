@@ -1,12 +1,18 @@
 package com.didan.forum.notifications.service.impl;
 
+import com.didan.forum.notifications.constant.NotifyTypeConstant;
+import com.didan.forum.notifications.constant.RedisCacheConstant;
+import com.didan.forum.notifications.dto.request.CreateNotificationRequestDto;
 import com.didan.forum.notifications.entity.notification.NotificationEntity;
 import com.didan.forum.notifications.repository.notification.NotificationRepository;
 import com.didan.forum.notifications.service.INotificationService;
+import com.didan.forum.notifications.service.IRedisService;
+import com.didan.forum.notifications.utils.MapperUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationServiceImpl implements INotificationService {
 
   private final NotificationRepository notificationRepository;
+  private final IRedisService redisService;
+  private final StreamBridge streamBridge;
 
   @Value("${app.pagination.default-size}")
   private Integer defaultPageSize;
@@ -49,7 +57,15 @@ public class NotificationServiceImpl implements INotificationService {
 
   @Override
   public Long getUnreadNotificationsCount(String userId) {
-    return notificationRepository.countNotificationEntitiesByUserIdAndIsReadIsFalseOrderByCreatedAtDesc(userId);
+    Long count =
+        redisService
+            .getCache(RedisCacheConstant.NOTIFICATION_UNREAD_COUNT.getCacheName(), userId, Long.class);
+    if (count == null) {
+      return notificationRepository
+          .countNotificationEntitiesByUserIdAndIsReadIsFalseOrderByCreatedAtDesc(userId);
+    } else {
+      return count;
+    }
   }
 
   @Override
@@ -94,5 +110,15 @@ public class NotificationServiceImpl implements INotificationService {
     List<NotificationEntity> notifications = notificationRepository
         .findNotificationEntitiesByUserIdOrderByCreatedAtDesc(userId);
     notificationRepository.deleteAll(notifications);
+  }
+
+  @Override
+  public NotificationEntity createNotificationByAdmin(CreateNotificationRequestDto requestDto) {
+    NotificationEntity notificationEntity = MapperUtils.map(requestDto, NotificationEntity.class);
+    notificationEntity.setIsRead(false);
+    notificationEntity.setType(NotifyTypeConstant.ADMIN);
+    notificationRepository.save(notificationEntity);
+    streamBridge.send("sendNotification-out-0", notificationEntity);
+    return notificationEntity;
   }
 }

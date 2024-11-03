@@ -21,7 +21,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
 import org.springframework.cloud.client.circuitbreaker.Customizer;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -99,6 +98,16 @@ public class GatewayServerApplication {
                 .metadata(RESPONSE_TIMEOUT_ATTR, 15000)
                 .metadata(CONNECT_TIMEOUT_ATTR, 20000))
             .uri("lb://COMMENTS"))
+        .route(p -> p.path("/forum/notifications/**")
+            .filters(f -> f
+                .rewritePath("/forum/notifications/(?<remaining>.*)", "/notifications/${remaining}")
+                .addRequestHeader("Time-Requested", LocalDateTime.now().toString())
+                .circuitBreaker(config -> config
+                    .setName("notificationsCircuitBreaker")
+                    .setFallbackUri("forward:/contact-support"))
+                .metadata(RESPONSE_TIMEOUT_ATTR, 15000)
+                .metadata(CONNECT_TIMEOUT_ATTR, 20000))
+            .uri("lb://NOTIFICATIONS"))
         .build();
   }
 
