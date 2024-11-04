@@ -18,11 +18,20 @@ import lombok.ToString;
 @Builder
 public class CreateNotificationRequestDto {
   @Schema(
-      name = "message",
-      description = "Message of the notification",
-      example = "You have a new message"
+      name = "title",
+      description = "Title of the notification",
+      example = "You have a new message from admin"
   )
-  @NotBlank(message = "blank.field.message")
-  @Column(name = "message")
-  private String message;
+  @NotBlank(message = "blank.field.title")
+  @Column(name = "title")
+  private String title;
+
+  @Schema(
+      name = "content",
+      description = "Content of the notification",
+      example = "The forum is off in 0 AM to update"
+  )
+  @NotBlank(message = "blank.field.content")
+  @Column(name = "content")
+  private String content;
 }

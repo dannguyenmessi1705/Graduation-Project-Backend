@@ -1,10 +1,12 @@
 package com.didan.forum.posts.service.impl;
 
+import com.didan.forum.posts.constant.NotifyTypeConstant;
 import com.didan.forum.posts.constant.RedisCacheConstant;
 import com.didan.forum.posts.constant.SearchType;
 import com.didan.forum.posts.constant.SortType;
 import com.didan.forum.posts.constant.VoteType;
 import com.didan.forum.posts.dto.GeneralResponse;
+import com.didan.forum.posts.dto.NotificationKafkaCommon;
 import com.didan.forum.posts.dto.client.UserResponseDto;
 import com.didan.forum.posts.dto.request.CreatePostRequestDto;
 import com.didan.forum.posts.dto.request.UpdatePostRequestDto;
@@ -54,10 +56,11 @@ public class PostServiceImpl implements IPostService {
   @Value("${app.pagination.defaultSize}")
   private int defaultSize;
 
+
   @Override
-  public void validatePost(String postId) {
+  public PostEntity validatePost(String postId) {
     log.info("Validate post with id: {}", postId);
-    postRepository.findById(postId).orElseThrow(() -> {
+    return postRepository.findById(postId).orElseThrow(() -> {
       log.error("Post with id {} not found", postId);
       return new ResourceNotFoundException("Post with id " + postId + " not found");
     });
@@ -162,7 +165,7 @@ public class PostServiceImpl implements IPostService {
     postRepository.save(post);
     log.info("Post with id {} updated successfully", postId);
 
-    UserInfo author = new UserInfo();
+    UserInfo author;
     if (user != null) {
       author = UserInfo.builder()
           .id(user.getId())
@@ -213,7 +216,15 @@ public class PostServiceImpl implements IPostService {
       return new ResourceNotFoundException("Post with id " + postId + " not found");
     });
     postRepository.delete(post);
+    NotificationKafkaCommon notification = NotificationKafkaCommon.builder()
+        .type(NotifyTypeConstant.ADMIN)
+        .title("Your post is not following the community rules and has been deleted")
+        .content(post.getTitle().substring(0, Math.min(post.getTitle().length(), 50)) + "...")
+        .userId(post.getAuthorId())
+        .link("/posts/" + postId)
+        .build();
     streamBridge.send("postDeleted-out-0", postId);
+    streamBridge.send("sendNotification-out-0", notification);
     log.info("Post with id {} deleted successfully", postId);
   }
 

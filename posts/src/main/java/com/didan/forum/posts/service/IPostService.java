@@ -8,7 +8,7 @@ import com.didan.forum.posts.entity.post.PostEntity;
 import java.util.List;
 
 public interface IPostService {
-  void validatePost(String postId);
+  PostEntity validatePost(String postId);
   PostEntity getPostById(String postId);
   PostResponseDto createNewPost(String userId, CreatePostRequestDto requestDto);
   PostResponseDto updatePost(String userId, String postId, UpdatePostRequestDto requestDto);

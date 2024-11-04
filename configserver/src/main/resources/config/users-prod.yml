@@ -54,6 +54,8 @@ spring:
         listenUserEmail-in-0:
           destination: mail-register
           group: ${spring.application.name}
+        sendNotification-out-0:
+          destination: event-notification
       kafka:
         binder:
           brokers:

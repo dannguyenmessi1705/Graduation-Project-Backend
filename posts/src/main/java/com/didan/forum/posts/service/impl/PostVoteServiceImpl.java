@@ -1,7 +1,9 @@
 package com.didan.forum.posts.service.impl;
 
+import com.didan.forum.posts.constant.NotifyTypeConstant;
 import com.didan.forum.posts.constant.VoteType;
 import com.didan.forum.posts.dto.GeneralResponse;
+import com.didan.forum.posts.dto.NotificationKafkaCommon;
 import com.didan.forum.posts.dto.PostInteractionScoreMessage;
 import com.didan.forum.posts.dto.client.UserResponseDto;
 import com.didan.forum.posts.dto.response.PostVoteResponseDto;
@@ -18,6 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -65,6 +68,14 @@ public class PostVoteServiceImpl implements IPostVoteService {
           .interactionScore(VoteType.UPVOTE.getName().equals(voteType.toLowerCase()) ? 1L : -1L)
           .build();
       streamBridge.send("sendPostScore-out-0", postInteractionScoreMessage);
+      NotificationKafkaCommon notificationKafkaCommon = NotificationKafkaCommon.builder()
+          .userId(post.getAuthorId())
+          .title(VoteType.UPVOTE.getName().equals(voteType.toLowerCase()) ? "Someone upvote your post" : "Someone downvote your post")
+          .content(post.getTitle().substring(0, Math.min(post.getTitle().length(), 50)) + "...")
+          .type(VoteType.UPVOTE.getName().equals(voteType.toLowerCase()) ? NotifyTypeConstant.VOTE_UP_POST : NotifyTypeConstant.VOTE_DOWN_POST)
+          .link("/posts/" + post.getId())
+          .build();
+      streamBridge.send("sendNotification-out-0", notificationKafkaCommon);
     }
   }
 

@@ -39,8 +39,11 @@ public class NotificationEntity extends SuperClass {
   @Column(name = "user_id", nullable = true)
   private String userId;
 
-  @Column(name = "message", nullable = false)
-  private String message;
+  @Column(name = "title", nullable = false)
+  private String title;
+
+  @Column(name = "content", nullable = false)
+  private String content;
 
   @Column(name = "type", nullable = false)
   @Enumerated(EnumType.STRING)

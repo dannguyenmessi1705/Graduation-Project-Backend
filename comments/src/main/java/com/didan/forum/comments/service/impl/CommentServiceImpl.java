@@ -1,8 +1,11 @@
 package com.didan.forum.comments.service.impl;
 
+import com.didan.forum.comments.constant.NotifyTypeConstant;
 import com.didan.forum.comments.constant.RedisCacheConstant;
 import com.didan.forum.comments.constant.SortType;
 import com.didan.forum.comments.constant.VoteType;
+import com.didan.forum.comments.dto.CreateRequestNotificationKafkaCommon;
+import com.didan.forum.comments.dto.NotificationKafkaCommon;
 import com.didan.forum.comments.dto.PostInteractionScoreMessage;
 import com.didan.forum.comments.dto.client.UserResponseDto;
 import com.didan.forum.comments.dto.request.CreateCommentRequestDto;
@@ -93,8 +96,22 @@ public class CommentServiceImpl implements ICommentService {
         .postId(requestDto.getPostId())
         .interactionScore(1L)
         .build();
+    log.info("Sending message to update post score {}", postInteractionScoreMessage);
     streamBridge.send("sendPostScore-out-0", postInteractionScoreMessage);
+
+    log.info("Sending message to update comment action {}", savedComment.getPostId());
     streamBridge.send("commentAction-out-0", savedComment.getPostId());
+
+    CreateRequestNotificationKafkaCommon requestNotificationKafkaCommon = CreateRequestNotificationKafkaCommon.builder()
+        .commentId(savedComment.getId())
+        .ownerCommentId(savedComment.getAuthorId())
+        .userCommentId(userId)
+        .postId(savedComment.getPostId())
+        .commentContent(savedComment.getContent())
+        .build();
+    log.info("Sending message to create notification {}", requestNotificationKafkaCommon);
+    streamBridge.send("sendRequestToCreateNotification-out-0", requestNotificationKafkaCommon);
+
     return CommentResponseDto.builder()
         .id(savedComment.getId())
         .postId(savedComment.getPostId())
@@ -162,8 +179,21 @@ public class CommentServiceImpl implements ICommentService {
         .postId(comment.getPostId())
         .interactionScore(-1L)
         .build();
+    log.info("Sending message to update post score {}", postInteractionScoreMessage);
     streamBridge.send("sendPostScore-out-0", postInteractionScoreMessage);
+
+    log.info("Sending message to update comment action {}", comment.getPostId());
     streamBridge.send("commentAction-out-0", comment.getPostId());
+
+    NotificationKafkaCommon notificationKafkaCommon = NotificationKafkaCommon.builder()
+        .userId(comment.getAuthorId())
+        .type(NotifyTypeConstant.ADMIN)
+        .title("Your comment is not following the community rules and has been deleted")
+        .content(comment.getContent().substring(0, Math.min(comment.getContent().length(), 50)) + "...")
+        .link("/comments/get/" + comment.getId())
+        .build();
+    log.info("Sending message to create notification {}", notificationKafkaCommon);
+    streamBridge.send("sendNotification-out-0", notificationKafkaCommon);
   }
 
   @Override

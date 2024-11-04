@@ -12,5 +12,5 @@ public interface INotificationService {
   void markAllAsRead(String userId);
   void deleteNotification(String userId, Long notificationId);
   void deleteAllNotifications(String userId);
-  NotificationEntity createNotificationByAdmin(CreateNotificationRequestDto requestDto);
+  void createNotificationByAdmin(CreateNotificationRequestDto requestDto);
 }

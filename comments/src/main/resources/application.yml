@@ -59,8 +59,15 @@ spring:
           destination: post-score
         commentAction-out-0:
           destination: comment-action
+        sendNotification-out-0:
+          destination: event-notification
+        sendRequestToCreateNotification-out-0:
+          destination: notification-create
+        listenRequestToCreateNotification-in-0:
+          destination: notification-create
+          group: ${spring.application.name}
     function:
-      definition: postDeleted;listenCommentScore
+      definition: postDeleted;listenCommentScore;listenRequestToCreateNotification
 
 eureka:
   instance:

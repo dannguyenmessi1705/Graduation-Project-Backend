@@ -2,6 +2,7 @@ package com.didan.forum.notifications.service.impl;
 
 import com.didan.forum.notifications.constant.NotifyTypeConstant;
 import com.didan.forum.notifications.constant.RedisCacheConstant;
+import com.didan.forum.notifications.dto.NotificationKafkaCommon;
 import com.didan.forum.notifications.dto.request.CreateNotificationRequestDto;
 import com.didan.forum.notifications.entity.notification.NotificationEntity;
 import com.didan.forum.notifications.repository.notification.NotificationRepository;
@@ -113,12 +114,10 @@ public class NotificationServiceImpl implements INotificationService {
   }
 
   @Override
-  public NotificationEntity createNotificationByAdmin(CreateNotificationRequestDto requestDto) {
-    NotificationEntity notificationEntity = MapperUtils.map(requestDto, NotificationEntity.class);
-    notificationEntity.setIsRead(false);
-    notificationEntity.setType(NotifyTypeConstant.ADMIN);
-    notificationRepository.save(notificationEntity);
-    streamBridge.send("sendNotification-out-0", notificationEntity);
-    return notificationEntity;
+  public void createNotificationByAdmin(CreateNotificationRequestDto requestDto) {
+    NotificationKafkaCommon notificationKafkaCommon = MapperUtils.map(requestDto,
+        NotificationKafkaCommon.class);
+    notificationKafkaCommon.setType(NotifyTypeConstant.ADMIN);
+    streamBridge.send("sendNotification-out-0", notificationKafkaCommon);
   }
 }

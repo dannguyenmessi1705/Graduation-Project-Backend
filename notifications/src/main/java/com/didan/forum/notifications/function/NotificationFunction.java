@@ -1,7 +1,7 @@
 package com.didan.forum.notifications.function;
 
 import com.didan.forum.notifications.constant.RedisCacheConstant;
-import com.didan.forum.notifications.dto.NotificationConsumer;
+import com.didan.forum.notifications.dto.NotificationKafkaCommon;
 import com.didan.forum.notifications.dto.UserJoinProducer;
 import com.didan.forum.notifications.entity.notification.NotificationEntity;
 import com.didan.forum.notifications.repository.notification.NotificationRepository;
@@ -23,18 +23,19 @@ public class NotificationFunction {
   private String subscribeEndpoint;
 
   @Bean
-  public Consumer<NotificationConsumer> listenNotification(
+  public Consumer<NotificationKafkaCommon> listenNotification(
       NotificationRepository notificationRepository,
       SimpMessageSendingOperations simpMessageSendingOperations,
       IRedisService redisService) {
-    return notificationConsumer -> {
-      log.info("Notification received: {}", notificationConsumer);
-      NotificationEntity notificationEntity = MapperUtils.map(notificationConsumer,
+    return notificationKafkaCommon -> {
+      log.info("Notification received: {}", notificationKafkaCommon);
+      NotificationEntity notificationEntity = MapperUtils.map(notificationKafkaCommon,
           NotificationEntity.class);
       if (StringUtils.hasText(notificationEntity.getUserId())) {
         simpMessageSendingOperations.convertAndSend(
             subscribeEndpoint + "/private/" + notificationEntity.getUserId(), notificationEntity);
       } else {
+        notificationEntity.setIsRead(false);
         simpMessageSendingOperations.convertAndSend(subscribeEndpoint + "/public",
             notificationEntity);
       }

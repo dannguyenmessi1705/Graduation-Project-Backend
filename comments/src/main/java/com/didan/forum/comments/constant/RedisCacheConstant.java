@@ -7,7 +7,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum RedisCacheConstant {
   USER_CACHE("userdata"),
-  COMMENT_QUANTITY_CACHE("commentquantity");
+  COMMENT_QUANTITY_CACHE("commentquantity"),
+  POST_DETAIL_CACHE("postdetail");
 
   private String cacheName;
   RedisCacheConstant(String cacheName) {

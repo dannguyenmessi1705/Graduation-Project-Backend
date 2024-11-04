@@ -1,5 +1,6 @@
 package com.didan.forum.notifications.repository.notification;
 
+import com.didan.forum.notifications.constant.NotifyTypeConstant;
 import com.didan.forum.notifications.entity.notification.NotificationEntity;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,8 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
       String userId);
 
   Long countNotificationEntitiesByUserIdAndIsReadIsFalseOrderByCreatedAtDesc(String userId);
+
+  List<NotificationEntity> findNotificationEntitiesByTypeAndUserIdIsNull(NotifyTypeConstant type);
 
 
 }

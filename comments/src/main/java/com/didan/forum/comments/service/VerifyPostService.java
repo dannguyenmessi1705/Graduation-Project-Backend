@@ -2,7 +2,6 @@ package com.didan.forum.comments.service;
 
 import com.didan.forum.comments.dto.response.GeneralResponse;
 import com.didan.forum.comments.service.client.PostsFeignClient;
-import com.didan.forum.comments.service.client.UsersFeignClient;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;

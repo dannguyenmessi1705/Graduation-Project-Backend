@@ -1,7 +1,9 @@
 package com.didan.forum.comments.service.impl;
 
+import com.didan.forum.comments.constant.NotifyTypeConstant;
 import com.didan.forum.comments.constant.VoteType;
 import com.didan.forum.comments.dto.CommentInteractionScoreMessage;
+import com.didan.forum.comments.dto.NotificationKafkaCommon;
 import com.didan.forum.comments.dto.client.UserResponseDto;
 import com.didan.forum.comments.dto.response.CommentVoteResponseDto;
 import com.didan.forum.comments.entity.comment.CommentEntity;
@@ -61,7 +63,18 @@ public class CommentVoteServiceImpl implements ICommentVoteService {
           .commentId(commentId)
           .interactionScore(VoteType.UPVOTE.getName().equals(voteType.toLowerCase()) ? 1L : -1L)
           .build();
+      log.info("Send message to update comment score");
       streamBridge.send("sendCommentScore-out-0", commentInteractionScoreMessage);
+
+      NotificationKafkaCommon notificationKafkaCommon = NotificationKafkaCommon.builder()
+          .userId(comment.getAuthorId())
+          .title(VoteType.UPVOTE.getName().equals(voteType.toLowerCase()) ? "Someone upvote your comment" : "Someone downvote your comment")
+          .content(comment.getContent().substring(0, Math.min(comment.getContent().length(), 50)) + "...")
+          .type(VoteType.UPVOTE.getName().equals(voteType.toLowerCase()) ? NotifyTypeConstant.VOTE_UP_COMMENT : NotifyTypeConstant.VOTE_DOWN_COMMENT)
+          .link("/comments/get/" + comment.getId())
+          .build();
+      log.info("Send message to create notification {}", notificationKafkaCommon);
+      streamBridge.send("sendNotification-out-0", notificationKafkaCommon);
     }
   }
 

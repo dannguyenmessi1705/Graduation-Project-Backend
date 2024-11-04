@@ -80,7 +80,7 @@ app:
     default-size: 10
   scheduled:
     fixedDelay:
-      milliseconds: 60000
+      milliseconds: 3600000
   baseUrl: http://localhost:8072/forum
   websocket:
     endpoint: /notifications/ws
