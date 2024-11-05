@@ -80,6 +80,9 @@ springdoc:
       - url: /forum/comments/api-docs
         name: Comments Service
         display-name: Comments Service
+      - url: /forum/notifications/api-docs
+        name: Notification Service
+        display-name: Notification Service
     oauth:
       client-id: forum-authentication
       client-secret: l2WiWQULnEFt9KrgySvFK03QtVf9K4DO
