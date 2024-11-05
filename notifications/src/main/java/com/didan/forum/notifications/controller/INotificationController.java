@@ -220,7 +220,7 @@ public interface INotificationController {
       }
   )
   @PostMapping("/admin/create")
-  ResponseEntity<GeneralResponse<NotificationEntity>> createNotificationByAdmin(
+  ResponseEntity<GeneralResponse<Void>> createNotificationByAdmin(
       @Valid @RequestBody CreateNotificationRequestDto requestDto
   );
 

@@ -11,7 +11,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Configuration
-@Order(1)
+@Order(0)
 @Slf4j
 public class RequestFilter extends OncePerRequestFilter {
 

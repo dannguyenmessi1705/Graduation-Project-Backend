@@ -100,12 +100,12 @@ public class NotificationControllerImpl implements INotificationController {
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<NotificationEntity>> createNotificationByAdmin(CreateNotificationRequestDto requestDto) {
+  public ResponseEntity<GeneralResponse<Void>> createNotificationByAdmin(CreateNotificationRequestDto requestDto) {
     log.info("========== Create notification by admin ==========");
-    NotificationEntity notification = notificationService.createNotificationByAdmin(requestDto);
+    notificationService.createNotificationByAdmin(requestDto);
 
     Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.CREATED.value(),
         "Created notification by admin successfully", LocalDateTime.now());
-    return new ResponseEntity<>(new GeneralResponse<>(status, notification), HttpStatus.CREATED);
+    return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.CREATED);
   }
 }

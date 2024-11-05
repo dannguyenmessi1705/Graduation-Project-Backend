@@ -6,7 +6,7 @@
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>
-        %d{HH:mm:ss.SSS} | %-5level | %t | ${name} | %X{Trace-Id} | %X{Span-Id} | %msg %n
+        %d{HH:mm:ss.SSS} | %-5level | %t | ${name} | %X{traceId} | %X{spanId} | %msg %n
       </pattern>
     </encoder>
   </appender>
@@ -26,8 +26,8 @@
           app=${name}
           host=${HOSTNAME}
           level=%level
-          traceId=%X{Trace-Id:-null}
-          spanId=%X{Span-Id:-null}
+          traceId=%X{traceId:-null}
+          spanId=%X{spanId:-null}
         </pattern>
         <pairSeparator>regex:(\n|//[^\n]+)+</pairSeparator>
         <!-- (3) -->
