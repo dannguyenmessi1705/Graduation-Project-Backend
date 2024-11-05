@@ -6,35 +6,37 @@
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>
-        %5p | %X{Trace-Id} | %X{Span-Id} | %d{HH:mm:ss.SSS} | %-5level | %logger{36} | %msg%n
+        %d{HH:mm:ss.SSS} | %-5level | %t | ${name} | %X{Trace-Id} | %X{Span-Id} | %msg %n
       </pattern>
     </encoder>
   </appender>
 
   <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
     <!-- (1) -->
+    <batchMaxBytes>65536</batchMaxBytes>
     <http>
       <url>http://localhost:3100/loki/api/v1/push</url>
+      <tenantId>tenant1</tenantId>
+      <requestTimeoutMs>15000</requestTimeoutMs>
     </http>
     <format>
       <!-- (2) -->
       <label>
-        <pattern>app=${name},host=${HOSTNAME},level=%level</pattern>
+        <pattern>
+          app=${name}
+          host=${HOSTNAME}
+          level=%level
+          traceId=%X{Trace-Id:-null}
+          spanId=%X{Span-Id:-null}
+        </pattern>
+        <pairSeparator>regex:(\n|//[^\n]+)+</pairSeparator>
         <!-- (3) -->
         <readMarkers>true</readMarkers>
       </label>
-      <message>
         <!-- (4) -->
+      <message>
         <pattern>
-          {
-          "level":"%level",
-          "class":"%logger{36}",
-          "thread":"%thread",
-          "message": "%message",
-          "requestId": "%X{X-Request-ID}",
-          "traceId": "%X{Trace-Id}",
-          "spanId": "%X{Span-Id}"
-          }
+          %msg %n
         </pattern>
       </message>
     </format>
