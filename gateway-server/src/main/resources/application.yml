@@ -92,4 +92,4 @@ logging:
         microservices:
           gatewaysever: debug
   pattern:
-    level: "%5p [${spring.application.name},%X{Trace-Id},%X{Span-Id}]"
+    level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"

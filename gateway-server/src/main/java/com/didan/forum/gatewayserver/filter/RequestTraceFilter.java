@@ -34,12 +34,11 @@ public class RequestTraceFilter implements GlobalFilter {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-    MDC.put(TrackingConstant.SPAN_ID.getHeaderKey(), generateSpanId());
     HttpHeaders httpHeaders = exchange.getRequest().getHeaders();
     String path = exchange.getRequest().getPath().toString();
-    String traceId = generateTraceId();
-    filterUtils.setTraceId(exchange, traceId);
-    log.debug("trace-id generated in tracking filter: {}.", traceId);
+//    String traceId = generateTraceId();
+//    filterUtils.setTraceId(exchange, traceId);
+//    log.debug("trace-id generated in tracking filter: {}.", traceId);
     if (privateRoutes.stream().anyMatch(path::contains)) {
       String authHeader = httpHeaders.getFirst("Authorization");
       if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
@@ -49,7 +48,7 @@ public class RequestTraceFilter implements GlobalFilter {
               String sub = jwtToken.getClaimAsString("sub");
               if (StringUtils.hasText(sub)) {
                 filterUtils.setxUserId(exchange, sub);
-                log.debug("forum-x-user-id generated in tracking filter: {}.", sub);
+                log.debug("x-user-id generated in tracking filter: {}.", sub);
               }
               return chain.filter(exchange);
 
@@ -76,7 +75,9 @@ public class RequestTraceFilter implements GlobalFilter {
   }
 
   private String generateTraceId() {
-    return java.util.UUID.randomUUID().toString();
+    return StringUtils.hasText(MDC.get(TrackingConstant.TRACE_ID.getHeaderKey()))
+        ? MDC.get(TrackingConstant.TRACE_ID.getHeaderKey())
+        : java.util.UUID.randomUUID().toString();
   }
 
   private String generateSpanId() {

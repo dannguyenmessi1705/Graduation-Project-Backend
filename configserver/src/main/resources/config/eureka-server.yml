@@ -38,3 +38,5 @@ logging:
       didan:
         forum:
           eureka_server: debug
+  pattern:
+    level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"

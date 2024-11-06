@@ -124,6 +124,9 @@ app:
     fixedDelay:
       milliseconds: 300000
   baseUrl: http://localhost:8072/forum
+  log:
+    request:
+      ignore: X-User-Id,X-Request-Id
 
 management:
   endpoints:
@@ -165,7 +168,7 @@ logging:
         forum:
           users: debug
   pattern:
-    level: "%5p [${spring.application.name},%X{Trace-Id},%X{Span-Id}]"
+    level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"
 
 minio:
   root:

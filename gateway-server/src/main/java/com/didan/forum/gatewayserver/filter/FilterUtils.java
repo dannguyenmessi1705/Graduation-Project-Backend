@@ -2,7 +2,6 @@ package com.didan.forum.gatewayserver.filter;
 
 import com.didan.forum.gatewayserver.constant.TrackingConstant;
 import java.util.List;
-import org.slf4j.MDC;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -35,9 +34,8 @@ public class FilterUtils {
         .build();
   }
 
-  public ServerWebExchange setTraceId(ServerWebExchange exchange, String correlationId) {
-    MDC.put(TrackingConstant.TRACE_ID.getHeaderKey(), correlationId);
-    return setRequestHeader(exchange, TrackingConstant.TRACE_ID.getHeaderKey(), correlationId);
+  public ServerWebExchange setTraceId(ServerWebExchange exchange, String traceId) {
+    return setRequestHeader(exchange, TrackingConstant.TRACE_ID.getHeaderKey(), traceId);
   }
 
   public ServerWebExchange setxUserId(ServerWebExchange exchange, String xUserId) {

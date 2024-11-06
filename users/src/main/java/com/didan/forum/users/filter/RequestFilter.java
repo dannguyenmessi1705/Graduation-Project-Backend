@@ -6,12 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Configuration
-@Order(1)
+@Order(0)
 @Slf4j
 public class RequestFilter extends OncePerRequestFilter {
 
@@ -21,5 +22,6 @@ public class RequestFilter extends OncePerRequestFilter {
     RequestContext.setRequest(request);
     filterChain.doFilter(request, response);
     RequestContext.clear();
+    MDC.clear();
   }
 }

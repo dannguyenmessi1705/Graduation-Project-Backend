@@ -85,6 +85,9 @@ app:
     endpoint: /notifications/ws
     publish: /notifications/app
     subscribe: /notifications/topic
+  log:
+    request:
+      ignore: X-User-Id,X-Request-Id
 
 private:
   route: notifications/delete,notifications/mark,notifications/read,notifications/unread
@@ -129,7 +132,7 @@ logging:
         forum:
           notifications: debug
   pattern:
-    level: "%5p [${spring.application.name},%X{Trace-Id},%X{Span-Id}]"
+    level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"
 
 minio:
   root:
