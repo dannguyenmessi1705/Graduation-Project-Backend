@@ -32,6 +32,10 @@ datasources:
       httpMethod: GET
       serviceMap:
         datasourceUid: 'prometheus'
+      tracesToLogs:
+        datasourceUid: 'loki'
+      nodeGraph:
+        enabled: true
   - name: Loki
     type: loki
     uid: loki
