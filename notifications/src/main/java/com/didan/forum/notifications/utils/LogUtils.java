@@ -1,5 +1,5 @@
 package com.didan.forum.notifications.utils;
-;
+
 import com.didan.forum.notifications.dto.Status;
 import com.didan.forum.notifications.dto.response.GeneralResponse;
 import com.fasterxml.jackson.databind.DeserializationFeature;

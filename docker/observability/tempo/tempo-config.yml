@@ -3,10 +3,7 @@ server:
 
 distributor:
   receivers:
-    otlp:
-      protocols:
-        grpc:
-        http:
+    zipkin:
 
 ingester:
   trace_idle_period: 10s
