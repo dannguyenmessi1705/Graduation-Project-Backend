@@ -88,7 +88,9 @@ app:
     subscribe: /notifications/topic
   log:
     request:
-      ignore: X-User-Id,X-Request-Id
+      ignoreHeaders: authorization,x-session-id,x-envoy-decorator-operation,X-Request-Id,sessionid,X-User-Id
+      extended:
+        enabled: true
 
 
 private:

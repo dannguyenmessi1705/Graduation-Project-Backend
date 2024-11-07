@@ -29,4 +29,7 @@ public class LogSystemEntity {
   private String userAgent;
   private String spanId;
   private String correlationId;
+  private String typeOS;
+  private String osVersion;
+  private String appVersion;
 }

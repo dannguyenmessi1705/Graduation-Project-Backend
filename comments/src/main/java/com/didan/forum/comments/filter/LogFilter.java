@@ -24,7 +24,7 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 
 @Configuration
 @Slf4j
-@Order(1)
+@Order(2)
 public class LogFilter extends OncePerRequestFilter {
 
   @Value("${spring.application.name}")
@@ -86,6 +86,9 @@ public class LogFilter extends OncePerRequestFilter {
             .userAgent(MDC.get(TrackingConstant.USER_AGENT.getHeaderKey()))
             .spanId(MDC.get(TrackingConstant.SPAN_ID.getHeaderKey()))
             .correlationId(MDC.get(TrackingConstant.CORRELATION_ID.getHeaderKey()))
+            .appVersion(MDC.get(TrackingConstant.APP_VERSION.getHeaderKey()))
+            .typeOS(MDC.get(TrackingConstant.TYPE_OS.getHeaderKey()))
+            .osVersion(MDC.get(TrackingConstant.OS_VERSION.getHeaderKey()))
             .build();
 
         log.info("STANDARD_LOG: {}", ObjectMapperUtils.toJson(logSystemEntity));

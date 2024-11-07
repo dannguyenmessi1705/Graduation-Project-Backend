@@ -96,7 +96,9 @@ app:
   baseUrl: http://localhost:8072/forum
   log:
     request:
-      ignore: X-User-Id,X-Request-Id
+      ignoreHeaders: authorization,x-session-id,x-envoy-decorator-operation,X-Request-Id,sessionid,X-User-Id
+      extended:
+        enabled: true
 
 private:
   route: votes/add,votes/revoke,posts/update,posts/report,posts/new,posts/delete

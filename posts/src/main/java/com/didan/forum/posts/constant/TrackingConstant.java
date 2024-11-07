@@ -11,7 +11,13 @@ public enum TrackingConstant {
   X_USER_ID("X-User-Id"),
   CORRELATION_ID("correlationId"),
   X_REQUEST_ID("X-Request-Id"),
-  USER_AGENT("User-Agent"),
+  USER_AGENT("user-agent"),
+  APP_VERSION("appVersion"),
+  TYPE_OS("type-os"),
+  OS_VERSION("os-version"),
+  X_FORWARD_FOR("x-forwarded-for"),
+  X_ORIGINAL_FORWARD_FOR("x-original-forwarded-for"),
+  X_REAL_IP("x-real-ip"),
   DURATION("duration");
 
   private String headerKey;
