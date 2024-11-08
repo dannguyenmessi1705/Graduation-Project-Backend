@@ -208,7 +208,7 @@ services:
     command: -config.file /etc/tempo-config.yml
     ports:
       - "3110:3100" # Tempo
-      - "4318:4318" # OLTP HTTP
+      - "9411:9411" # Zipkin
     volumes:
       - ../observability/tempo/tempo-config.yml:/etc/tempo-config.yml
     networks:

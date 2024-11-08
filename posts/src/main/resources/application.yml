@@ -126,14 +126,6 @@ management:
       application: ${spring.application.name}
     distribution:
       percentiles-histogram.http.server.requests: true
-  otlp:
-    metrics:
-      export:
-        url: http://localhost:9090/api/v1/otlp/v1/metrics
-  zipkin:
-    tracing:
-      endpoint: http://localhost:4318/v1/traces
-      encoding: proto3
   observations:
     key-values:
       application: ${spring.application.name}
@@ -159,6 +151,7 @@ logging:
           posts: debug
   pattern:
     level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"
+    correlation: "[[${spring.application.name},%X{traceId},%X{spanId}]"
 
 minio:
   root:
