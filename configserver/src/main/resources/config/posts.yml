@@ -124,14 +124,6 @@ management:
   observations:
     key-values:
       application: ${spring.application.name}
-  otlp:
-    metrics:
-      export:
-        url: http://localhost:9090/api/v1/otlp/v1/metrics
-  zipkin:
-    tracing:
-      endpoint: http://localhost:4318/v1/traces
-      encoding: proto3
   tracing:
     sampling:
       probability: 1.0

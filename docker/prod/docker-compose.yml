@@ -602,8 +602,6 @@ services:
       MINIO_ROOT_USER: didannguyen
       MINIO_ROOT_PASSWORD: 17052002
       MINIO_ROOT_ENDPOINT: http://minio:9000
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://tempo:4318/v1/traces
-      MANAGEMENT_OTLP_METRICS_EXPORT_URL: http://prometheus:9090/api/v1/otlp/v1/metrics
     depends_on:
       configserver:
         condition: service_healthy
