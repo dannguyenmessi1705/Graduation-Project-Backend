@@ -24,6 +24,7 @@ import org.springframework.cloud.client.circuitbreaker.Customizer;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 
 @SpringBootApplication
 @OpenAPIDefinition(
@@ -72,6 +73,11 @@ public class GatewayServerApplication {
             .filters(f -> f
                 .rewritePath("/forum/users/(?<remaining>.*)", "/users/${remaining}")
                 .addRequestHeader("Time-Requested", LocalDateTime.now().toString())
+                .retry(retryConfig -> retryConfig
+                    .setRetries(3)
+                    .setMethods(HttpMethod.GET)
+                    .setBackoff(Duration.ofMillis(500), Duration.ofMillis(2000), 2, true)
+                )
                 .circuitBreaker(config -> config
                     .setName("usersCircuitBreaker")
                     .setFallbackUri("forward:/contact-support"))
@@ -82,6 +88,11 @@ public class GatewayServerApplication {
             .filters(f -> f
                 .rewritePath("/forum/posts/(?<remaining>.*)", "/posts/${remaining}")
                 .addRequestHeader("Time-Requested", LocalDateTime.now().toString())
+                .retry(retryConfig -> retryConfig
+                    .setRetries(3)
+                    .setMethods(HttpMethod.GET)
+                    .setBackoff(Duration.ofMillis(500), Duration.ofMillis(2000), 2, true)
+                )
                 .circuitBreaker(config -> config
                     .setName("postsCircuitBreaker")
                     .setFallbackUri("forward:/contact-support"))
@@ -92,6 +103,11 @@ public class GatewayServerApplication {
             .filters(f -> f
                 .rewritePath("/forum/comments/(?<remaining>.*)", "/comments/${remaining}")
                 .addRequestHeader("Time-Requested", LocalDateTime.now().toString())
+                .retry(retryConfig -> retryConfig
+                    .setRetries(3)
+                    .setMethods(HttpMethod.GET)
+                    .setBackoff(Duration.ofMillis(500), Duration.ofMillis(2000), 2, true)
+                )
                 .circuitBreaker(config -> config
                     .setName("commentsCircuitBreaker")
                     .setFallbackUri("forward:/contact-support"))
@@ -102,6 +118,11 @@ public class GatewayServerApplication {
             .filters(f -> f
                 .rewritePath("/forum/notifications/(?<remaining>.*)", "/notifications/${remaining}")
                 .addRequestHeader("Time-Requested", LocalDateTime.now().toString())
+                .retry(retryConfig -> retryConfig
+                    .setRetries(3)
+                    .setMethods(HttpMethod.GET)
+                    .setBackoff(Duration.ofMillis(500), Duration.ofMillis(2000), 2, true)
+                )
                 .circuitBreaker(config -> config
                     .setName("notificationsCircuitBreaker")
                     .setFallbackUri("forward:/contact-support"))
