@@ -395,6 +395,7 @@ services:
           memory: 700m
     environment:
       SPRING_APPLICATION_NAME: configserver
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://tempo:9411/api/v2/spans
     networks:
       - didan
 
@@ -416,6 +417,7 @@ services:
     environment:
       SPRING_APPLICATION_NAME: eureka-server
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://tempo:9411/api/v2/spans
     depends_on:
       configserver:
         condition: service_healthy
@@ -437,6 +439,7 @@ services:
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
       OAUTH_OPENID_SERVER: keycloak:8080
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://tempo:9411/api/v2/spans
     depends_on:
       configserver:
         condition: service_healthy
@@ -532,6 +535,7 @@ services:
       MINIO_ROOT_USER: didannguyen
       MINIO_ROOT_PASSWORD: 17052002
       MINIO_ROOT_ENDPOINT: http://minio:9000
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://tempo:9411/api/v2/spans
     depends_on:
       configserver:
         condition: service_healthy
@@ -602,6 +606,7 @@ services:
       MINIO_ROOT_USER: didannguyen
       MINIO_ROOT_PASSWORD: 17052002
       MINIO_ROOT_ENDPOINT: http://minio:9000
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://tempo:9411/api/v2/spans
     depends_on:
       configserver:
         condition: service_healthy
@@ -672,6 +677,7 @@ services:
       MINIO_ROOT_USER: didannguyen
       MINIO_ROOT_PASSWORD: 17052002
       MINIO_ROOT_ENDPOINT: http://minio:9000
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://tempo:9411/api/v2/spans
     depends_on:
       configserver:
         condition: service_healthy
@@ -739,6 +745,7 @@ services:
       MINIO_ROOT_USER: didannguyen
       MINIO_ROOT_PASSWORD: 17052002
       MINIO_ROOT_ENDPOINT: http://minio:9000
+      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://tempo:9411/api/v2/spans
     depends_on:
       configserver:
         condition: service_healthy
