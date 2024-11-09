@@ -16,15 +16,20 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
 import org.springframework.cloud.client.circuitbreaker.Customizer;
+import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
+import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import reactor.core.publisher.Mono;
 
 @SpringBootApplication
 @OpenAPIDefinition(
@@ -60,6 +65,7 @@ import org.springframework.http.HttpMethod;
     type = SecuritySchemeType.OPENIDCONNECT,
     in = SecuritySchemeIn.HEADER
 )
+@Slf4j
 public class GatewayServerApplication {
 
   public static void main(String[] args) {
@@ -78,6 +84,10 @@ public class GatewayServerApplication {
                     .setMethods(HttpMethod.GET)
                     .setBackoff(Duration.ofMillis(500), Duration.ofMillis(2000), 2, true)
                 )
+                .requestRateLimiter(rateLimiter -> rateLimiter
+                    .setKeyResolver(userKeyResolver())
+                    .setRateLimiter(redisRateLimiter())
+                )
                 .circuitBreaker(config -> config
                     .setName("usersCircuitBreaker")
                     .setFallbackUri("forward:/contact-support"))
@@ -92,6 +102,10 @@ public class GatewayServerApplication {
                     .setRetries(3)
                     .setMethods(HttpMethod.GET)
                     .setBackoff(Duration.ofMillis(500), Duration.ofMillis(2000), 2, true)
+                )
+                .requestRateLimiter(rateLimiter -> rateLimiter
+                    .setKeyResolver(userKeyResolver())
+                    .setRateLimiter(redisRateLimiter())
                 )
                 .circuitBreaker(config -> config
                     .setName("postsCircuitBreaker")
@@ -108,6 +122,10 @@ public class GatewayServerApplication {
                     .setMethods(HttpMethod.GET)
                     .setBackoff(Duration.ofMillis(500), Duration.ofMillis(2000), 2, true)
                 )
+                .requestRateLimiter(rateLimiter -> rateLimiter
+                    .setKeyResolver(userKeyResolver())
+                    .setRateLimiter(redisRateLimiter())
+                )
                 .circuitBreaker(config -> config
                     .setName("commentsCircuitBreaker")
                     .setFallbackUri("forward:/contact-support"))
@@ -122,6 +140,10 @@ public class GatewayServerApplication {
                     .setRetries(3)
                     .setMethods(HttpMethod.GET)
                     .setBackoff(Duration.ofMillis(500), Duration.ofMillis(2000), 2, true)
+                )
+                .requestRateLimiter(rateLimiter -> rateLimiter
+                    .setKeyResolver(userKeyResolver())
+                    .setRateLimiter(redisRateLimiter())
                 )
                 .circuitBreaker(config -> config
                     .setName("notificationsCircuitBreaker")
@@ -138,6 +160,19 @@ public class GatewayServerApplication {
         .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(30)).cancelRunningFuture(true).build())
         .circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
         .build());
+  }
+
+  @Bean
+  public KeyResolver userKeyResolver() {
+    return exchange -> {
+      log.info("Request from {}", Objects.requireNonNull(Objects.requireNonNull(exchange.getRequest().getLocalAddress()).getHostName()));
+      return Mono.just(Objects.requireNonNull(exchange.getRequest().getRemoteAddress()).getHostName());
+    };
+  }
+
+  @Bean
+  public RedisRateLimiter redisRateLimiter() {
+    return new RedisRateLimiter(150, 300, 1);
   }
 
 }
