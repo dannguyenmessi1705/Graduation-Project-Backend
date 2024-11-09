@@ -21,6 +21,12 @@ spring:
       httpclient:
         connect-timeout: 15000 # Thoi gian toi da de ket noi toi service
         response-timeout: 20s # Thoi gian toi da de nhan phan hoi tu service
+  data:
+    redis:
+      connect-timeout: 20s
+      host: localhost
+      port: 6379
+      timeout: 10s
 
 oauth:
   openId:

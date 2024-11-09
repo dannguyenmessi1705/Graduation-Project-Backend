@@ -86,7 +86,7 @@
 				<version>3.3.2</version>
 				<configuration>
 					<to>
-						<image>dannguyenmessi/${project.artifactId}:v1</image>
+						<image>dannguyenmessi/forum-${project.artifactId}:v1</image>
 					</to>
 				</configuration>
 			</plugin>

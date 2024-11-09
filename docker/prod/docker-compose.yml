@@ -379,7 +379,7 @@ services:
       - didan
 
   configserver:
-    image: dannguyenmessi/configserver:v1
+    image: dannguyenmessi/forum-configserver:v1
     container_name: configserver
     ports:
       - "8071:8071"
@@ -400,7 +400,7 @@ services:
       - didan
 
   eurekaserver:
-    image: dannguyenmessi/eureka-server:v1
+    image: dannguyenmessi/forum-eureka-server:v1
     container_name: eureka-server
     ports:
       - "8070:8070"
@@ -425,7 +425,7 @@ services:
       - didan
 
   gatewayserver:
-    image: dannguyenmessi/gateway-server:v1
+    image: dannguyenmessi/forum-gateway-server:v1
     container_name: gateway-server
     ports:
       - "8072:8072"
@@ -440,6 +440,8 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
       OAUTH_OPENID_SERVER: keycloak:8080
       MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://tempo:9411/api/v2/spans
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
     depends_on:
       configserver:
         condition: service_healthy
@@ -499,7 +501,7 @@ services:
       - didan
 
   users-service:
-    image: dannguyenmessi/users:v1
+    image: dannguyenmessi/forum-users:v1
     container_name: users-service
     ports:
       - "8080:8080"
@@ -572,7 +574,7 @@ services:
       - didan
 
   posts-service:
-    image: dannguyenmessi/posts:v1
+    image: dannguyenmessi/forum-posts:v1
     container_name: posts-service
     ports:
       - "8090:8090"
@@ -643,7 +645,7 @@ services:
       - didan
 
   comments-service:
-    image: dannguyenmessi/comments:v1
+    image: dannguyenmessi/forum-comments:v1
     container_name: comments-service
     ports:
       - "9000:9000"
@@ -714,7 +716,7 @@ services:
       - didan
 
   notifications-service:
-    image: dannguyenmessi/notifications:v1
+    image: dannguyenmessi/forum-notifications:v1
     container_name: notifications-service
     ports:
       - "9010:9010"
