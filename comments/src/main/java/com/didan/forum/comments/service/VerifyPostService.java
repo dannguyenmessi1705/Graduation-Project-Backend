@@ -9,16 +9,20 @@ import jakarta.annotation.PostConstruct;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class VerifyPostService {
   private final PostsFeignClient postsFeignClient;
   private LoadingCache<String, Boolean> loadingCache;
   private static final int EXPIRETIME = 30;
+
+  public VerifyPostService(@Qualifier("com.didan.forum.comments.service.client.PostsFeignClient") PostsFeignClient postsFeignClient) {
+    this.postsFeignClient = postsFeignClient;
+  }
 
   @PostConstruct
   public void init() {

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.domain.Page;
@@ -38,7 +39,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class CommentServiceImpl implements ICommentService {
   private final CommentRepository commentRepository;
   private final VerifyPostService verifyPostService;
@@ -52,6 +52,21 @@ public class CommentServiceImpl implements ICommentService {
 
   @Value("${app.pagination.defaultSize}")
   private int defaultSize;
+
+  public CommentServiceImpl(
+      CommentRepository commentRepository,
+      VerifyPostService verifyPostService,
+      @Qualifier("com.didan.forum.comments.service.client.UsersFeignClient") UsersFeignClient usersFeignClient,
+      IRedisService redisService,
+      MinioService minioService,
+      StreamBridge streamBridge) {
+    this.commentRepository = commentRepository;
+    this.verifyPostService = verifyPostService;
+    this.usersFeignClient = usersFeignClient;
+    this.redisService = redisService;
+    this.minioService = minioService;
+    this.streamBridge = streamBridge;
+  }
 
   @Override
   public CommentResponseDto createComment(String userId, CreateCommentRequestDto requestDto) {

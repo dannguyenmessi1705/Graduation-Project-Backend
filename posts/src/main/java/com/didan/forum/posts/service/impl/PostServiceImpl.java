@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.domain.Page;
@@ -40,7 +41,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class PostServiceImpl implements IPostService {
   private final PostRepository postRepository;
   private final TopicRepository topicRepository;
@@ -56,6 +56,23 @@ public class PostServiceImpl implements IPostService {
   @Value("${app.pagination.defaultSize}")
   private int defaultSize;
 
+  public PostServiceImpl(
+      PostRepository postRepository,
+      TopicRepository topicRepository,
+      @Qualifier("com.didan.forum.posts.service.client.UsersFeignClient") UsersFeignClient usersFeignClient,
+      MinioService minioService,
+      IRedisService redisService,
+      StreamBridge streamBridge,
+      @Qualifier("com.didan.forum.posts.service.client.CommentsFeignClient") CommentsFeignClient commentsFeignClient
+  ) {
+    this.postRepository = postRepository;
+    this.topicRepository = topicRepository;
+    this.usersFeignClient = usersFeignClient;
+    this.minioService = minioService;
+    this.redisService = redisService;
+    this.streamBridge = streamBridge;
+    this.commentsFeignClient = commentsFeignClient;
+  }
 
   @Override
   public PostEntity validatePost(String postId) {
@@ -364,10 +381,10 @@ public class PostServiceImpl implements IPostService {
         commentsFeignClient.countComments(postId);
     if (requestComments.getStatusCode().is2xxSuccessful()) {
       Long totalComments = Objects.requireNonNull(requestComments.getBody()).getData();
-      redisService.setCache(RedisCacheConstant.COMMENT_QUANTITY_CACHE.getCacheName(), postId, totalComments, 3600);
+      redisService.setCache(RedisCacheConstant.COMMENT_QUANTITY_CACHE.getCacheName(), postId, totalComments, 60);
       return totalComments;
     } else {
-      redisService.setCache(RedisCacheConstant.COMMENT_QUANTITY_CACHE.getCacheName(), postId, 0L, 3600);
+      redisService.setCache(RedisCacheConstant.COMMENT_QUANTITY_CACHE.getCacheName(), postId, 0L, 60);
       return 0L;
     }
   }
