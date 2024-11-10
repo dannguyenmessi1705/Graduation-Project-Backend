@@ -36,4 +36,19 @@ public class VerifyControllerImpl implements IVerifyController {
         LocalDateTime.now());
     return new ResponseEntity<>(new GeneralResponse<>(status, responseDto), HttpStatus.OK);
   }
+
+  @Override
+  public ResponseEntity<GeneralResponse<Void>> resendActivationEmail() {
+    log.info("Resend activation email");
+    String userId = RequestContext.getRequest().getHeader("X-User-Id");
+    if (userId == null) {
+      Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.BAD_REQUEST.value(), "Not authorized",
+          LocalDateTime.now());
+      return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.BAD_REQUEST);
+    }
+    verifyService.resendActivationEmail(userId);
+    Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.CREATED.value(), "Activation email sent successfully",
+        LocalDateTime.now());
+    return new ResponseEntity<>(new GeneralResponse<>(status, null), HttpStatus.CREATED);
+  }
 }

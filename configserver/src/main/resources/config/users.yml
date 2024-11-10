@@ -124,7 +124,7 @@ app:
 
 
 private:
-  route: users/update,users/qrcode,users/report
+  route: users/update,users/qrcode,users/report,users/verify/reactivate
 management:
   endpoints:
     web:

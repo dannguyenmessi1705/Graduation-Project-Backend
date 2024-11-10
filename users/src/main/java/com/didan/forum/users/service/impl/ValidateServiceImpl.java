@@ -1,6 +1,7 @@
 package com.didan.forum.users.service.impl;
 
 import com.didan.forum.users.constant.RoleConstant;
+import com.didan.forum.users.dto.SendMailWithTemplate;
 import com.didan.forum.users.dto.request.ChangePasswordAdminDto;
 import com.didan.forum.users.dto.request.UpdateUserAdminRequestDto;
 import com.didan.forum.users.entity.redis.TokenRequestEntity;
@@ -11,10 +12,13 @@ import com.didan.forum.users.repository.user.UserRepository;
 import com.didan.forum.users.service.IKeycloakRoleService;
 import com.didan.forum.users.service.IKeycloakUserService;
 import com.didan.forum.users.service.IVerifyService;
+import com.didan.forum.users.utils.MapperUtils;
 import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +31,10 @@ public class ValidateServiceImpl implements IVerifyService {
   private final PasswordEncoder passwordEncoder;
   private final IKeycloakUserService keycloakUserService;
   private final IKeycloakRoleService keycloakRoleService;
+  private final StreamBridge streamBridge;
+
+  @Value("${sendgrid.urlVerify}")
+  private String urlAuth;
 
   @Override
   public void activateUser(String token) {
@@ -56,5 +64,24 @@ public class ValidateServiceImpl implements IVerifyService {
         .builder()
         .password(newPassword)
         .build();
+  }
+
+  @Override
+  public void resendActivationEmail(String userId) {
+    UserEntity user = userRepository.findById(userId)
+        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    if (user.isVerified()) {
+      throw new ResourceNotFoundException("User already verified");
+    }
+    SendMailWithTemplate objectMail = MapperUtils.map(user, SendMailWithTemplate.class);
+    String token = RandomStringUtils.random(100, true, true);
+    String messageAuthUrl = urlAuth + "activate?token=" + token;
+    objectMail.setUserId(user.getId());
+    objectMail.setMessage(messageAuthUrl);
+    objectMail.setGuide("Click this link to verify account, the link is expired in 10 minutes");
+    objectMail.setTitle("Verify your account");
+    log.info("Sending Communication request to Kafka for the details : {}", objectMail);
+    boolean isSendKafka = streamBridge.send("sendUserEmail-out-0", objectMail);
+    log.info("Is the Communication request successfully triggered ? : {}", isSendKafka);
   }
 }
