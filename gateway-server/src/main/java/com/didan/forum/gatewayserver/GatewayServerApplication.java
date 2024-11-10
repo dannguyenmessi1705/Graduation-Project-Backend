@@ -20,7 +20,7 @@ import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
+import org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreakerFactory;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
 import org.springframework.cloud.client.circuitbreaker.Customizer;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
@@ -155,7 +155,7 @@ public class GatewayServerApplication {
   }
 
   @Bean
-  public Customizer<Resilience4JCircuitBreakerFactory> globalCustomConfiguration() {
+  public Customizer<ReactiveResilience4JCircuitBreakerFactory> globalCustomConfiguration() {
     return factory -> factory.configureDefault(id -> new Resilience4JConfigBuilder(id)
         .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(30)).cancelRunningFuture(true).build())
         .circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())

@@ -1,14 +1,16 @@
 package com.didan.forum.users.service.impl;
 
 import com.didan.forum.users.entity.user.RoleEntity;
+import com.didan.forum.users.entity.user.UserEntity;
 import com.didan.forum.users.entity.user.UserRoleEntity;
-import com.didan.forum.users.entity.key.UserRoleId;
 import com.didan.forum.users.exception.ResourceAlreadyExistException;
 import com.didan.forum.users.exception.ResourceNotFoundException;
 import com.didan.forum.users.repository.user.RoleRepository;
+import com.didan.forum.users.repository.user.UserRepository;
 import com.didan.forum.users.repository.user.UserRoleRepository;
 import com.didan.forum.users.service.IRoleService;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,13 +24,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class RoleServiceImpl implements IRoleService {
 
   private final RoleRepository roleRepository;
+  private final UserRepository userRepository;
   private final UserRoleRepository userRoleRepository;
 
   @Override
   public List<RoleEntity> queryRolesOfUser(String userId) {
     List<UserRoleEntity> userRoleEntities =
-        userRoleRepository.findUserRoleEntityByUser_Id(userId);
-    List<String> roleIds = userRoleEntities.stream().map(r -> r.getRole().getId())
+        userRoleRepository.findUserRoleEntitiesByUserId(userId);
+    log.info("User role entities: {}", userRoleEntities);
+    List<String> roleIds = userRoleEntities.stream().map(r -> {
+          log.info("Role id: {}", r.getRoleId());
+          return r.getRoleId();
+        })
         .collect(Collectors.toList());
     return roleRepository.findAllById(roleIds);
   }
@@ -45,32 +52,31 @@ public class RoleServiceImpl implements IRoleService {
   @Override
   public void assignRoleToUser(String userId, String roleName) {
     List<UserRoleEntity> userRoleEntities =
-        userRoleRepository.findUserRoleEntityByUser_Id(userId);
+        userRoleRepository.findUserRoleEntitiesByUserId(userId);
     RoleEntity roleEntity = roleRepository.findRoleEntityByName(roleName)
         .orElseThrow(() -> new IllegalArgumentException("Role not found"));
-    if (userRoleEntities.stream().anyMatch(r -> r.getRole().getId().equals(roleEntity.getId()))) {
+    if (userRoleEntities.stream().anyMatch(r -> r.getRoleId().equals(roleEntity.getId()))) {
       throw new ResourceAlreadyExistException("Role already assigned to user");
     } else {
+      UserEntity user = userRepository.findById(userId)
+          .orElseThrow(() -> new ResourceNotFoundException("User not found"));
       UserRoleEntity userRoleEntity = new UserRoleEntity();
-      userRoleEntity.setId(new UserRoleId(userId, roleEntity.getId()));
+      userRoleEntity.setRoleId(roleEntity.getId());
+      userRoleEntity.setUserId(userId);
       userRoleRepository.save(userRoleEntity);
     }
   }
 
   @Override
-  @Transactional
-  @Modifying
   public void removeRoleFromUser(String userId, String roleName) {
-    List<UserRoleEntity> userRoleEntities =
-        userRoleRepository.findUserRoleEntityByUser_Id(userId);
     RoleEntity roleEntity = roleRepository.findRoleEntityByName(roleName)
         .orElseThrow(() -> new IllegalArgumentException("Role not found"));
-    userRoleEntities.stream()
-        .filter(r -> r.getRole().getId().equals(roleEntity.getId()))
-        .findFirst()
-        .ifPresentOrElse(userRoleRepository::delete, () -> {
-          throw new ResourceNotFoundException("Role not assigned to user");
-        });
+    UserRoleEntity userRoleEntity = userRoleRepository
+        .findUserRoleEntityByUserIdAndRoleId(userId, roleEntity.getId())
+        .orElseThrow(() -> new ResourceNotFoundException("Role not assigned to user"));
+    log.info("Delete user role: {}", userRoleEntity.getId());
+    userRoleRepository.deleteUserRoleEntityById(userRoleEntity.getId());
+    log.info("Deleted user role: {}", userRoleEntity.getId());
   }
 
   @Override

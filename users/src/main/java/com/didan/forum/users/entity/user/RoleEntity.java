@@ -30,10 +30,4 @@ public class RoleEntity extends SuperClass implements Serializable {
 
   @Column(unique = true)
   private String name;
-
-
-  @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
-  @JsonManagedReference
-  @JsonIgnore
-  private List<UserRoleEntity> userRoles;
 }

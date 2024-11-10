@@ -37,11 +37,11 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="usersdb@localhost" uuid="c443f4e1-4892-48b2-ad0d-810d76a6a5e1">
+    <data-source source="LOCAL" name="commentsdb@localhost" uuid="377a92cd-cd01-45ae-a680-bad33b5cb909">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3308/usersdb</jdbc-url>
+      <jdbc-url>jdbc:mysql://localhost:3311/commentsdb</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
@@ -49,11 +49,11 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="commentsdb@localhost" uuid="377a92cd-cd01-45ae-a680-bad33b5cb909">
+    <data-source source="LOCAL" name="usersdb@localhost" uuid="7d84b89c-39a9-4007-9095-8586688af1e5">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3311/commentsdb</jdbc-url>
+      <jdbc-url>jdbc:mysql://localhost:3308/usersdb</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />

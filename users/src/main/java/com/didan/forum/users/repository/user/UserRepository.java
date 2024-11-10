@@ -15,17 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, String> {
-  @EntityGraph(attributePaths = {"userRoles", "userRoles.role"},
-      type = EntityGraphType.FETCH)
   Optional<UserEntity> findFirstByEmailIgnoreCase(String email);
-  @EntityGraph(attributePaths = {"userRoles", "userRoles.role"},
-      type = EntityGraphType.FETCH)
   Optional<UserEntity> findFirstByUsernameIgnoreCase(String username);
-  @EntityGraph(attributePaths = {"userRoles", "userRoles.role"},
-      type = EntityGraphType.FETCH)
   Optional<UserEntity> findFirstByPhoneNumber(String phoneNumber);
-  @EntityGraph(attributePaths = {"userRoles", "userRoles.role"},
-      type = EntityGraphType.FETCH)
   List<UserEntity> findAllByUsernameContainingIgnoreCase(String username, Pageable pageable);
 
   @Query(value = "UPDATE user u SET u.isVerified = ?2 WHERE u.id = ?1")

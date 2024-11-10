@@ -8,7 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RoleRepository extends JpaRepository<RoleEntity, String> {
-  @EntityGraph(attributePaths = {"userRoles", "userRoles.user"},
-      type = EntityGraph.EntityGraphType.FETCH)
   Optional<RoleEntity> findRoleEntityByName(String name);
 }

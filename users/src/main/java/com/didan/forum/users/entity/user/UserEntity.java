@@ -77,8 +77,4 @@ public class UserEntity extends SuperClass implements Serializable {
   @Column(columnDefinition = "TINYINT(1)", name = "is_verified")
   private boolean isVerified = false;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  @JsonManagedReference
-  @JsonIgnore
-  private List<UserRoleEntity> userRoles;
 }
