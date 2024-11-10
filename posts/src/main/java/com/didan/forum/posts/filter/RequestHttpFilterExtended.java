@@ -60,10 +60,14 @@ public class RequestHttpFilterExtended extends OncePerRequestFilter {
           .append("Request to: ").append(getFullURL(cachedBodyHttpServletRequest)).append(" \n")
           .append("Method    : ").append(cachedBodyHttpServletRequest.getMethod()).append(" \n")
           .append("Header    : ").append(headers).append(" \n")
-          .append("Body      : ").append(replaceChars(new String(cachedBodyHttpServletRequest.getCachedBody(), StandardCharsets.UTF_8))).append(" \n")
+          .append("Body      : ").append(replaceChars(getBodyRequest(cachedBodyHttpServletRequest))).append(" \n")
           .append(" \n");
 
-      filterChain.doFilter(cachedBodyHttpServletRequest, responseWrapper);
+      if (isMultipart(request)) {
+        filterChain.doFilter(request, responseWrapper);
+      } else {
+        filterChain.doFilter(cachedBodyHttpServletRequest, responseWrapper);
+      }
 
       // response
       str.append("Response = ").append(" \n")
@@ -81,8 +85,14 @@ public class RequestHttpFilterExtended extends OncePerRequestFilter {
     }
   }
 
+  public String getBodyRequest(CachedBodyHttpServletRequest request) {
+    boolean checkBodyRequest = request.getCachedBody() != null;
+    return checkBodyRequest ? new String(request.getCachedBody(), StandardCharsets.UTF_8) : null;
+  }
+
   public String getBodyResponse(ContentCachingResponseWrapper responseWrapper) {
-    return LogUtils.hideSensitiveData(new String(responseWrapper.getContentAsByteArray()));
+    String body = new String(responseWrapper.getContentAsByteArray());
+    return StringUtils.isEmpty(body) ? null : LogUtils.hideSensitiveData(body);
   }
 
   public Map<String, String> getHeaders(HttpServletResponse response) {
@@ -107,9 +117,16 @@ public class RequestHttpFilterExtended extends OncePerRequestFilter {
   }
 
   public String replaceChars(String str) {
+    if (StringUtils.isEmpty(str)) {
+      return null;
+    }
     for (Map.Entry<String, String> entry : replaceCharsError.entrySet()) {
       str = str.replace(entry.getKey(), entry.getValue());
     }
     return str;
+  }
+
+  private boolean isMultipart(HttpServletRequest request) {
+    return request.getContentType() != null && request.getContentType().startsWith("multipart/");
   }
 }

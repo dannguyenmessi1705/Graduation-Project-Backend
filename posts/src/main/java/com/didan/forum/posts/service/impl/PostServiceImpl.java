@@ -100,7 +100,7 @@ public class PostServiceImpl implements IPostService {
         });
     UserResponseDto user = getUserData(userId);
     List<String> filesPath = new ArrayList<>();
-    if (requestDto.getFiles() != null && requestDto.getFiles().length > 0) {
+    if (!requestDto.getFiles().isEmpty()) {
       log.info("Uploading files to Minio");
       minioService.createBucket(bucketName);
       for (MultipartFile file : requestDto.getFiles()) {

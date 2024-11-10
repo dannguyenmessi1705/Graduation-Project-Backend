@@ -1,6 +1,9 @@
 package com.didan.forum.users.filter.cachehttp;
 
+import jakarta.servlet.ReadListener;
 import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -11,12 +14,22 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 
 @SuppressWarnings("all")
 public class CachedBodyHttpServletRequest extends ContentCachingRequestWrapper {
+
   private byte[] cachedBody;
 
-  public CachedBodyHttpServletRequest(ContentCachingRequestWrapper request) throws IOException {
+  public CachedBodyHttpServletRequest(HttpServletRequest request) throws IOException {
     super(request);
-    InputStream requestInputStream = request.getInputStream();
-    this.cachedBody = StreamUtils.copyToByteArray(requestInputStream);
+    // Kiểm tra nếu request là multipart thì không cache body
+    if (isMultipart(request)) {
+      this.cachedBody = null;
+    } else {
+      InputStream requestInputStream = request.getInputStream();
+      this.cachedBody = StreamUtils.copyToByteArray(requestInputStream);
+    }
+  }
+
+  private boolean isMultipart(HttpServletRequest request) {
+    return request.getContentType() != null && request.getContentType().startsWith("multipart/");
   }
 
   public byte[] getCachedBody() {
@@ -41,6 +54,32 @@ public class CachedBodyHttpServletRequest extends ContentCachingRequestWrapper {
 
   @Override
   public ServletInputStream getInputStream() throws IOException {
-    return new CachedBodyServletInputStream(this.cachedBody);
+    if (this.cachedBody == null) {
+      return super.getInputStream();
+    }
+
+    return new ServletInputStream() {
+      private final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(cachedBody);
+
+      @Override
+      public boolean isFinished() {
+        return byteArrayInputStream.available() == 0;
+      }
+
+      @Override
+      public boolean isReady() {
+        return true;
+      }
+
+      @Override
+      public void setReadListener(ReadListener readListener) {
+        // Not implemented
+      }
+
+      @Override
+      public int read() throws IOException {
+        return byteArrayInputStream.read();
+      }
+    };
   }
 }

@@ -2,6 +2,7 @@ package com.didan.forum.comments.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -47,6 +48,6 @@ public class CreateCommentRequestDto {
       description = "The files attached to the post",
       nullable = true
   )
-  private MultipartFile[] files;
+  private List<MultipartFile> files;
 
 }

@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,7 +51,7 @@ public interface ITopicController {
           )
       }
   )
-  @PostMapping("/create")
+  @PostMapping(value = "/create", consumes = {MediaType.APPLICATION_JSON_VALUE})
   ResponseEntity<GeneralResponse<TopicResponseDto>> createTopic(@Valid @RequestBody
       CreateTopicRequestDto requestDto);
 

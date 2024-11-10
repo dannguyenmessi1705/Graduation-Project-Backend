@@ -51,5 +51,5 @@ public class CreatePostRequestDto {
       name = "files",
       description = "The files attached to the post"
   )
-  private MultipartFile[] files;
+  private List<MultipartFile> files;
 }

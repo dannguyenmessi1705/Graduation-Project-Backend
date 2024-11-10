@@ -11,6 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -44,7 +45,6 @@ public class LogFilter extends OncePerRequestFilter {
     response.setHeader(TrackingConstant.CORRELATION_ID.getHeaderKey(), correlationId);
     response.setHeader(TrackingConstant.TRACE_ID.getHeaderKey(), MDC.get(TrackingConstant.TRACE_ID.getHeaderKey()));
     response.setHeader(TrackingConstant.SPAN_ID.getHeaderKey(), MDC.get(TrackingConstant.SPAN_ID.getHeaderKey()));
-
     request = new RequestWrapper(request);
 
     ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
@@ -72,7 +72,7 @@ public class LogFilter extends OncePerRequestFilter {
             .applicationCode(applicationName)
             .requestID(MDC.get(TrackingConstant.X_REQUEST_ID.getHeaderKey()))
             .sessionID(MDC.get(TrackingConstant.TRACE_ID.getHeaderKey()))
-            .requestContent(LogUtils.hideSensitiveData(((RequestWrapper) request).getBody()))
+            .requestContent(((RequestWrapper) request).getBody() == null ? null : LogUtils.hideSensitiveData(((RequestWrapper) request).getBody()))
             .responseContent(LogUtils.hideSensitiveData(responseBody))
             .startTime(String.valueOf(time))
             .endTime(String.valueOf(now))
@@ -120,7 +120,7 @@ public class LogFilter extends OncePerRequestFilter {
       if (!StringUtils.hasText(responseBody)) {
         return null;
       } else {
-        return ObjectMapperUtils.fromJson(responseBody, GeneralResponse.class).getStatus();
+        return Objects.requireNonNull(ObjectMapperUtils.fromJson(responseBody, GeneralResponse.class)).getStatus();
       }
     } catch (Exception e) {
       log.error("Error while getting application error code", e);
