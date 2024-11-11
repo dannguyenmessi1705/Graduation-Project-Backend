@@ -43,7 +43,7 @@ public class ValidateServiceImpl implements IVerifyService {
     String userId = tokenRequestEntity.getUserId();
     userRepository.updateByIdAndVerified(userId, true);
     keycloakUserService.updateUserInKeycloak(userId,
-        UpdateUserAdminRequestDto.builder().isVerified(true).build());
+        UpdateUserAdminRequestDto.builder().isVerified(String.valueOf(Boolean.TRUE)).build());
     keycloakRoleService.removeRoleFromUserInKeycloak(userId, RoleConstant.ROLE_INACTIVE.getRole());
     keycloakRoleService.addRoleToUserInKeycloak(userId, RoleConstant.ROLE_USER.getRole());
     tokenRequestRepository.delete(tokenRequestEntity);
