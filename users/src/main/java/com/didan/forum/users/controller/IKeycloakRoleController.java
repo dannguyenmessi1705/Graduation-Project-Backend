@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -54,7 +55,8 @@ public interface IKeycloakRoleController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @GetMapping("/get-roles-user/{userId}")
   ResponseEntity<GeneralResponse<List<RoleKeycloakEntity>>> getAllRolesOfUserFromKeycloak(
@@ -86,7 +88,8 @@ public interface IKeycloakRoleController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PostMapping("/add-role-user")
   ResponseEntity<GeneralResponse<Void>> addRoleToUserInKeycloak(
@@ -117,7 +120,8 @@ public interface IKeycloakRoleController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @DeleteMapping("/remove-role-user")
   ResponseEntity<GeneralResponse<Void>> removeRoleFromUserInKeycloak(
@@ -141,7 +145,8 @@ public interface IKeycloakRoleController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @GetMapping("/all")
   ResponseEntity<GeneralResponse<List<RoleKeycloakEntity>>> getAllRolesFromKeycloak();
@@ -171,7 +176,8 @@ public interface IKeycloakRoleController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @GetMapping("/get-role/{roleName}")
   ResponseEntity<GeneralResponse<RoleKeycloakEntity>> getRoleFromKeycloak(
@@ -196,7 +202,8 @@ public interface IKeycloakRoleController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PostMapping("/create-role")
   ResponseEntity<GeneralResponse<Void>> createRoleInKeycloak(
@@ -227,7 +234,8 @@ public interface IKeycloakRoleController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @DeleteMapping("/delete-role/{roleName}")
   ResponseEntity<GeneralResponse<Void>> deleteRoleFromKeycloak(

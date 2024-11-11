@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -49,7 +50,8 @@ public interface ICommentController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
   ResponseEntity<GeneralResponse<CommentResponseDto>> createComment(
@@ -99,7 +101,8 @@ public interface ICommentController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @DeleteMapping("/delete/{commentId}")
   ResponseEntity<GeneralResponse<Void>> deleteComment(
@@ -123,7 +126,8 @@ public interface ICommentController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @DeleteMapping("/admin/delete/{commentId}")
   ResponseEntity<GeneralResponse<Void>> deleteCommentByAdmin(
@@ -177,6 +181,27 @@ public interface ICommentController {
   ResponseEntity<GeneralResponse<Long>> countComments(
       @NotBlank(message = "blank.field.postId") @PathVariable("postId") String postId);
 
+  @Operation(
+      summary = "Report a comment",
+      description = "Report a comment",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "Comment reported successfully",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content(
+                  schema = @Schema(implementation = GeneralResponse.class)
+              )
+          )
+      },
+      security = @SecurityRequirement(name = "Keycloak")
+  )
   @PostMapping("/report/{commentId}")
   ResponseEntity<GeneralResponse<Void>> reportComment(
       @NotBlank(message = "blank.field.commentId") @PathVariable("commentId") String commentId,

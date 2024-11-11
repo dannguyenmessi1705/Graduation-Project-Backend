@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
@@ -41,7 +42,8 @@ public interface IRoleController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @GetMapping("/get-roles/{userId}")
   ResponseEntity<GeneralResponse<List<RoleEntity>>> getRoles(

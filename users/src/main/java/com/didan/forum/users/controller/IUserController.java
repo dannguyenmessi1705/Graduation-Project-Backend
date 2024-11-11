@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -103,7 +104,8 @@ public interface IUserController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PostMapping(path = "/register", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   ResponseEntity<GeneralResponse<UserResponseDto>> createUser(
@@ -224,7 +226,8 @@ public interface IUserController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PostMapping(path = "/reset/password/{userId}")
   ResponseEntity<GeneralResponse<Void>> requestResetPassword(
@@ -255,7 +258,8 @@ public interface IUserController {
 
   @Operation(
       summary = "Check if user exists",
-      description = "Check if user exists with the provided user ID"
+      description = "Check if user exists with the provided user ID",
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @GetMapping("/check/{userId}")
   ResponseEntity<GeneralResponse<Boolean>> checkUserExists(@NotBlank(message = "blank.field.userid") @PathVariable(
@@ -279,7 +283,8 @@ public interface IUserController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PostMapping(path = "/report/{userId}")
   ResponseEntity<GeneralResponse<Void>> reportUser(

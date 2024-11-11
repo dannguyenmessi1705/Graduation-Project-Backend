@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -49,7 +50,8 @@ public interface ITopicController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PostMapping(value = "/create", consumes = {MediaType.APPLICATION_JSON_VALUE})
   ResponseEntity<GeneralResponse<TopicResponseDto>> createTopic(@Valid @RequestBody
@@ -147,7 +149,8 @@ public interface ITopicController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PutMapping("/update/{topicId}")
   ResponseEntity<GeneralResponse<TopicResponseDto>> updateTopic(@NotBlank(message = "blank.field.topic.id")
@@ -172,7 +175,8 @@ public interface ITopicController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @DeleteMapping("/delete/{topicId}")
   ResponseEntity<GeneralResponse<Void>> deleteTopic(

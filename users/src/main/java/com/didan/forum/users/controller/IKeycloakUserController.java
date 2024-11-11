@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -51,7 +52,8 @@ public interface IKeycloakUserController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @GetMapping("/all")
   ResponseEntity<GeneralResponse<List<UserResponseDto>>> getAllUsersFromKeycloak(
@@ -75,7 +77,8 @@ public interface IKeycloakUserController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @GetMapping("/{userId}")
   ResponseEntity<GeneralResponse<UserResponseDto>> getUserDetailsFromKeycloak(
@@ -100,7 +103,8 @@ public interface IKeycloakUserController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PostMapping(path = "/create", produces = MediaType.APPLICATION_JSON_VALUE, consumes =
       MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -125,7 +129,8 @@ public interface IKeycloakUserController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PutMapping(path = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes =
       MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -151,7 +156,8 @@ public interface IKeycloakUserController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PutMapping(path = "/{userId}/password", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<GeneralResponse<UserResponseDto>> updateUserPasswordInKeycloak(
@@ -176,7 +182,8 @@ public interface IKeycloakUserController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @DeleteMapping("/{userId}/delete")
   ResponseEntity<GeneralResponse<Void>> deleteUserFromKeycloak(

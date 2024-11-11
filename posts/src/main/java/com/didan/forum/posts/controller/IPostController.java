@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -52,7 +53,8 @@ public interface IPostController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PostMapping(path = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<GeneralResponse<PostResponseDto>> createPost(
@@ -76,7 +78,8 @@ public interface IPostController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PutMapping(path = "/update/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces =
       MediaType.APPLICATION_JSON_VALUE)
@@ -234,7 +237,8 @@ public interface IPostController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @DeleteMapping("/delete/{postId}")
   ResponseEntity<GeneralResponse<Void>> deletePost(
@@ -284,7 +288,8 @@ public interface IPostController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PostMapping("/report/{postId}")
   ResponseEntity<GeneralResponse<Void>> reportPost(

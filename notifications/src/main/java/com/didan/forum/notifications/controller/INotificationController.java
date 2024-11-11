@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -48,7 +49,8 @@ public interface INotificationController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @GetMapping("/all")
   ResponseEntity<GeneralResponse<List<NotificationEntity>>> getAllNotifications(
@@ -73,7 +75,8 @@ public interface INotificationController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @GetMapping("/unread")
   ResponseEntity<GeneralResponse<List<NotificationEntity>>> getUnreadNotifications(
@@ -98,7 +101,8 @@ public interface INotificationController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @GetMapping("/unread/count")
   ResponseEntity<GeneralResponse<Long>> getUnreadNotificationsCount();
@@ -121,7 +125,8 @@ public interface INotificationController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PutMapping("/mark/read/{notificationId}")
   ResponseEntity<GeneralResponse<Void>> markAsRead(
@@ -146,7 +151,8 @@ public interface INotificationController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PutMapping("/mark/read/all")
   ResponseEntity<GeneralResponse<Void>> markAllAsRead();
@@ -169,7 +175,8 @@ public interface INotificationController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @DeleteMapping("/delete/{notificationId}")
   ResponseEntity<GeneralResponse<Void>> deleteNotification(
@@ -194,7 +201,8 @@ public interface INotificationController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @DeleteMapping("/delete/all")
   ResponseEntity<GeneralResponse<Void>> deleteAllNotifications();
@@ -217,7 +225,8 @@ public interface INotificationController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PostMapping("/admin/create")
   ResponseEntity<GeneralResponse<Void>> createNotificationByAdmin(
