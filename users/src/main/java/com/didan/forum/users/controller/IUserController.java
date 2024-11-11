@@ -104,8 +104,7 @@ public interface IUserController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      },
-      security = @SecurityRequirement(name = "Keycloak")
+      }
   )
   @PostMapping(path = "/register", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   ResponseEntity<GeneralResponse<UserResponseDto>> createUser(
@@ -129,7 +128,8 @@ public interface IUserController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PutMapping(path = "/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes =
       MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -203,7 +203,8 @@ public interface IUserController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @PutMapping(path = "/update/password")
   ResponseEntity<GeneralResponse<Void>> updatePasswordByUser(@Valid @RequestBody ChangePasswordUserDto requestDto);
@@ -226,12 +227,11 @@ public interface IUserController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      },
-      security = @SecurityRequirement(name = "Keycloak")
+      }
   )
-  @PostMapping(path = "/reset/password/{userId}")
+  @PostMapping(path = "/reset/password")
   ResponseEntity<GeneralResponse<Void>> requestResetPassword(
-      @NotBlank(message = "blank.field.userid") @PathVariable("userId") String userId);
+      @NotBlank(message = "blank.field.userid") @RequestParam("username") String username);
 
   @Operation(
       summary = "Get QR code for user account",
@@ -251,15 +251,15 @@ public interface IUserController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @GetMapping(path = "/qrcode", produces = MediaType.IMAGE_PNG_VALUE)
   ResponseEntity<byte[]> getQRCode();
 
   @Operation(
       summary = "Check if user exists",
-      description = "Check if user exists with the provided user ID",
-      security = @SecurityRequirement(name = "Keycloak")
+      description = "Check if user exists with the provided user ID"
   )
   @GetMapping("/check/{userId}")
   ResponseEntity<GeneralResponse<Boolean>> checkUserExists(@NotBlank(message = "blank.field.userid") @PathVariable(

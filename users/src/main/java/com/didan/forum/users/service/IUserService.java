@@ -33,7 +33,7 @@ public interface IUserService {
 
   void deleteUser(String userId);
 
-  void requestResetPassword(String userId);
+  void requestResetPassword(String username);
 
   boolean checkUserExist(String userId);
 }

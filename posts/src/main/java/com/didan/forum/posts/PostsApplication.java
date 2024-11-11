@@ -42,9 +42,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
             description = "Gateway server",
             url = "http://localhost:8072/forum"
         )
-    },
-    security = {
-        @SecurityRequirement(name = "Keycloak")
     }
 )
 @SecurityScheme(

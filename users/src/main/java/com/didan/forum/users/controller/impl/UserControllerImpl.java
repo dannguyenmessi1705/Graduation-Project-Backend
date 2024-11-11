@@ -115,9 +115,9 @@ public class UserControllerImpl implements IUserController {
   }
 
   @Override
-  public ResponseEntity<GeneralResponse<Void>> requestResetPassword(String userId) {
+  public ResponseEntity<GeneralResponse<Void>> requestResetPassword(String username) {
     log.info("===== Start requesting reset password =====");
-    userService.requestResetPassword(userId);
+    userService.requestResetPassword(username);
     Status status = new Status(RequestContext.getRequest().getRequestURI(), HttpStatus.OK.value(),
         "Reset password requested successfully",
         LocalDateTime.now());

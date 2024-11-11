@@ -263,7 +263,8 @@ public interface IPostController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      }
+      },
+      security = @SecurityRequirement(name = "Keycloak")
   )
   @DeleteMapping("/admin/delete/{postId}")
   ResponseEntity<GeneralResponse<Void>> deletePostByAdmin(

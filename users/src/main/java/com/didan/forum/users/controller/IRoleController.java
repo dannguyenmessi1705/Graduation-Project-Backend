@@ -42,8 +42,7 @@ public interface IRoleController {
                   schema = @Schema(implementation = GeneralResponse.class)
               )
           )
-      },
-      security = @SecurityRequirement(name = "Keycloak")
+      }
   )
   @GetMapping("/get-roles/{userId}")
   ResponseEntity<GeneralResponse<List<RoleEntity>>> getRoles(

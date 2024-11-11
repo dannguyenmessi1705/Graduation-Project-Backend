@@ -316,8 +316,8 @@ public class UserServiceImpl implements IUserService {
   }
 
   @Override
-  public void requestResetPassword(String userId) {
-    UserEntity user = userRepository.findById(userId)
+  public void requestResetPassword(String username) {
+    UserEntity user = userRepository.findFirstByUsernameIgnoreCase(username)
         .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     String token = RandomStringUtils.random(100, true, true);
 

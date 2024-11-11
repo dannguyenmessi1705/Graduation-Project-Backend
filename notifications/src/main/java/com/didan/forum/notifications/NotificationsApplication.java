@@ -36,15 +36,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     servers = {
         @Server(
             description = "Local server",
-            url = "http://localhost:9020"
+            url = "http://localhost:9010"
         ),
         @Server(
             description = "Gateway server",
             url = "http://localhost:8072/forum"
         )
-    },
-    security = {
-        @SecurityRequirement(name = "Keycloak")
     }
 )
 @SecurityScheme(
