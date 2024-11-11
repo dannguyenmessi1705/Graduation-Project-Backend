@@ -126,8 +126,8 @@ public class KeycloakUserServiceImpl implements IKeycloakUserService {
       if (StringUtils.hasText(requestDto.getLastName())) {
         updateUser.setLastName(requestDto.getLastName());
       }
-      if (StringUtils.hasText(String.valueOf(requestDto.isVerified()))) {
-        updateUser.setVerified(requestDto.isVerified());
+      if (StringUtils.hasText(requestDto.getIsVerified())) {
+        updateUser.setVerified(Boolean.parseBoolean(requestDto.getIsVerified().toLowerCase()));
       }
 
       if (requestDto.getPicture() != null) {

@@ -91,7 +91,8 @@ public class UpdateUserAdminRequestDto {
       description = "User is verified or not",
       example = "true"
   )
-  private boolean isVerified;
+  @Pattern(regexp = "^(true|TRUE|True|FALSE|False|false|)$", message = "Invalid field isVerified, must be true or false")
+  private String isVerified;
 
   @Schema(
       name = "picture",
