@@ -1,0 +1,16 @@
+FROM mysql:8.0
+
+LABEL authors="dannguyenmessi"
+
+ENV MYSQL_DATABASE=keycloakdb
+ENV MYSQL_USER=keycloak
+ENV MYSQL_PASSWORD=17052002
+ENV MYSQL_ROOT_PASSWORD=root
+
+RUN chmod -R 755 /var/lib/mysql && chown -R mysql:mysql /var/lib/mysql
+
+COPY data.sql /docker-entrypoint-initdb.d/
+
+EXPOSE 3306
+
+CMD ["mysqld"]

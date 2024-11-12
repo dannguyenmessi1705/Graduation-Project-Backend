@@ -1,0 +1,19 @@
+FROM minio/minio
+
+LABEL authors="dannguyenmessi"
+
+ENV TZ=Asia/Ho_Chi_Minh
+ENV LANG=en_US.UTF-8
+ENV MINIO_PROMETHEUS_AUTH_TYPE=public
+ENV MINIO_ROOT_USER=didannguyen
+ENV MINIO_ROOT_PASSWORD=17052002
+
+RUN mkdir -p /data /minio /root/.minio
+
+COPY ./minio/data /data
+COPY ./minio/minio /minio
+COPY ./minio/config /root/.minio
+
+CMD ["server", "/data", "--console-address", ":9001"]
+
+EXPOSE 9000 9001

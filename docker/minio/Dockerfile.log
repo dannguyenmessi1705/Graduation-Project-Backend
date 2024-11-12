@@ -1,0 +1,13 @@
+FROM minio/minio
+
+LABEL authors="dannguyenmessi"
+
+ENV MINIO_ROOT_USER=loki
+ENV MINIO_ROOT_PASSWORD=supersecret
+ENV MINIO_PROMETHEUS_AUTH_TYPE=public
+ENV MINIO_UPDATE=off
+
+COPY entrypoint-minio-log.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["sh", "-euc", "mkdir -p /data/loki-data && mkdir -p /data/loki-ruler && minio server /data"]

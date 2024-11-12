@@ -1,0 +1,9 @@
+FROM grafana/loki:3.0.0
+
+LABEL authors="dannguyenmessi"
+
+COPY loki-config.yaml /etc/loki/config.yaml
+
+CMD ["-config.file=/etc/loki/config.yaml", "-target=read"]
+
+EXPOSE 3100 7946 9095
