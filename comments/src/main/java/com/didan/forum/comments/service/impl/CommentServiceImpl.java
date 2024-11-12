@@ -79,7 +79,7 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     List<String> filesPath = new ArrayList<>();
-    if (!requestDto.getFiles().isEmpty()) {
+    if (requestDto.getFiles() != null && !requestDto.getFiles().isEmpty()) {
       log.info("Uploading files to Minio");
       minioService.createBucket(bucketName);
       for (MultipartFile file : requestDto.getFiles()) {
