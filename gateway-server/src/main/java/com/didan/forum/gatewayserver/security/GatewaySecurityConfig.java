@@ -37,7 +37,8 @@ public class GatewaySecurityConfig {
                         + "/report/**", "/forum/comments/report/**", "/forum/comments/delete/**",
                     "/forum/comments/create/**", "/forum/comments/votes/add/**", "/forum/comments"
                         + "/votes/revoke/**", "/forum/notifications/delete/**", "/forum/notifications/mark/**",
-                    "/forum/notifications/read/**", "/forum/notifications/unread/**", "/forum/users/verify/reactivate/**")
+                    "/forum/notifications/read/**", "/forum/notifications/unread/**", "/forum/users/verify/reactivate/**",
+                    "/forum/notifications/all/**")
                 .hasAnyRole("user", "admin")
                 .pathMatchers("/forum/users/keycloak/**", "/forum/posts/topic/update/**",
                     "/forum/posts/topic/delete/**", "/forum/posts/topic/create/**", "/forum/posts/topic/delete/**",

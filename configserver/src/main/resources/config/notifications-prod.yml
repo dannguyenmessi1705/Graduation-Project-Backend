@@ -93,7 +93,7 @@ app:
         enabled: true
 
 private:
-  route: notifications/delete,notifications/mark,notifications/read,notifications/unread
+  route: notifications/delete,notifications/mark,notifications/read,notifications/unread,notifications/all
 management:
   endpoints:
     web:

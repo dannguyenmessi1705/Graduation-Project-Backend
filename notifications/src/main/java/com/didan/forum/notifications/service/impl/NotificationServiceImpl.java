@@ -36,7 +36,7 @@ public class NotificationServiceImpl implements INotificationService {
   public List<NotificationEntity> getAllNotifications(String userId, Integer page) {
     Pageable pageable = PageRequest.of(page, defaultPageSize);
     List<NotificationEntity> notifications = notificationRepository
-        .findNotificationEntitiesByUserIdOrderByCreatedAtDesc(userId, pageable);
+        .findNotificationEntitiesByUserIdOrUserIdOrderByCreatedAtDesc(userId, null, pageable);
     if (notifications.isEmpty()) {
       log.info("No notifications found for user: {}", userId);
       return List.of();

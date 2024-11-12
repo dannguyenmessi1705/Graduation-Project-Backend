@@ -41,7 +41,7 @@ oauth:
 #      timeout: 1s
 
 private:
-  route: users/update,users/qrcode,posts/update,comments/update,votes/add,votes/revoke,posts/update,posts/report,posts/new,posts/delete,comments/create,votes/revoke,votes/add,comments/report,comments/delete,notifications/delete,notifications/mark,notifications/read,notifications/unread,users/verify/reactivate
+  route: users/update,users/qrcode,posts/update,comments/update,votes/add,votes/revoke,posts/update,posts/report,posts/new,posts/delete,comments/create,votes/revoke,votes/add,comments/report,comments/delete,notifications/delete,notifications/mark,notifications/read,notifications/unread,users/verify/reactivate,notifications/all
 
 management:
   endpoints:

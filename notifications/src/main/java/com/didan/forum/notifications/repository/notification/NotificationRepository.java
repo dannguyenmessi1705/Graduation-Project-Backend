@@ -8,8 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NotificationRepository extends JpaRepository<NotificationEntity, Long> {
 
-  List<NotificationEntity> findNotificationEntitiesByUserIdOrderByCreatedAtDesc(String userId
-      , Pageable pageable);
+  List<NotificationEntity> findNotificationEntitiesByUserIdOrUserIdOrderByCreatedAtDesc(String userId1, String userId2, Pageable pageable);
 
   List<NotificationEntity> findNotificationEntitiesByUserIdOrderByCreatedAtDesc(String userId);
 
