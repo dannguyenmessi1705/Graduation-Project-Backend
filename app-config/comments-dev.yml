@@ -1,0 +1,173 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: comments
+#  config:
+#    import: optional:configserver:http://localhost:8071
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 30MB
+  datasource:
+    commentdb:
+      url: jdbc:h2:mem:commentdb;DB_CLOSE_DELAY=-1;MODE=MySQL;NON_KEYWORDS=USER
+      username: 'root'
+      password: '17052002'
+      driver-class-name: org.h2.Driver
+      hikari:
+        maximum-pool-size: 10
+        connection-timeout: 60000
+        max-lifetime: 590000
+    reportdb:
+      url: jdbc:h2:mem:reportdb;DB_CLOSE_DELAY=-1;MODE=MySQL;NON_KEYWORDS=USER
+      username: 'root'
+      password: '17052002'
+      driver-class-name: org.h2.Driver
+      hikari:
+        maximum-pool-size: 10
+        connection-timeout: 60000
+        max-lifetime: 590000
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers:
+            - localhost:9092
+      bindings:
+        postDeleted-in-0:
+          destination: post-delete
+          group: ${spring.application.name}
+        sendCommentScore-out-0:
+          destination: comment-score
+        listenCommentScore-in-0:
+          destination: comment-score
+          group: ${spring.application.name}
+        sendPostScore-out-0:
+          destination: post-score
+        commentAction-out-0:
+          destination: comment-action
+        sendNotification-out-0:
+          destination: event-notification
+        sendRequestToCreateNotification-out-0:
+          destination: notification-create
+        listenRequestToCreateNotification-in-0:
+          destination: notification-create
+          group: ${spring.application.name}
+    function:
+      definition: postDeleted;listenCommentScore;listenRequestToCreateNotification
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8070/eureka/
+
+springdoc:
+  api-docs:
+    path: /comments/api-docs
+  swagger-ui:
+    path: /comments/swagger-ui
+
+app:
+  cache:
+    redis:
+      enabled: true
+      host: localhost
+      port: 6379
+      timeoutSeconds: 60
+      maxPoolSize: 8
+      maxIdle: 8
+      minIdle: 0
+      password:
+  pagination:
+    defaultSize: 20
+  schedule:
+    fixedDelay:
+      milliseconds: 300000
+  baseUrl: http://localhost:8072/forum
+  log:
+    request:
+      ignoreHeaders: authorization,x-session-id,x-envoy-decorator-operation,X-Request-Id,sessionid,X-User-Id
+      extended:
+        enabled: true
+
+private:
+  route: comments/create,votes/revoke,votes/add,comments/report,comments/delete
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true
+    shutdown:
+      enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram.http.server.requests: true
+  observations:
+    key-values:
+      application: ${spring.application.name}
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+      encoding: json
+      connect-timeout: 3s
+      read-timeout: 10s
+
+endpoints:
+  shutdown:
+    enabled: true
+
+info:
+  app:
+    name: ${spring.application.name}
+    description: "Forum users application"
+    version: "1.0.0"
+
+logging:
+  level:
+    com:
+      didan:
+        forum:
+          comments: debug
+  pattern:
+    level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"
+
+minio:
+  root:
+    user: didannguyen
+    password: 17052002
+    endpoint: http://localhost:10000
+  bucketName: ${spring.application.name}
