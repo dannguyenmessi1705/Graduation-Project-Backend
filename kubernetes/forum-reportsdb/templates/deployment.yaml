@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reportsdb-service-deployment
+  labels:
+    app: reportsdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reportsdb
+  template:
+    metadata:
+      labels:
+        app: reportsdb
+    spec:
+      containers:
+        - name: reportsdb
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+            - name: MYSQL_DATABASE
+              value: reportsdb
+            - name: MYSQL_USER
+              value: reports
+            - name: MYSQL_PASSWORD
+              value: "17052002"
+          ports:
+            - containerPort: 3306

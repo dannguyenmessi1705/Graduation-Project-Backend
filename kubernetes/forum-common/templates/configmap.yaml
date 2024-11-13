@@ -1,0 +1,41 @@
+{{- define "common.configmap" -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.global.configMapName }}
+data:
+  SPRING_PROFILES_ACTIVE: "{{ .Values.global.activeProfile }}"
+  SPRING_CONFIG_IMPORT: "{{ .Values.global.configServerURL }}"
+  SPRING_CLOUD_KUBERNETES_DISCOVERY_DISCOVERY-SERVER-URL: "{{ .Values.global.kubernetesDiscoveryServerURL }}"
+  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "{{ .Values.global.eurekaDiscoveryServerURL }}"
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: "{{ .Values.global.keyCloakJWKURL }}"
+  OAUTH_OPENID_SERVER: "{{ .Values.global.keyCloakOpenIdURL }}"
+  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "{{ .Values.global.zipkinEndPoint }}"
+  SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: "{{ .Values.global.kafkaBrokerURL }}"
+  MINIO_ROOT_USER: "{{ .Values.global.minioRootUser }}"
+  MINIO_ROOT_PASSWORD: "{{ .Values.global.minioRootPassword }}"
+  MINIO_ROOT_ENDPOINT: "{{ .Values.global.minioRootEndPoint }}"
+  APP_CACHE_REDIS_ENABLED: "{{ .Values.global.redisCacheEnabled }}"
+  APP_CACHE_REDIS_HOST: "{{ .Values.global.redisCacheHost }}"
+  APP_CACHE_REDIS_PORT: "{{ .Values.global.redisCachePort }}"
+  APP_PAGINATION_DEFAULTSIZE: "{{ .Values.global.defaultPageSize }}"
+  APP_SCHEDULE_FIXEDDELAY_MILLISECONDS: "{{ .Values.global.fixedDelayMilliseconds }}"
+  APP_BASEURL: "{{ .Values.global.baseURL }}"
+  SPRING_DATASOURCE_USERDB_URL: "{{ .Values.global.userDBURL }}"
+  SPRING_DATASOURCE_USERDB_USERNAME: "{{ .Values.global.userDBUsername }}"
+  SPRING_DATASOURCE_USERDB_PASSWORD: "{{ .Values.global.userDBPassword }}"
+  SPRING_DATASOURCE_POSTDB_URL: "{{ .Values.global.postDBURL }}"
+  SPRING_DATASOURCE_POSTDB_USERNAME: "{{ .Values.global.postDBUsername }}"
+  SPRING_DATASOURCE_POSTDB_PASSWORD: "{{ .Values.global.postDBPassword }}"
+  SPRING_DATASOURCE_COMMENTDB_URL: "{{ .Values.global.commentDBURL }}"
+  SPRING_DATASOURCE_COMMENTDB_USERNAME: "{{ .Values.global.commentDBUsername }}"
+  SPRING_DATASOURCE_COMMENTDB_PASSWORD: "{{ .Values.global.commentDBPassword }}"
+  SPRING_DATASOURCE_NOTIFICATIONDB_URL: "{{ .Values.global.notificationDBURL }}"
+  SPRING_DATASOURCE_NOTIFICATIONDB_USERNAME: "{{ .Values.global.notificationDBUsername }}"
+  SPRING_DATASOURCE_NOTIFICATIONDB_PASSWORD: "{{ .Values.global.notificationDBPassword }}"
+  SPRING_DATASOURCE_REPORTDB_URL: "{{ .Values.global.reportDBURL }}"
+  SPRING_DATASOURCE_REPORTDB_USERNAME: "{{ .Values.global.reportDBUsername }}"
+  SPRING_DATASOURCE_REPORTDB_PASSWORD: "{{ .Values.global.reportDBPassword }}"
+  SPRING_DATA_REDIS_HOST: "{{ .Values.global.redisHost }}"
+  SPRING_DATA_REDIS_PORT: "{{ .Values.global.redisPort }}"
+{{- end -}}

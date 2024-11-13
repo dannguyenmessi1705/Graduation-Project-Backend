@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: commentsdb-service-deployment
+  labels:
+    app: commentsdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: commentsdb
+  template:
+    metadata:
+      labels:
+        app: commentsdb
+    spec:
+      containers:
+        - name: commentsdb
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+            - name: MYSQL_DATABASE
+              value: commentsdb
+            - name: MYSQL_USER
+              value: comments
+            - name: MYSQL_PASSWORD
+              value: "17052002"
+          ports:
+            - containerPort: 3306

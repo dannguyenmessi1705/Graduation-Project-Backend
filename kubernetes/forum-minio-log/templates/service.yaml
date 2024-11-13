@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-log
+spec:
+  selector:
+    app: minio-log
+  type: ClusterIP
+  ports:
+    - port: 9000
+      targetPort: 9000

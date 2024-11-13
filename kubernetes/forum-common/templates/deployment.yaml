@@ -1,0 +1,238 @@
+{{- define "common.deployment" -}}
+apiVersion: apps/v1 # Version dành cho Deployment
+kind: Deployment # Loại cấu hình là Deployment
+metadata:
+  name: {{ .Values.deploymentName }} # Tên Deployment, lấy giá trị deploymentName từ file values.yaml
+  labels: # Label cho Deployment
+    app: {{ .Values.appLabel }} # Lấy giá trị appLabel từ file values.yaml
+spec:
+  replicas: {{ .Values.replicaCount }} # Số lượng Pod, lấy giá trị replicaCount từ file values.yaml
+  selector: # Chọn Pod dựa trên label
+    matchLabels:
+      app: {{ .Values.appLabel }} # Lấy giá trị appLabel từ file values.yaml
+  template: # Template Pod
+    metadata:
+      labels: # Label cho Pod
+        app: {{ .Values.appLabel }} # Lấy giá trị appLabel từ file values.yaml
+    spec:
+      containers:
+        - name: {{ .Values.appLabel }} # Tên Container, lấy giá trị appLabel từ file values.yaml
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}" # Image của Container, lấy giá trị repository và tag từ file values.yaml
+          ports:
+            - containerPort: {{ .Values.containerPort }} # Port của Container, lấy giá trị containerPort từ file values.yaml
+              protocol: TCP # Giao thức sử dụng cho Container
+          env:
+          {{- if .Values.appname_enabled }} # Nếu có appname_enabled trong file values.yaml
+            - name: SPRING_APPLICATION_NAME # Tên biến môi trường
+              value: {{ .Values.appName }} # Giá trị biến môi trường, lấy giá trị appname từ file values.yaml
+          {{- end }} # Kết thúc điều kiện
+          {{- if .Values.profile_enabled }} # Nếu có profile_enabled trong file values.yaml
+            - name: SPRING_PROFILES_ACTIVE # Tên biến môi trường
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }} # Tên ConfigMap, lấy giá trị configmapName từ file values.yaml
+                  key: SPRING_PROFILES_ACTIVE # Key của ConfigMap
+          {{- end }} # Kết thúc điều kiện
+          {{- if .Values.config_enabled }} # Nếu có config_enabled trong file values.yaml
+            - name: SPRING_CONFIG_IMPORT # Tên biến môi trường
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }} # Tên ConfigMap, lấy giá trị configmapName từ file values.yaml
+                  key: SPRING_CONFIG_IMPORT # Key của ConfigMap
+          {{- end }} # Kết thúc điều kiện
+          {{- if .Values.global.discoveryclient_kubernetes_enabled }} # Nếu có discovery client kubernetes trong file values.yaml
+            - name: SPRING_CLOUD_KUBERNETES_DISCOVERY_DISCOVERY-SERVER-URL # Tên biến môi trường
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }} # Tên ConfigMap, lấy giá trị configmapName từ file values.yaml
+                  key: SPRING_CLOUD_KUBERNETES_DISCOVERY_DISCOVERY-SERVER-URL # Key của ConfigMap
+          {{- end }} # Kết thúc điều kiện
+          {{- if .Values.global.discoveryclient_eureka_enabled }} # Nếu có discovery client eureka trong file values.yaml
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE # Tên biến môi trường
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }} # Tên ConfigMap, lấy giá trị configmapName từ file values.yaml
+                  key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE # Key của ConfigMap
+          {{- end }} # Kết thúc điều kiện
+          {{- if .Values.resourceserver_enabled }} # Nếu có resourceserver_enabled trong file values.yaml
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI # Tên biến môi trường
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }} # Tên ConfigMap, lấy giá trị configmapName từ file values.yaml
+                  key: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI # Key của ConfigMap
+          {{- end }} # Kết thúc điều kiện
+          {{- if .Values.oauth_openid_enabled }}
+            - name: OAUTH_OPENID_SERVER # Tên biến môi trường
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }} # Tên ConfigMap, lấy giá trị configmapName từ file values.yaml
+                  key: OAUTH_OPENID_SERVER # Key của ConfigMap
+          {{- end }} # Kết thúc điều kiện
+          {{- if .Values.zipkin_enabled }} # Nếu có zipkin_enabled trong file values.yaml
+            - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT # Tên biến môi trường
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }} # Tên ConfigMap, lấy giá trị configmapName từ file values.yaml
+                  key: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT # Key của ConfigMap
+          {{- end }} # Kết thúc điều kiện
+          {{- if .Values.kafka_enabled }} # Nếu có kafka_enabled trong file values.yaml
+            - name: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
+          {{- end }}
+          {{- if .Values.minio_enabled }}
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: MINIO_ROOT_USER
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: MINIO_ROOT_PASSWORD
+            - name: MINIO_ROOT_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: MINIO_ROOT_ENDPOINT
+          {{- end }}
+          {{- if .Values.redis_enabled }}
+            - name: APP_CACHE_REDIS_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: APP_CACHE_REDIS_ENABLED
+            - name: APP_CACHE_REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: APP_CACHE_REDIS_HOST
+            - name: APP_CACHE_REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: APP_CACHE_REDIS_PORT
+          {{- end }}
+          {{- if .Values.pageniation_enabled }}
+            - name: APP_PAGINATION_DEFAULTSIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: APP_PAGINATION_DEFAULTSIZE
+          {{- end }}
+          {{- if .Values.schedule_enabled }}
+            - name: APP_SCHEDULE_FIXEDDELAY_MILLISECONDS
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: APP_SCHEDULE_FIXEDDELAY_MILLISECONDS
+          {{- end }}
+          {{- if .Values.appBaseUrl_enabled }}
+            - name: APP_BASEURL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: APP_BASEURL
+          {{- end }}
+          {{- if .Values.usersdb_enabled }}
+            - name: SPRING_DATASOURCE_USERDB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATASOURCE_USERDB_URL
+            - name: SPRING_DATASOURCE_USERDB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATASOURCE_USERDB_USERNAME
+            - name: SPRING_DATASOURCE_USERSDB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATASOURCE_USERSDB_PASSWORD
+          {{- end }}
+          {{- if .Values.postsdb_enabled }}
+            - name: SPRING_DATASOURCE_POSTDB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATASOURCE_POSTDB_URL
+            - name: SPRING_DATASOURCE_POSTDB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATASOURCE_POSTDB_USERNAME
+            - name: SPRING_DATASOURCE_POSTDB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATASOURCE_POSTDB_PASSWORD
+          {{- end }}
+          {{- if .Values.commentsdb_enabled }}
+            - name: SPRING_DATASOURCE_COMMENTDB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATASOURCE_COMMENTDB_URL
+            - name: SPRING_DATASOURCE_COMMENTDB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATASOURCE_COMMENTDB_USERNAME
+            - name: SPRING_DATASOURCE_COMMENTDB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATASOURCE_COMMENTDB_PASSWORD
+          {{- end }}
+          {{- if .Values.notificationsdb_enabled }}
+            - name: SPRING_DATASOURCE_NOTIFICATIONDB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATASOURCE_NOTIFICATIONDB_URL
+            - name: SPRING_DATASOURCE_NOTIFICATIONDB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATASOURCE_NOTIFICATIONDB_USERNAME
+            - name: SPRING_DATASOURCE_NOTIFICATIONDB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATASOURCE_NOTIFICATIONDB_PASSWORD
+          {{- end }}
+          {{- if .Values.reportsdb_enabled }}
+            - name: SPRING_DATASOURCE_REPORTDB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATASOURCE_REPORTDB_URL
+            - name: SPRING_DATASOURCE_REPORTDB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATASOURCE_REPORTDB_USERNAME
+            - name: SPRING_DATASOURCE_REPORTDB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATASOURCE_REPORTDB_PASSWORD
+          {{- end }}
+          {{- if .Values.redis_reactive_enabled }}
+            - name: SPRING_DATA_REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATA_REDIS_HOST
+            - name: SPRING_DATA_REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.global.configMapName }}
+                  key: SPRING_DATA_REDIS_PORT
+          {{- end }}
+
+{{- end -}}

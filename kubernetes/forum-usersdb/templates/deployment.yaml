@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usersdb-service-deployment
+  labels:
+    app: usersdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: usersdb
+  template:
+    metadata:
+      labels:
+        app: usersdb
+    spec:
+      containers:
+        - name: usersdb
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+            - name: MYSQL_DATABASE
+              value: usersdb
+            - name: MYSQL_USER
+              value: users
+            - name: MYSQL_PASSWORD
+              value: "17052002"
+          ports:
+            - containerPort: 3306

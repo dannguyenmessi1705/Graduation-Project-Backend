@@ -1,0 +1,36 @@
+deploymentName: notifications-service-deployment
+serviceName: notifications-service
+appLabel: notifications-service
+appName: notifications
+
+replicaCount: 1
+
+image:
+  repository: dannguyenmessi/forum-notifications
+  tag: v1
+
+containerPort: 9010
+
+service:
+  type: ClusterIP
+  port: 9010
+  targetPort: 9010
+
+appname_enabled: true
+profile_enabled: true
+config_enabled: true
+resourceserver_enabled: false
+oauth_openid_enabled: false
+zipkin_enabled: true
+kafka_enabled: true
+minio_enabled: true
+redis_enabled: true
+pageniation_enabled: true
+schedule_enabled: true
+appBaseUrl_enabled: true
+usersdb_enabled: false
+postsdb_enabled: false
+comments_enabled: false
+notificationsdb_enabled: true
+reportsdb_enabled: false
+redis_reactive_enabled: false

@@ -1,0 +1,113 @@
+apiVersion: v2
+name: prod-env
+description: A Helm chart for Kubernetes
+
+# A chart can be either an 'application' or a 'library' chart.
+#
+# Application charts are a collection of templates that can be packaged into versioned archives
+# to be deployed.
+#
+# Library charts provide useful utilities or functions for the chart developer. They're included as
+# a dependency of application charts to inject those utilities and functions into the rendering
+# pipeline. Library charts do not define any templates and therefore cannot be deployed.
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 0.1.0
+
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are not expected to
+# follow Semantic Versioning. They should reflect the version the application is using.
+# It is recommended to use it with quotes.
+appVersion: "1.16.0"
+
+dependencies:
+  - name: forum-common
+    version: 0.1.0
+    repository: "file://../../forum-common"
+  - name: forum-backend-loki
+    version: 0.1.0
+    repository: "file://../../forum-backend-loki"
+  - name: forum-comments
+    version: 0.1.0
+    repository: "file://../../forum-comments"
+  - name: forum-commentsdb
+    version: 0.1.0
+    repository: "file://../../forum-commentsdb"
+  - name: forum-configserver
+    version: 0.1.0
+    repository: "file://../../forum-configserver"
+  - name: forum-eurekaserver
+    version: 0.1.0
+    repository: "file://../../forum-eurekaserver"
+  - name: forum-gatewayserver
+    version: 0.1.0
+    repository: "file://../../forum-gatewayserver"
+  - name: forum-grafana
+    version: 0.1.0
+    repository: "file://../../forum-grafana"
+  - name: forum-kafka
+    version: 0.1.0
+    repository: "file://../../forum-kafka"
+  - name: forum-kafkaui
+    version: 0.1.0
+    repository: "file://../../forum-kafkaui"
+  - name: forum-keycloak
+    version: 0.1.0
+    repository: "file://../../forum-keycloak"
+  - name: forum-keycloakdb
+    version: 0.1.0
+    repository: "file://../../forum-keycloakdb"
+  - name: forum-minio
+    version: 0.1.0
+    repository: "file://../../forum-minio"
+  - name: forum-minio-log
+    version: 0.1.0
+    repository: "file://../../forum-minio-log"
+  - name: forum-nginx
+    version: 0.1.0
+    repository: "file://../../forum-nginx"
+  - name: forum-notifications
+    version: 0.1.0
+    repository: "file://../../forum-notifications"
+  - name: forum-notificationsdb
+    version: 0.1.0
+    repository: "file://../../forum-notificationsdb"
+  - name: forum-posts
+    version: 0.1.0
+    repository: "file://../../forum-posts"
+  - name: forum-postsdb
+    version: 0.1.0
+    repository: "file://../../forum-postsdb"
+  - name: forum-prometheus
+    version: 0.1.0
+    repository: "file://../../forum-prometheus"
+  - name: forum-read-loki
+    version: 0.1.0
+    repository: "file://../../forum-read-loki"
+  - name: forum-redis
+    version: 0.1.0
+    repository: "file://../../forum-redis"
+  - name: forum-redis-insight
+    version: 0.1.0
+    repository: "file://../../forum-redis-insight"
+  - name: forum-reportsdb
+    version: 0.1.0
+    repository: "file://../../forum-reportsdb"
+  - name: forum-tempo
+    version: 0.1.0
+    repository: "file://../../forum-tempo"
+  - name: forum-users
+    version: 0.1.0
+    repository: "file://../../forum-users"
+  - name: forum-usersdb
+    version: 0.1.0
+    repository: "file://../../forum-usersdb"
+  - name: forum-write-loki
+    version: 0.1.0
+    repository: "file://../../forum-write-loki"
+  - name: forum-zookeeper
+    version: 0.1.0
+    repository: "file://../../forum-zookeeper"

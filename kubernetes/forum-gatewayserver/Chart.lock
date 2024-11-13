@@ -1,0 +1,6 @@
+dependencies:
+- name: forum-common
+  repository: file://../forum-common
+  version: 0.1.0
+digest: sha256:2679310a7d4de53c03fec8bba264c03df6505b613458ad37d31898c61988c1c5
+generated: "2024-11-14T01:54:53.7745908+07:00"
