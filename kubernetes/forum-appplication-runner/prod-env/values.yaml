@@ -1,7 +1,7 @@
 global:
   configMapName: forumprod-configmap
   activeProfile: prod
-  configServerURL: http://configserver:8071
+  configServerURL: configserver:http://configserver:8071
   discoveryclient_kubernetes_enabled: false
   discoveryclient_eureka_enabled: true
   kubernetesDiscoveryServerURL: http://spring-cloud-kubernetes-discoveryserver:80/
@@ -9,7 +9,7 @@ global:
   keyCloakJWKURL: http://keycloak:8080/auth/realms/forum/protocol/openid-connect/certs
   keyCloakOpenIdURL: http://keycloak:8080
   zipkinEndPoint: http://tempo:9411/api/v2/spans
-  kafkaBrokerURL: kafka:9092
+  kafkaBrokerURL: kafka-controller-0.kafka-controller-headless.default.svc.cluster.local:9092
   minioRootUser: didannguyen
   minioRootPassword: "17052002"
   minioRootEndPoint: http://minio:9000

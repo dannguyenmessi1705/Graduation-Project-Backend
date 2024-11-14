@@ -148,11 +148,11 @@ spec:
               configMapKeyRef:
                 name: {{ .Values.global.configMapName }}
                 key: SPRING_DATASOURCE_USERDB_USERNAME
-          - name: SPRING_DATASOURCE_USERSDB_PASSWORD
+          - name: SPRING_DATASOURCE_USERDB_PASSWORD
             valueFrom:
               configMapKeyRef:
                 name: {{ .Values.global.configMapName }}
-                key: SPRING_DATASOURCE_USERSDB_PASSWORD
+                key: SPRING_DATASOURCE_USERDB_PASSWORD
           {{- end }}
           {{- if .Values.postsdb_enabled }}
           - name: SPRING_DATASOURCE_POSTDB_URL

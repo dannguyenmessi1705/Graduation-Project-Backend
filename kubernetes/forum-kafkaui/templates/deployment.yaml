@@ -19,3 +19,12 @@ spec:
           image: dannguyenmessi/forum-kafka-ui:v1
           ports:
             - containerPort: 8080
+          env:
+          - name: KAFKA_CLUSTERS_0_NAME
+            value: kafka
+          - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
+            value: kafka-controller-0.kafka-controller-headless.default.svc.cluster.local:9092
+          - name: KAFKA_CLUSTERS_0_METRICS_PORT
+            value: '9997'
+          - name: DYNAMIC_CONFIG_ENABLED
+            value: 'true'

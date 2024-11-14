@@ -48,9 +48,6 @@ dependencies:
   - name: forum-grafana
     version: 0.1.0
     repository: "file://../../forum-grafana"
-  - name: forum-kafka
-    version: 0.1.0
-    repository: "file://../../forum-kafka"
   - name: forum-kafkaui
     version: 0.1.0
     repository: "file://../../forum-kafkaui"

@@ -1,6 +1,6 @@
 deploymentName: gatewayserver-service-deployment
-serviceName: gatewayserver-service
-appLabel: gatewayserver-service
+serviceName: gatewayserver
+appLabel: gatewayserver
 appName: gatewayserver
 
 replicaCount: 1
@@ -19,7 +19,7 @@ service:
 appname_enabled: true
 profile_enabled: true
 config_enabled: true
-resourceserver_enabled: false
+resourceserver_enabled: true
 oauth_openid_enabled: true
 zipkin_enabled: true
 kafka_enabled: false

@@ -1,6 +1,6 @@
 deploymentName: configserver-service-deployment
-serviceName: configserver-service
-appLabel: configserver-service
+serviceName: configserver
+appLabel: configserver
 appName: configserver
 
 replicaCount: 1
@@ -12,7 +12,7 @@ image:
 containerPort: 8071
 
 service:
-  type: ClusterIP
+  type: LoadBalancer
   port: 8071
   targetPort: 8071
 

@@ -1,1 +1,11 @@
-{{- template "common.service" . -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+spec:
+  selector:
+    app: keycloak
+  type: LoadBalancer
+  ports:
+    - port: 7080
+      targetPort: 8080

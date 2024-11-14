@@ -23,9 +23,6 @@ dependencies:
 - name: forum-grafana
   repository: file://../../forum-grafana
   version: 0.1.0
-- name: forum-kafka
-  repository: file://../../forum-kafka
-  version: 0.1.0
 - name: forum-kafkaui
   repository: file://../../forum-kafkaui
   version: 0.1.0
@@ -86,5 +83,5 @@ dependencies:
 - name: forum-zookeeper
   repository: file://../../forum-zookeeper
   version: 0.1.0
-digest: sha256:db2c982ce6a96e62166d9061d5e2f4f1a2db70d5e9a92830263358af2305e1be
-generated: "2024-11-14T03:13:45.9881787+07:00"
+digest: sha256:9d2e88db5b1a336334eeda435c82ab9b4f82fff37ffe2973390cb8e9ddbe5ed7
+generated: "2024-11-15T01:55:32.1333419+07:00"
