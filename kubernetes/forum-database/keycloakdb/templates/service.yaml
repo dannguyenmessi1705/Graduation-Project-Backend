@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloakdb
+spec:
+  selector:
+    app: keycloakdb
+  type: {{ .Values.service.type }}
+  ports:
+    - port: 3306
+      targetPort: 3306

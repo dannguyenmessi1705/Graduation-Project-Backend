@@ -27,54 +27,54 @@ dependencies:
   - name: forum-common
     version: 0.1.0
     repository: "file://../../forum-common"
-  - name: forum-comments
+  - name: comments
     version: 0.1.0
-    repository: "file://../../forum-comments"
-  - name: forum-commentsdb
+    repository: "file://../../forum-application-common/comments"
+  - name: commentsdb
     version: 0.1.0
-    repository: "file://../../forum-commentsdb"
-  - name: forum-configserver
+    repository: "file://../../forum-database/commentsdb"
+  - name: configserver
     version: 0.1.0
-    repository: "file://../../forum-configserver"
-  - name: forum-gatewayserver
+    repository: "file://../../forum-application-common/configserver"
+  - name: gatewayserver
     version: 0.1.0
-    repository: "file://../../forum-gatewayserver"
-  - name: forum-kafkaui
+    repository: "file://../../forum-application-common/gatewayserver"
+  - name: kafkaui
     version: 0.1.0
-    repository: "file://../../forum-kafkaui"
-  - name: forum-keycloak
+    repository: "file://../../forum-services/kafkaui"
+  - name: keycloak
     version: 0.1.0
-    repository: "file://../../forum-keycloak"
-  - name: forum-keycloakdb
+    repository: "file://../../forum-services/keycloak"
+  - name: keycloakdb
     version: 0.1.0
-    repository: "file://../../forum-keycloakdb"
-  - name: forum-minio
+    repository: "file://../../forum-database/keycloakdb"
+  - name: minio
     version: 0.1.0
-    repository: "file://../../forum-minio"
-  - name: forum-notifications
+    repository: "file://../../forum-services/minio"
+  - name: notifications
     version: 0.1.0
-    repository: "file://../../forum-notifications"
-  - name: forum-notificationsdb
+    repository: "file://../../forum-application-common/notifications"
+  - name: notificationsdb
     version: 0.1.0
-    repository: "file://../../forum-notificationsdb"
-  - name: forum-posts
+    repository: "file://../../forum-database/notificationsdb"
+  - name: posts
     version: 0.1.0
-    repository: "file://../../forum-posts"
-  - name: forum-postsdb
+    repository: "file://../../forum-application-common/posts"
+  - name: postsdb
     version: 0.1.0
-    repository: "file://../../forum-postsdb"
-  - name: forum-redis
+    repository: "file://../../forum-database/postsdb"
+  - name: redis
     version: 0.1.0
-    repository: "file://../../forum-redis"
-  - name: forum-redis-insight
+    repository: "file://../../forum-services/redis"
+  - name: redis-insight
     version: 0.1.0
-    repository: "file://../../forum-redis-insight"
-  - name: forum-reportsdb
+    repository: "file://../../forum-services/redis-insight"
+  - name: reportsdb
     version: 0.1.0
-    repository: "file://../../forum-reportsdb"
-  - name: forum-users
+    repository: "file://../../forum-database/reportsdb"
+  - name: users
     version: 0.1.0
-    repository: "file://../../forum-users"
-  - name: forum-usersdb
+    repository: "file://../../forum-application-common/users"
+  - name: usersdb
     version: 0.1.0
-    repository: "file://../../forum-usersdb"
+    repository: "file://../../forum-database/usersdb"

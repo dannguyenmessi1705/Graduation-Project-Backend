@@ -1,0 +1,38 @@
+deploymentName: keycloakdb-service-deployment
+serviceName: keycloakdb
+appLabel: keycloakdb
+appName: keycloakdb
+
+replicaCount: 1
+
+image:
+  repository: dannguyenmessi/keycloakdb
+  tag: v1
+
+containerPort: 3306
+
+service:
+  type: ClusterIP
+  port: 3306
+  targetPort: 3306
+
+appname_enabled: false
+profile_enabled: false
+config_enabled: false
+resourceserver_enabled: false
+oauth_openid_enabled: false
+zipkin_enabled: false
+kafka_enabled: false
+minio_enabled: false
+redis_enabled: false
+pageniation_enabled: false
+schedule_enabled: false
+appBaseUrl_enabled: false
+usersdb_enabled: false
+postsdb_enabled: false
+commentsdb_enabled: false
+notificationsdb_enabled: false
+reportsdb_enabled: false
+redis_reactive_enabled: false
+loki_enabled: false
+discoveryclient_kubernetes_enabled: false

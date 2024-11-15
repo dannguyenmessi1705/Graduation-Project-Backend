@@ -1,0 +1,17 @@
+deploymentName: keycloak-service-deployment
+serviceName: keycloak
+appLabel: keycloak
+appName: keycloak
+
+replicaCount: 1
+
+image:
+  repository: dannguyenmessi/keycloak
+  tag: v1
+
+containerPort: 8080
+
+service:
+  type: LoadBalancer
+  port: 7080
+  targetPort: 8080

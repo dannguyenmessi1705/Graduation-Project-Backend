@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloakdb-service-deployment
+  labels:
+    app: keycloakdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloakdb
+  template:
+    metadata:
+      labels:
+        app: keycloakdb
+    spec:
+      containers:
+        - name: keycloakdb
+          image: dannguyenmessi/keycloakdb:v1
+          ports:
+            - containerPort: 3306

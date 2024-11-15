@@ -95,7 +95,7 @@ public class GatewayServerApplication {
                     .setFallbackUri("forward:/contact-support"))
                 .metadata(RESPONSE_TIMEOUT_ATTR, 15000)
                 .metadata(CONNECT_TIMEOUT_ATTR, 20000))
-            .uri("http://users-service:8080"))
+            .uri("http://users:8080"))
         .route(p -> p.path("/forum/posts/**")
             .filters(f -> f
                 .rewritePath("/forum/posts/(?<remaining>.*)", "/posts/${remaining}")
@@ -114,7 +114,7 @@ public class GatewayServerApplication {
                     .setFallbackUri("forward:/contact-support"))
                 .metadata(RESPONSE_TIMEOUT_ATTR, 15000)
                 .metadata(CONNECT_TIMEOUT_ATTR, 20000))
-            .uri("http://posts-service:8090"))
+            .uri("http://posts:8090"))
         .route(p -> p.path("/forum/comments/**")
             .filters(f -> f
                 .rewritePath("/forum/comments/(?<remaining>.*)", "/comments/${remaining}")
@@ -133,7 +133,7 @@ public class GatewayServerApplication {
                     .setFallbackUri("forward:/contact-support"))
                 .metadata(RESPONSE_TIMEOUT_ATTR, 15000)
                 .metadata(CONNECT_TIMEOUT_ATTR, 20000))
-            .uri("http://comments-service:9000"))
+            .uri("http://comments:9000"))
         .route(p -> p.path("/forum/notifications/**")
             .filters(f -> f
                 .rewritePath("/forum/notifications/(?<remaining>.*)", "/notifications/${remaining}")
@@ -152,7 +152,7 @@ public class GatewayServerApplication {
                     .setFallbackUri("forward:/contact-support"))
                 .metadata(RESPONSE_TIMEOUT_ATTR, 15000)
                 .metadata(CONNECT_TIMEOUT_ATTR, 20000))
-            .uri("http://notifications-service:9010"))
+            .uri("http://notifications:9010"))
         .build();
   }
 

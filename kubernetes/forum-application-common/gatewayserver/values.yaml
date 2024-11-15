@@ -1,0 +1,38 @@
+deploymentName: gateway-server-service-deployment
+serviceName: gateway-server
+appLabel: gateway-server
+appName: gateway-server
+
+replicaCount: 1
+
+image:
+  repository: dannguyenmessi/forum-gateway-server
+  tag: v2
+
+containerPort: 8072
+
+service:
+  type: LoadBalancer
+  port: 8072
+  targetPort: 8072
+
+appname_enabled: true
+profile_enabled: true
+config_enabled: true
+resourceserver_enabled: true
+oauth_openid_enabled: true
+zipkin_enabled: true
+kafka_enabled: false
+minio_enabled: false
+redis_enabled: false
+pageniation_enabled: false
+schedule_enabled: false
+appBaseUrl_enabled: false
+usersdb_enabled: false
+postsdb_enabled: false
+commentsdb_enabled: false
+notificationsdb_enabled: false
+reportsdb_enabled: false
+redis_reactive_enabled: true
+loki_enabled: true
+discoveryclient_kubernetes_enabled: true
