@@ -7,7 +7,6 @@ data:
   SPRING_PROFILES_ACTIVE: "{{ .Values.global.activeProfile }}"
   SPRING_CONFIG_IMPORT: "{{ .Values.global.configServerURL }}"
   SPRING_CLOUD_KUBERNETES_DISCOVERY_DISCOVERY-SERVER-URL: "{{ .Values.global.kubernetesDiscoveryServerURL }}"
-  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "{{ .Values.global.eurekaDiscoveryServerURL }}"
   SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: "{{ .Values.global.keyCloakJWKURL }}"
   OAUTH_OPENID_SERVER: "{{ .Values.global.keyCloakOpenIdURL }}"
   MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "{{ .Values.global.zipkinEndPoint }}"
@@ -38,4 +37,5 @@ data:
   SPRING_DATASOURCE_REPORTDB_PASSWORD: "{{ .Values.global.reportDBPassword }}"
   SPRING_DATA_REDIS_HOST: "{{ .Values.global.redisHost }}"
   SPRING_DATA_REDIS_PORT: "{{ .Values.global.redisPort }}"
+  APP_LOKI_URL: "{{ .Values.global.lokiURL }}"
 {{- end -}}

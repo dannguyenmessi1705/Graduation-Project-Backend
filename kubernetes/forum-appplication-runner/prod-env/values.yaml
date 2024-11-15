@@ -2,13 +2,10 @@ global:
   configMapName: forumprod-configmap
   activeProfile: prod
   configServerURL: configserver:http://configserver:8071
-  discoveryclient_kubernetes_enabled: false
-  discoveryclient_eureka_enabled: true
   kubernetesDiscoveryServerURL: http://spring-cloud-kubernetes-discoveryserver:80/
-  eurekaDiscoveryServerURL: http://eurekaserver:8070/eureka/
   keyCloakJWKURL: http://keycloak:8080/auth/realms/forum/protocol/openid-connect/certs
   keyCloakOpenIdURL: http://keycloak:8080
-  zipkinEndPoint: http://tempo:9411/api/v2/spans
+  zipkinEndPoint: http://tempo-grafana-tempo-distributor:9411/api/v2/spans
   kafkaBrokerURL: kafka-controller-0.kafka-controller-headless.default.svc.cluster.local:9092
   minioRootUser: didannguyen
   minioRootPassword: "17052002"
@@ -36,6 +33,7 @@ global:
   reportDBPassword: "17052002"
   redisHost: redis
   redisPort: 6379
+  lokiURL: http://loki-grafana-loki-gateway:80/loki/api/v1/push
 
 
 

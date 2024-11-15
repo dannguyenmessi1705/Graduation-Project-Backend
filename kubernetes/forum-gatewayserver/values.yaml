@@ -7,7 +7,7 @@ replicaCount: 1
 
 image:
   repository: dannguyenmessi/forum-gateway-server
-  tag: v1
+  tag: v2
 
 containerPort: 8072
 
@@ -34,3 +34,5 @@ commentsdb_enabled: false
 notificationsdb_enabled: false
 reportsdb_enabled: false
 redis_reactive_enabled: true
+loki_enabled: true
+discoveryclient_kubernetes_enabled: true

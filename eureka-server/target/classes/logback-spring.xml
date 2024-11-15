@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <springProperty name="name" source="spring.application.name" />
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>
+        %d{HH:mm:ss.SSS} | %-5level | %t | ${name} | %X{correlationId} | %logger{36} | %msg %n
+      </pattern>
+    </encoder>
+  </appender>
+
+  <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+    <!-- (1) -->
+    <batchMaxBytes>65536</batchMaxBytes>
+    <batchTimeoutMs>10000</batchTimeoutMs>
+    <http>
+      <url>http://gateway:3100/loki/api/v1/push</url>
+      <tenantId>tenant1</tenantId>
+      <requestTimeoutMs>15000</requestTimeoutMs>
+    </http>
+    <format>
+      <!-- (2) -->
+      <label>
+        <pattern>
+          app=${name}
+          host=${HOSTNAME}
+          level=%level
+          traceId=%X{traceId:-null}
+          spanId=%X{spanId:-null}
+          class=%logger{36}
+        </pattern>
+        <pairSeparator>regex:(\n|//[^\n]+)+</pairSeparator>
+        <!-- (3) -->
+        <readMarkers>true</readMarkers>
+      </label>
+      <!-- (4) -->
+      <message>
+        <pattern>
+          %msg %n
+        </pattern>
+      </message>
+    </format>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="LOKI" />
+  </root>
+
+</configuration>

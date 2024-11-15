@@ -7,7 +7,7 @@ replicaCount: 1
 
 image:
   repository: dannguyenmessi/forum-configserver
-  tag: v1
+  tag: v2
 
 containerPort: 8071
 
@@ -34,3 +34,5 @@ commentsdb_enabled: false
 notificationsdb_enabled: false
 reportsdb_enabled: false
 redis_reactive_enabled: false
+loki_enabled: true
+discoveryclient_kubernetes_enabled: false

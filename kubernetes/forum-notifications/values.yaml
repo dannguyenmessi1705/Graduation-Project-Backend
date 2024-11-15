@@ -1,13 +1,13 @@
 deploymentName: notifications-service-deployment
 serviceName: notifications-service
 appLabel: notifications-service
-appName: notifications
+appName: notifications-service
 
 replicaCount: 1
 
 image:
   repository: dannguyenmessi/forum-notifications
-  tag: v1
+  tag: v2
 
 containerPort: 9010
 
@@ -34,3 +34,5 @@ comments_enabled: false
 notificationsdb_enabled: true
 reportsdb_enabled: false
 redis_reactive_enabled: false
+loki_enabled: true
+discoveryclient_kubernetes_enabled: true

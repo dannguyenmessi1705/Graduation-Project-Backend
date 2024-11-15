@@ -2,9 +2,6 @@ dependencies:
 - name: forum-common
   repository: file://../../forum-common
   version: 0.1.0
-- name: forum-backend-loki
-  repository: file://../../forum-backend-loki
-  version: 0.1.0
 - name: forum-comments
   repository: file://../../forum-comments
   version: 0.1.0
@@ -14,14 +11,8 @@ dependencies:
 - name: forum-configserver
   repository: file://../../forum-configserver
   version: 0.1.0
-- name: forum-eurekaserver
-  repository: file://../../forum-eurekaserver
-  version: 0.1.0
 - name: forum-gatewayserver
   repository: file://../../forum-gatewayserver
-  version: 0.1.0
-- name: forum-grafana
-  repository: file://../../forum-grafana
   version: 0.1.0
 - name: forum-kafkaui
   repository: file://../../forum-kafkaui
@@ -35,12 +26,6 @@ dependencies:
 - name: forum-minio
   repository: file://../../forum-minio
   version: 0.1.0
-- name: forum-minio-log
-  repository: file://../../forum-minio-log
-  version: 0.1.0
-- name: forum-nginx
-  repository: file://../../forum-nginx
-  version: 0.1.0
 - name: forum-notifications
   repository: file://../../forum-notifications
   version: 0.1.0
@@ -53,12 +38,6 @@ dependencies:
 - name: forum-postsdb
   repository: file://../../forum-postsdb
   version: 0.1.0
-- name: forum-prometheus
-  repository: file://../../forum-prometheus
-  version: 0.1.0
-- name: forum-read-loki
-  repository: file://../../forum-read-loki
-  version: 0.1.0
 - name: forum-redis
   repository: file://../../forum-redis
   version: 0.1.0
@@ -68,20 +47,11 @@ dependencies:
 - name: forum-reportsdb
   repository: file://../../forum-reportsdb
   version: 0.1.0
-- name: forum-tempo
-  repository: file://../../forum-tempo
-  version: 0.1.0
 - name: forum-users
   repository: file://../../forum-users
   version: 0.1.0
 - name: forum-usersdb
   repository: file://../../forum-usersdb
   version: 0.1.0
-- name: forum-write-loki
-  repository: file://../../forum-write-loki
-  version: 0.1.0
-- name: forum-zookeeper
-  repository: file://../../forum-zookeeper
-  version: 0.1.0
-digest: sha256:9d2e88db5b1a336334eeda435c82ab9b4f82fff37ffe2973390cb8e9ddbe5ed7
-generated: "2024-11-15T01:55:32.1333419+07:00"
+digest: sha256:1bff0f2f1687cfbcdc853a492c67c81f3f9191b4847968cca0c95a8fe91582b1
+generated: "2024-11-16T00:44:26.08023+07:00"

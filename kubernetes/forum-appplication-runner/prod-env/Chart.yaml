@@ -27,9 +27,6 @@ dependencies:
   - name: forum-common
     version: 0.1.0
     repository: "file://../../forum-common"
-  - name: forum-backend-loki
-    version: 0.1.0
-    repository: "file://../../forum-backend-loki"
   - name: forum-comments
     version: 0.1.0
     repository: "file://../../forum-comments"
@@ -39,15 +36,9 @@ dependencies:
   - name: forum-configserver
     version: 0.1.0
     repository: "file://../../forum-configserver"
-  - name: forum-eurekaserver
-    version: 0.1.0
-    repository: "file://../../forum-eurekaserver"
   - name: forum-gatewayserver
     version: 0.1.0
     repository: "file://../../forum-gatewayserver"
-  - name: forum-grafana
-    version: 0.1.0
-    repository: "file://../../forum-grafana"
   - name: forum-kafkaui
     version: 0.1.0
     repository: "file://../../forum-kafkaui"
@@ -60,12 +51,6 @@ dependencies:
   - name: forum-minio
     version: 0.1.0
     repository: "file://../../forum-minio"
-  - name: forum-minio-log
-    version: 0.1.0
-    repository: "file://../../forum-minio-log"
-  - name: forum-nginx
-    version: 0.1.0
-    repository: "file://../../forum-nginx"
   - name: forum-notifications
     version: 0.1.0
     repository: "file://../../forum-notifications"
@@ -78,12 +63,6 @@ dependencies:
   - name: forum-postsdb
     version: 0.1.0
     repository: "file://../../forum-postsdb"
-  - name: forum-prometheus
-    version: 0.1.0
-    repository: "file://../../forum-prometheus"
-  - name: forum-read-loki
-    version: 0.1.0
-    repository: "file://../../forum-read-loki"
   - name: forum-redis
     version: 0.1.0
     repository: "file://../../forum-redis"
@@ -99,9 +78,3 @@ dependencies:
   - name: forum-usersdb
     version: 0.1.0
     repository: "file://../../forum-usersdb"
-  - name: forum-write-loki
-    version: 0.1.0
-    repository: "file://../../forum-write-loki"
-  - name: forum-zookeeper
-    version: 0.1.0
-    repository: "file://../../forum-zookeeper"

@@ -34,3 +34,5 @@ commentsdb_enabled: false
 notificationsdb_enabled: false
 reportsdb_enabled: false
 redis_reactive_enabled: false
+loki_enabled: false
+discoveryclient_kubernetes_enabled: false

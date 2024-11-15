@@ -56,7 +56,7 @@ logging:
           configserver: debug
   pattern:
     level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"
-    correlation: "[[${spring.application.name},%X{traceId},%X{spanId}]"
+    correlation: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"
 
 encrypt:
   key: 52a7f9495e2faf8cc6423de8c76aacb8081084733825d852
