@@ -139,7 +139,7 @@ app:
       extended:
         enabled: true
   loki:
-    url: http://gateway:3100/loki/api/v1/push
+    url: http://localhost:3100/loki/api/v1/push
 
 management:
   endpoints:

@@ -93,9 +93,6 @@ dependencies:
   - name: forum-reportsdb
     version: 0.1.0
     repository: "file://../../forum-reportsdb"
-  - name: forum-tempo
-    version: 0.1.0
-    repository: "file://../../forum-tempo"
   - name: forum-users
     version: 0.1.0
     repository: "file://../../forum-users"
