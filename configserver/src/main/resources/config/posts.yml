@@ -94,6 +94,9 @@ app:
       ignoreHeaders: authorization,x-session-id,x-envoy-decorator-operation,X-Request-Id,sessionid,X-User-Id
       extended:
         enabled: true
+  loki:
+    url: http://localhost:3100/loki/api/v1/push
+
 
 private:
   route: votes/add,votes/revoke,posts/update,posts/report,posts/new,posts/delete

@@ -41,6 +41,10 @@ spring:
     init:
       mode: always
   cloud:
+    kubernetes:
+      discovery:
+        all-namespaces: true
+        discovery-server-url: http://spring-cloud-kubernetes-discoveryserver:80/
     stream:
       kafka:
         binder:
@@ -69,14 +73,14 @@ spring:
     function:
       definition: postDeleted;listenCommentScore;listenRequestToCreateNotification
 
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://localhost:8070/eureka/
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: http://localhost:8070/eureka/
 
 
 springdoc:
@@ -107,6 +111,8 @@ app:
       ignoreHeaders: authorization,x-session-id,x-envoy-decorator-operation,X-Request-Id,sessionid,X-User-Id
       extended:
         enabled: true
+  loki:
+    url: http://localhost:3100/loki/api/v1/push
 
 private:
   route: comments/create,votes/revoke,votes/add,comments/report,comments/delete
@@ -175,6 +181,7 @@ logging:
           comments: debug
   pattern:
     level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"
+    correlation: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"
 
 minio:
   root:

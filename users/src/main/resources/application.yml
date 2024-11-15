@@ -50,6 +50,10 @@ spring:
       name: didannguyen
       password: 17052002
   cloud:
+    kubernetes:
+      discovery:
+        all-namespaces: true
+        discovery-server-url: http://spring-cloud-kubernetes-discoveryserver:80/
     function:
       definition: listenUserEmail
     stream:
@@ -66,14 +70,14 @@ spring:
           brokers:
             - localhost:9092
 
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://localhost:8070/eureka/
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: http://localhost:8070/eureka/
 
 springdoc:
   api-docs:
@@ -134,6 +138,8 @@ app:
       ignoreHeaders: authorization,x-session-id,x-envoy-decorator-operation,X-Request-Id,sessionid,X-User-Id
       extended:
         enabled: true
+  loki:
+    url: http://gateway:3100/loki/api/v1/push
 
 management:
   endpoints:
@@ -190,6 +196,7 @@ logging:
           users: debug
   pattern:
     level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"
+    correlation: %5p [${spring.application.name},%X{traceId},%X{spanId}]
 
 minio:
   root:

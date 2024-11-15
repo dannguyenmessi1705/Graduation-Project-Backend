@@ -33,15 +33,12 @@ oauth:
     server: localhost:7080
     url: http://${oauth.openId.server}/realms/forum/.well-known/openid-configuration
 
-#  data:
-#    redis:
-#      connect-timeout: 2s
-#      host: localhost
-#      port: 6379
-#      timeout: 1s
-
 private:
   route: users/update,users/qrcode,posts/update,comments/update,votes/add,votes/revoke,posts/update,posts/report,posts/new,posts/delete,comments/create,votes/revoke,votes/add,comments/report,comments/delete,notifications/delete,notifications/mark,notifications/read,notifications/unread,users/verify/reactivate,notifications/all
+
+app:
+  loki:
+    url: http://localhost:3100/loki/api/v1/push
 
 management:
   endpoints:

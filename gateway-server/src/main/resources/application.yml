@@ -38,6 +38,10 @@ oauth:
 private:
   route: users/update,users/qrcode,posts/update,comments/update,votes/add,votes/revoke,posts/update,posts/report,posts/new,posts/delete,comments/create,votes/revoke,votes/add,comments/report,comments/delete,notifications/delete,notifications/mark,notifications/read,notifications/unread,users/verify/reactivate,notifications/all
 
+app:
+  loki:
+    url: http://gateway:3100/loki/api/v1/push
+
 management:
   endpoints:
     web:
@@ -117,3 +121,4 @@ logging:
           gatewaysever: debug
   pattern:
     level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"
+    correlation: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"

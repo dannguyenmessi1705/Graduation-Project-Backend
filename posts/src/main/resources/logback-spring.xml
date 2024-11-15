@@ -2,6 +2,7 @@
 <configuration>
 
   <springProperty name="name" source="spring.application.name" />
+  <springProperty name="lokiUrl" source="app.loki.url" />
 
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
@@ -16,7 +17,7 @@
     <batchMaxBytes>65536</batchMaxBytes>
     <batchTimeoutMs>10000</batchTimeoutMs>
     <http>
-      <url>http://gateway:3100/loki/api/v1/push</url>
+      <url>${lokiUrl}</url>
       <tenantId>tenant1</tenantId>
       <requestTimeoutMs>15000</requestTimeoutMs>
     </http>

@@ -41,6 +41,10 @@ spring:
       max-file-size: 25MB
       max-request-size: 30MB
   cloud:
+    kubernetes:
+      discovery:
+        all-namespaces: true
+        discovery-server-url: http://spring-cloud-kubernetes-discoveryserver:80/
     stream:
       kafka:
         binder:
@@ -62,14 +66,14 @@ spring:
     function:
       definition: listenPostScore;commentAction
 
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://localhost:8070/eureka/
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: http://localhost:8070/eureka/
 
 springdoc:
   api-docs:
@@ -99,6 +103,8 @@ app:
       ignoreHeaders: authorization,x-session-id,x-envoy-decorator-operation,X-Request-Id,sessionid,X-User-Id
       extended:
         enabled: true
+  loki:
+    url: http://localhost:3100/loki/api/v1/push
 
 private:
   route: votes/add,votes/revoke,posts/update,posts/report,posts/new,posts/delete

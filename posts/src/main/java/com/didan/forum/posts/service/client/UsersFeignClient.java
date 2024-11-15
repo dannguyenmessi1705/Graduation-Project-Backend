@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(value = "users", fallback = UsersFallback.class)
+@FeignClient(value = "users", url = "http://users-service:8080", fallback = UsersFallback.class)
 public interface UsersFeignClient {
   @GetMapping(path = "users/detail/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<GeneralResponse<UserResponseDto>> getDetailUser(

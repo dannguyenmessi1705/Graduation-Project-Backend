@@ -23,6 +23,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreakerFactory;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
 import org.springframework.cloud.client.circuitbreaker.Customizer;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -32,6 +33,7 @@ import org.springframework.http.HttpMethod;
 import reactor.core.publisher.Mono;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 @OpenAPIDefinition(
     info = @Info(
         title = "Microservice for Gateway service of Z'forum",
@@ -93,7 +95,7 @@ public class GatewayServerApplication {
                     .setFallbackUri("forward:/contact-support"))
                 .metadata(RESPONSE_TIMEOUT_ATTR, 15000)
                 .metadata(CONNECT_TIMEOUT_ATTR, 20000))
-            .uri("lb://USERS"))
+            .uri("http://users-service:8080"))
         .route(p -> p.path("/forum/posts/**")
             .filters(f -> f
                 .rewritePath("/forum/posts/(?<remaining>.*)", "/posts/${remaining}")
@@ -112,7 +114,7 @@ public class GatewayServerApplication {
                     .setFallbackUri("forward:/contact-support"))
                 .metadata(RESPONSE_TIMEOUT_ATTR, 15000)
                 .metadata(CONNECT_TIMEOUT_ATTR, 20000))
-            .uri("lb://POSTS"))
+            .uri("http://posts-service:8090"))
         .route(p -> p.path("/forum/comments/**")
             .filters(f -> f
                 .rewritePath("/forum/comments/(?<remaining>.*)", "/comments/${remaining}")
@@ -131,7 +133,7 @@ public class GatewayServerApplication {
                     .setFallbackUri("forward:/contact-support"))
                 .metadata(RESPONSE_TIMEOUT_ATTR, 15000)
                 .metadata(CONNECT_TIMEOUT_ATTR, 20000))
-            .uri("lb://COMMENTS"))
+            .uri("http://comments-service:9000"))
         .route(p -> p.path("/forum/notifications/**")
             .filters(f -> f
                 .rewritePath("/forum/notifications/(?<remaining>.*)", "/notifications/${remaining}")
@@ -150,7 +152,7 @@ public class GatewayServerApplication {
                     .setFallbackUri("forward:/contact-support"))
                 .metadata(RESPONSE_TIMEOUT_ATTR, 15000)
                 .metadata(CONNECT_TIMEOUT_ATTR, 20000))
-            .uri("lb://NOTIFICATIONS"))
+            .uri("http://notifications-service:9010"))
         .build();
   }
 
