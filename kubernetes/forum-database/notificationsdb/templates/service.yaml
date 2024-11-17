@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     app: notificationsdb
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 3311
       targetPort: 3306

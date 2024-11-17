@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     app: commentsdb
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 3310
       targetPort: 3306

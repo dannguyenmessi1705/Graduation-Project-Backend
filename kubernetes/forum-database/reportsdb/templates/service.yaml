@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     app: reportsdb
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 3312
       targetPort: 3306

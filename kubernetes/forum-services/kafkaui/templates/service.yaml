@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     app: kafka-ui
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 8017
       targetPort: 8080

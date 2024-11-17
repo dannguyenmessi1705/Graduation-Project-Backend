@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     app: minio
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 10000
       targetPort: 9000

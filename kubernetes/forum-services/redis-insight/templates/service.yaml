@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     app: redis-insight
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 5540
       targetPort: 5540
