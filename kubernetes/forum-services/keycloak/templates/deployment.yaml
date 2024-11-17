@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: keycloak
-          image: dannguyenmessi/keycloak:v1
+          image: dannguyenmessi/forum-keycloak:v1
           ports:
           - containerPort: 3100

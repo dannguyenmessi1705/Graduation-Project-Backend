@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     app: keycloakdb
-  type: {{ .Values.service.type }}
+  type: ClusterIP
   ports:
     - port: 3306
       targetPort: 3306

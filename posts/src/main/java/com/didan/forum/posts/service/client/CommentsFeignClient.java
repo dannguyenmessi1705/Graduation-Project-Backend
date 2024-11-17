@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "comments", url = "http://comments-service:9000", fallback = CommentsFallback.class)
+@FeignClient(name = "comments", url = "http://comments:9000", fallback = CommentsFallback.class)
 public interface CommentsFeignClient {
   @GetMapping("/comments/count/{postId}")
   ResponseEntity<GeneralResponse<Long>> countComments(

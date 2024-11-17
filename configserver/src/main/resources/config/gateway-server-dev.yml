@@ -126,3 +126,4 @@ logging:
           gatewaysever: debug
   pattern:
     level: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"
+    correlation: "%5p [${spring.application.name},%X{traceId},%X{spanId}]"

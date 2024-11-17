@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "posts", url = "http://posts-service:8090", fallback = PostsFallback.class)
+@FeignClient(name = "posts", url = "http://posts:8090", fallback = PostsFallback.class)
 public interface PostsFeignClient {
   @GetMapping("/posts/exists/{postId}")
   ResponseEntity<GeneralResponse<Boolean>> checkPostExist(

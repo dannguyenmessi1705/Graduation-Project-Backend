@@ -6,7 +6,7 @@ appName: comments
 replicaCount: 1
 
 image:
-  repository: dannguyenmessi/comments
+  repository: dannguyenmessi/forum-comments
   tag: v2
 
 containerPort: 9000

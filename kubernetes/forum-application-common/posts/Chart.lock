@@ -1,6 +1,6 @@
 dependencies:
 - name: forum-common
-  repository: file://../forum-common
+  repository: file://../../forum-common
   version: 0.1.0
-digest: sha256:2679310a7d4de53c03fec8bba264c03df6505b613458ad37d31898c61988c1c5
-generated: "2024-11-14T01:31:16.478509+07:00"
+digest: sha256:25f9ecf821ecb03245fef55bad09f607d650149dd5687efe5e9e90e6436ac7a2
+generated: "2024-11-17T21:22:46.914332+07:00"

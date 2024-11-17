@@ -3,40 +3,40 @@ dependencies:
   repository: file://../../forum-common
   version: 0.1.0
 - name: comments
-  repository: file://../../comments
+  repository: file://../../forum-application-common/comments
   version: 0.1.0
 - name: commentsdb
-  repository: file://../../commentsdb
+  repository: file://../../forum-database/commentsdb
   version: 0.1.0
 - name: configserver
-  repository: file://../../configserver
+  repository: file://../../forum-application-common/configserver
   version: 0.1.0
 - name: gatewayserver
-  repository: file://../../gatewayserver
+  repository: file://../../forum-application-common/gatewayserver
   version: 0.1.0
 - name: kafkaui
-  repository: file://../../kafkaui
+  repository: file://../../forum-services/kafkaui
   version: 0.1.0
 - name: keycloak
-  repository: file://../../keycloak
+  repository: file://../../forum-services/keycloak
   version: 0.1.0
 - name: keycloakdb
-  repository: file://../../keycloakdb
+  repository: file://../../forum-database/keycloakdb
   version: 0.1.0
-- name: forum-minio
+- name: minio
   repository: file://../../forum-services/minio
   version: 0.1.0
 - name: notifications
-  repository: file://../../notifications
+  repository: file://../../forum-application-common/notifications
   version: 0.1.0
 - name: notificationsdb
-  repository: file://../../notificationsdb
+  repository: file://../../forum-database/notificationsdb
   version: 0.1.0
 - name: posts
-  repository: file://../../posts
+  repository: file://../../forum-application-common/posts
   version: 0.1.0
 - name: postsdb
-  repository: file://../../postsdb
+  repository: file://../../forum-database/postsdb
   version: 0.1.0
 - name: redis
   repository: file://../../forum-services/redis
@@ -48,10 +48,10 @@ dependencies:
   repository: file://../../forum-database/reportsdb
   version: 0.1.0
 - name: users
-  repository: file://../../users
+  repository: file://../../forum-application-common/users
   version: 0.1.0
 - name: usersdb
   repository: file://../../forum-database/usersdb
   version: 0.1.0
-digest: sha256:09f3e04c28666c9809ec660253a774a79b9ba4e8afca41447d18dab3a8e10e86
-generated: "2024-11-16T04:09:00.1087438+07:00"
+digest: sha256:f0ca3a120872bb0cbe970a55e0367e0f99d42ae0da437892ebb2c7f95b8e4554
+generated: "2024-11-17T21:25:50.9652115+07:00"

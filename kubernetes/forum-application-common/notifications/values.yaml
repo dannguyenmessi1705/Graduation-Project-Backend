@@ -6,7 +6,7 @@ appName: notifications
 replicaCount: 1
 
 image:
-  repository: dannguyenmessi/notifications
+  repository: dannguyenmessi/forum-notifications
   tag: v2
 
 containerPort: 9010

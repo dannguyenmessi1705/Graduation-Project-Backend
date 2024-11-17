@@ -6,7 +6,7 @@ appName: configserver
 replicaCount: 1
 
 image:
-  repository: dannguyenmessi/configserver
+  repository: dannguyenmessi/forum-configserver
   tag: v2
 
 containerPort: 8071

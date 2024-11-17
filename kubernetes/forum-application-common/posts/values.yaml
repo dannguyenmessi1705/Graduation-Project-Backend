@@ -6,7 +6,7 @@ appName: posts
 replicaCount: 1
 
 image:
-  repository: dannguyenmessi/posts
+  repository: dannguyenmessi/forum-posts
   tag: v2
 
 containerPort: 8090

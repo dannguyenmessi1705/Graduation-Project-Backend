@@ -6,7 +6,7 @@ appName: users
 replicaCount: 1
 
 image:
-  repository: dannguyenmessi/users
+  repository: dannguyenmessi/forum-users
   tag: v2
 
 containerPort: 8080
