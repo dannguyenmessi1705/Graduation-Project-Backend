@@ -1,0 +1,79 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: host-based-ingress
+  labels:
+    app: routing-types
+    type: host-based
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - api.forum.didan.id.vn
+        - grafana.forum.didan.id.vn
+        - kafka.forum.didan.id.vn
+        - redis.forum.didan.id.vn
+        - keycloak.forum.didan.id.vn
+        - minio.forum.didan.id.vn
+      secretName: self-signed-tls
+  rules:
+  - host: "api.forum.didan.id.vn"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: gateway-server
+            port:
+              number: 8072
+  - host: "grafana.forum.didan.id.vn"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana
+            port:
+              number: 3000
+  - host: "kafka.forum.didan.id.vn"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kafka-ui
+            port:
+              number: 8017
+  - host: "redis.forum.didan.id.vn"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: redis-insight
+            port:
+              number: 5540
+  - host: "keycloak.forum.didan.id.vn"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: keycloak
+            port:
+              number: 7080
+  - host: "minio.forum.didan.id.vn"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: minio
+            port:
+              number: 10000

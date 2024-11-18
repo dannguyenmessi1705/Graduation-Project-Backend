@@ -12,7 +12,7 @@ image:
 containerPort: 8072
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
   port: 8072
   targetPort: 8072
 

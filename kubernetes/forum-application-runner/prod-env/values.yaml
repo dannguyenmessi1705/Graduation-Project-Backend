@@ -9,13 +9,13 @@ global:
   kafkaBrokerURL: kafka:9092
   minioRootUser: didannguyen
   minioRootPassword: "17052002"
-  minioRootEndPoint: http://minio:10000
+  minioRootEndPoint: https://minio.forum.didan.id.vn
   redisCacheEnabled: true
   redisCacheHost: redis
   redisCachePort: 6379
   defaultPageSize: 20
   fixedDelayMilliseconds: 300000
-  baseURL: http://forum.didan.id.vn/forum
+  baseURL: https://api.forum.didan.id.vn/forum
   userDBURL: jdbc:mysql://usersdb:3308/usersdb
   userDBUsername: users
   userDBPassword: "17052002"
