@@ -43,6 +43,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         @Server(
             description = "Gateway server",
             url = "http://localhost:8072/forum"
+        ),
+        @Server(
+            description = "Production server",
+            url = "${app.api.url}"
         )
     }
 )

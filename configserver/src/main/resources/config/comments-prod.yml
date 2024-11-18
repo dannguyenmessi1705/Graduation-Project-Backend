@@ -103,6 +103,8 @@ app:
         enabled: true
   loki:
     url: http://localhost:3100/loki/api/v1/push
+  api:
+    url: http://localhost:8072
 
 private:
   route: comments/create,votes/revoke,votes/add,comments/report,comments/delete

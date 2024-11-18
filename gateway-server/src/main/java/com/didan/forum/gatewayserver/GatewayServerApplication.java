@@ -54,6 +54,10 @@ import reactor.core.publisher.Mono;
         @Server(
             description = "Local server",
             url = "http://localhost:8072"
+        ),
+        @Server(
+            description = "Production server",
+            url = "${app.api.url}"
         )
     },
     security = {

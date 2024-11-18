@@ -3,8 +3,8 @@ global:
   activeProfile: prod
   configServerURL: configserver:http://configserver:8071
   kubernetesDiscoveryServerURL: http://spring-cloud-kubernetes-discoveryserver:80/
-  keyCloakJWKURL: http://keycloak:7080/auth/realms/forum/protocol/openid-connect/certs
-  keyCloakOpenIdURL: keycloak:7080
+  keyCloakJWKURL: https://keycloak.forum.didan.id.vn/auth/realms/forum/protocol/openid-connect/certs
+  keyCloakOpenIdURL: https://keycloak.forum.didan.id.vn
   zipkinEndPoint: http://tempo-grafana-tempo-distributor:9411/api/v2/spans
   kafkaBrokerURL: kafka:9092
   minioRootUser: didannguyen
@@ -34,6 +34,7 @@ global:
   redisHost: redis
   redisPort: 6379
   lokiURL: http://loki-grafana-loki-gateway:80/loki/api/v1/push
+  appURL: https://api.forum.didan.id.vn/forum
 
 
 

@@ -38,4 +38,5 @@ data:
   SPRING_DATA_REDIS_HOST: "{{ .Values.global.redisHost }}"
   SPRING_DATA_REDIS_PORT: "{{ .Values.global.redisPort }}"
   APP_LOKI_URL: "{{ .Values.global.lokiURL }}"
+  APP_API_URL: "{{ .Values.global.appURL }}"
 {{- end -}}

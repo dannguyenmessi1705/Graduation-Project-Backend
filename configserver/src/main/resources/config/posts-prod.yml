@@ -105,6 +105,8 @@ app:
         enabled: true
   loki:
     url: http://localhost:3100/loki/api/v1/push
+  api:
+    url: http://localhost:8072
 
 private:
   route: votes/add,votes/revoke,posts/update,posts/report,posts/new,posts/delete

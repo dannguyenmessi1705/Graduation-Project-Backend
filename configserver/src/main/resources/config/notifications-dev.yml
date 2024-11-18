@@ -96,6 +96,8 @@ app:
         enabled: true
   loki:
     url: http://localhost:3100/loki/api/v1/push
+  api:
+    url: http://localhost:8072
 
 private:
   route: notifications/delete,notifications/mark,notifications/read,notifications/unread,notifications/all

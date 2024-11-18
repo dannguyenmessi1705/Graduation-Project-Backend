@@ -36,3 +36,4 @@ reportsdb_enabled: false
 redis_reactive_enabled: true
 loki_enabled: true
 discoveryclient_kubernetes_enabled: true
+app_api_enabled: true
