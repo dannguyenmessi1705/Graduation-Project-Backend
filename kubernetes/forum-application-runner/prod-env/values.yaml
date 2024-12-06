@@ -3,8 +3,8 @@ global:
   activeProfile: prod
   configServerURL: configserver:http://configserver:8071
   kubernetesDiscoveryServerURL: http://spring-cloud-kubernetes-discoveryserver:80/
-  keyCloakJWKURL: https://keycloak.forum.didan.id.vn/auth/realms/forum/protocol/openid-connect/certs
-  keyCloakOpenIdURL: https://keycloak.forum.didan.id.vn
+  keyCloakJWKURL: keycloak.forum.didan.id.vn/auth/realms/forum/protocol/openid-connect/certs
+  keyCloakOpenIdURL: keycloak.forum.didan.id.vn
   zipkinEndPoint: http://tempo-grafana-tempo-distributor:9411/api/v2/spans
   kafkaBrokerURL: kafka:9092
   minioRootUser: didannguyen
