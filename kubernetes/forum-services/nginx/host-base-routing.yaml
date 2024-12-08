@@ -5,75 +5,75 @@ metadata:
   labels:
     app: routing-types
     type: host-based
+  annotations:
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Range, Authorization, X-Project-Key"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, PUT, POST, DELETE, PATCH, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-expose-headers: "*, X-Project-Key"
+    nginx.ingress.kubernetes.io/cors-max-age: "1728000"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   ingressClassName: nginx
-  tls:
-    - hosts:
-        - api.forum.didan.id.vn
-        - grafana.forum.didan.id.vn
-        - kafka.forum.didan.id.vn
-        - redis.forum.didan.id.vn
-        - keycloak.forum.didan.id.vn
-        - minio.forum.didan.id.vn
-      secretName: self-signed-tls
   rules:
-  - host: "api.forum.didan.id.vn"
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: gateway-server
-            port:
-              number: 8072
-  - host: "grafana.forum.didan.id.vn"
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: grafana
-            port:
-              number: 3000
-  - host: "kafka.forum.didan.id.vn"
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: kafka-ui
-            port:
-              number: 8017
-  - host: "redis.forum.didan.id.vn"
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: redis-insight
-            port:
-              number: 5540
-  - host: "keycloak.forum.didan.id.vn"
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: keycloak
-            port:
-              number: 7080
-  - host: "minio.forum.didan.id.vn"
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: minio
-            port:
-              number: 10000
+    - host: "api.forum.didan.id.vn"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway-server
+                port:
+                  number: 8072
+    - host: "grafana.forum.didan.id.vn"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000
+    - host: "kafka.forum.didan.id.vn"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kafka-ui
+                port:
+                  number: 8017
+    - host: "redis.forum.didan.id.vn"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: redis-insight
+                port:
+                  number: 5540
+    - host: "keycloak.forum.didan.id.vn"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 7080
+    - host: "minio.forum.didan.id.vn"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: minio
+                port:
+                  number: 10000

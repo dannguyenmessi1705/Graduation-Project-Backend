@@ -3,19 +3,19 @@ global:
   activeProfile: prod
   configServerURL: configserver:http://configserver:8071
   kubernetesDiscoveryServerURL: http://spring-cloud-kubernetes-discoveryserver:80/
-  keyCloakJWKURL: keycloak.forum.didan.id.vn/auth/realms/forum/protocol/openid-connect/certs
+  keyCloakJWKURL: keycloak.forum.didan.id.vn/realms/forum/protocol/openid-connect/certs
   keyCloakOpenIdURL: keycloak.forum.didan.id.vn
   zipkinEndPoint: http://tempo-grafana-tempo-distributor:9411/api/v2/spans
   kafkaBrokerURL: kafka:9092
   minioRootUser: didannguyen
   minioRootPassword: "17052002"
-  minioRootEndPoint: https://minio.forum.didan.id.vn
+  minioRootEndPoint: http://minio.forum.didan.id.vn
   redisCacheEnabled: true
   redisCacheHost: redis
   redisCachePort: 6379
   defaultPageSize: 20
   fixedDelayMilliseconds: 300000
-  baseURL: https://api.forum.didan.id.vn/forum
+  baseURL: http://api.forum.didan.id.vn/forum
   userDBURL: jdbc:mysql://usersdb:3308/usersdb
   userDBUsername: users
   userDBPassword: "17052002"
@@ -34,7 +34,7 @@ global:
   redisHost: redis
   redisPort: 6379
   lokiURL: http://loki-grafana-loki-gateway:80/loki/api/v1/push
-  appURL: https://api.forum.didan.id.vn/forum
+  appURL: http://api.forum.didan.id.vn/forum
 
 
 

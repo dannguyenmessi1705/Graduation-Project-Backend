@@ -18,4 +18,7 @@ spec:
         - name: keycloak
           image: dannguyenmessi/forum-keycloak:v1
           ports:
-          - containerPort: 3100
+            - containerPort: 3100
+          env:
+            - name: PROXY_ADDRESS_FORWARDING
+              value: "true"
