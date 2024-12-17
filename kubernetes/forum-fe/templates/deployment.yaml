@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fe-forum-service-deployment
+  labels:
+    app: fe-forum
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fe-forum
+  template:
+    metadata:
+      labels:
+        app: fe-forum
+    spec:
+      containers:
+        - name: fe-forum
+          image: dannguyenmessi/fe-forum:v1
+          ports:
+            - containerPort: 3000

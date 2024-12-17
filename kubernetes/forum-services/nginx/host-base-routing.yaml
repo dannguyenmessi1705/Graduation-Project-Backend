@@ -17,6 +17,16 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
+    - host: "fe.forum.didan.id.vn"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: fe-forum
+                port:
+                  number: 3000
     - host: "api.forum.didan.id.vn"
       http:
         paths:
