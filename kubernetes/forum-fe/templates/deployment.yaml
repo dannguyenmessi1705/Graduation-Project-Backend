@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: fe-forum
-          image: dannguyenmessi/forum-fe:v2
+          image: dannguyenmessi/forum-fe:v3
           ports:
             - containerPort: 3000
